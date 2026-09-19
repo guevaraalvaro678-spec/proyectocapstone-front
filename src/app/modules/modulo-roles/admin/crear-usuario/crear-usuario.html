@@ -1,0 +1,53 @@
+<section class="crear">
+  <h2>Usuarios y permisos</h2>
+  <p class="crear__ayuda">
+    <strong>SuperAdmin</strong>: acceso total y puede crear usuarios.
+    <strong>Admin</strong>: acceso al panel, sin crear usuarios.
+  </p>
+
+  <form class="crear__form" [formGroup]="form" (ngSubmit)="crear()">
+    <label>
+      Usuario
+      <input type="text" formControlName="usuario" autocomplete="off" />
+      @if (form.controls.usuario.touched && form.controls.usuario.invalid) {
+        <small class="crear__aviso">Mínimo 3 caracteres</small>
+      }
+    </label>
+
+    <label>
+      Rol
+      <select formControlName="rol">
+        @for (rol of roles; track rol) {
+          <option [value]="rol">{{ rol }}</option>
+        }
+      </select>
+    </label>
+
+    <label>
+      Contraseña
+      <input type="password" formControlName="password" autocomplete="new-password" />
+      @if (form.controls.password.touched && form.controls.password.invalid) {
+        <small class="crear__aviso">Mínimo 3 caracteres</small>
+      }
+    </label>
+
+    <label>
+      Confirmar contraseña
+      <input type="password" formControlName="confirmar" autocomplete="new-password" />
+      @if (form.controls.confirmar.touched && form.hasError('noCoinciden')) {
+        <small class="crear__aviso">Las contraseñas no coinciden</small>
+      }
+    </label>
+
+    @if (error()) {
+      <p class="crear__error">{{ error() }}</p>
+    }
+    @if (exito()) {
+      <p class="crear__exito">{{ exito() }}</p>
+    }
+
+    <button type="submit" [disabled]="cargando()">
+      {{ cargando() ? 'Creando...' : 'Crear usuario' }}
+    </button>
+  </form>
+</section>

@@ -1,0 +1,46 @@
+<section class="dash">
+  <header class="dash__cabecera">
+    <div>
+      <h2>Dashboard</h2>
+      <p>Resumen general de la operación.</p>
+    </div>
+    <span class="dash__etiqueta">Datos de ejemplo</span>
+  </header>
+
+  <div class="dash__indicadores">
+    @for (item of indicadores; track item.titulo) {
+      <article class="dash__tarjeta">
+        <span>{{ item.titulo }}</span>
+        <strong>{{ item.valor }}</strong>
+      </article>
+    }
+  </div>
+
+  <div class="dash__paneles">
+    <article class="dash__panel">
+      <h3>Citas por día</h3>
+      <div class="dash__barras">
+        @for (d of citasPorDia; track d.dia) {
+          <div class="dash__barra">
+            <span class="dash__valor">{{ d.cantidad }}</span>
+            <div class="dash__columna" [style.height.%]="(d.cantidad / maximoCitas) * 100"></div>
+            <span>{{ d.dia }}</span>
+          </div>
+        }
+      </div>
+    </article>
+
+    <article class="dash__panel">
+      <h3>Próximas citas</h3>
+      <ul class="dash__lista">
+        @for (cita of proximasCitas; track cita.hora) {
+          <li>
+            <strong>{{ cita.hora }}</strong>
+            <span>{{ cita.paciente }}</span>
+            <small>{{ cita.psicologo }}</small>
+          </li>
+        }
+      </ul>
+    </article>
+  </div>
+</section>

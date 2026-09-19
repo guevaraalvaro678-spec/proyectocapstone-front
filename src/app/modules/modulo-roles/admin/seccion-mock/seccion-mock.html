@@ -1,0 +1,30 @@
+<section class="seccion">
+  <header class="seccion__cabecera">
+    <div>
+      <h2>{{ info.titulo }}</h2>
+      <p>{{ info.descripcion }}</p>
+    </div>
+    <span class="seccion__etiqueta">Datos de ejemplo</span>
+  </header>
+
+  <div class="seccion__tabla">
+    <table>
+      <thead>
+        <tr>
+          @for (columna of info.columnas; track columna) {
+            <th>{{ columna }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (fila of info.filas; track $index) {
+          <tr>
+            @for (celda of fila; track $index) {
+              <td>{{ celda }}</td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>
