@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, inject, input, output, signal } from '@angular/core';
 
-import { Cita } from '../../../core/models/cita.model';
+import { Cita, etiquetaEstadoCita } from '../../../core/models/cita.model';
 import { CitaService } from '../../../core/services/cita.service';
 import { fechaLarga, hora, relativa } from '../../../core/utils/fechas';
 
@@ -16,6 +16,7 @@ import { fechaLarga, hora, relativa } from '../../../core/utils/fechas';
   styleUrl: './mis-citas.scss',
 })
 export class MisCitas {
+  protected readonly etiquetaEstado = etiquetaEstadoCita;
   private readonly citaService = inject(CitaService);
 
   readonly citas = input.required<Cita[]>();

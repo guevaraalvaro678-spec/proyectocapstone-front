@@ -92,7 +92,7 @@
       <select formControlName="estado">
         <option value="">Todos</option>
         @for (estado of estados; track estado) {
-          <option [value]="estado">{{ estado }}</option>
+          <option [value]="estado">{{ etiquetaEstado(estado) }}</option>
         }
       </select>
     </label>
@@ -154,7 +154,7 @@
                   <small>{{ cita.lugar }}</small>
                 }
               </td>
-              <td><span class="ui-etiqueta" [class]="'ui-etiqueta ' + claseEstado(cita.estado)">{{ cita.estado }}</span></td>
+              <td><span class="ui-etiqueta" [class]="'ui-etiqueta ' + claseEstado(cita.estado)">{{ etiquetaEstado(cita.estado) }}</span></td>
               <td>
                 <div class="ui-tabla__acciones">
                   @if (cita.estado === 'Programada') {

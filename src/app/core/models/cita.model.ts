@@ -44,3 +44,8 @@ export interface CitaEstadoCambio {
   estado: EstadoCita;
   notas?: string | null;
 }
+
+/** Texto que ven las personas: "Programada" es una cita solicitada que aún espera confirmación del psicólogo. */
+export function etiquetaEstadoCita(estado: EstadoCita): string {
+  return estado === 'Programada' ? 'Esperando respuesta' : estado;
+}

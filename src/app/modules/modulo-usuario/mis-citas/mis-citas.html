@@ -42,7 +42,7 @@
         <div class="cita__datos">
           <div class="cita__etiquetas">
             <span class="etiqueta">{{ cita.modalidad }}</span>
-            <span class="etiqueta" [class]="'etiqueta ' + claseEstado(cita)">{{ cita.estado }}</span>
+            <span class="etiqueta" [class]="'etiqueta ' + claseEstado(cita)">{{ etiquetaEstado(cita.estado) }}</span>
           </div>
           <h3>{{ cita.psicologoNombre }}</h3>
           <p>{{ fecha(cita.fechaInicio) }} · {{ hora(cita.fechaInicio) }} ({{ cita.duracionMinutos }} min)</p>
@@ -71,7 +71,7 @@
           </div>
           <div class="cita__datos">
             <div class="cita__etiquetas">
-              <span class="etiqueta" [class]="'etiqueta ' + claseEstado(cita)">{{ cita.estado }}</span>
+              <span class="etiqueta" [class]="'etiqueta ' + claseEstado(cita)">{{ etiquetaEstado(cita.estado) }}</span>
             </div>
             <h3>{{ cita.psicologoNombre }}</h3>
             <p>{{ fecha(cita.fechaInicio) }} · {{ hora(cita.fechaInicio) }}</p>

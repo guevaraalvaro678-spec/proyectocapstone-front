@@ -77,7 +77,7 @@
                     [class.ui-etiqueta--verde]="cita.estado === 'Confirmada'"
                     [class.ui-etiqueta--azul]="cita.estado === 'Programada'"
                   >
-                    {{ cita.estado }}
+                    {{ etiquetaEstado(cita.estado) }}
                   </span>
                 </td>
               </tr>

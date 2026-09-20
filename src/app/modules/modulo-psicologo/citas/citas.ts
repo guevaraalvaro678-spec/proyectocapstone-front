@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 
-import { Cita, EstadoCita, ESTADOS_CITA } from '../../../core/models/cita.model';
+import { Cita, EstadoCita, ESTADOS_CITA, etiquetaEstadoCita } from '../../../core/models/cita.model';
 import { CitaService } from '../../../core/services/cita.service';
 import { fechaLarga, hora } from '../../../core/utils/fechas';
 
@@ -16,6 +16,7 @@ type Filtro = 'proximas' | 'todas' | EstadoCita;
   styleUrl: './citas.scss',
 })
 export class Citas {
+  protected readonly etiquetaEstado = etiquetaEstadoCita;
   private readonly citaService = inject(CitaService);
 
   protected readonly estados = ESTADOS_CITA;

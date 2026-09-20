@@ -3,7 +3,7 @@ import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators } from '@angular/forms';
 
-import { Cita, CitaCrear, EstadoCita, ESTADOS_CITA, ModalidadCita } from '../../../../core/models/cita.model';
+import { Cita, CitaCrear, EstadoCita, ESTADOS_CITA, etiquetaEstadoCita, ModalidadCita } from '../../../../core/models/cita.model';
 import { PsicologoLista } from '../../../../core/models/psicologo.model';
 import { UsuarioLista } from '../../../../core/models/usuario-admin.model';
 import { CitaService } from '../../../../core/services/cita.service';
@@ -19,6 +19,7 @@ import { aInputLocal, claveDia, deInputLocal, fechaLarga, hora } from '../../../
   styleUrl: './citas.scss',
 })
 export class Citas {
+  protected readonly etiquetaEstado = etiquetaEstadoCita;
   private readonly fb = inject(FormBuilder);
   private readonly citaService = inject(CitaService);
   private readonly psicologoService = inject(PsicologoService);

@@ -1,3 +1,4 @@
+import { etiquetaEstadoCita } from '../../../core/models/cita.model';
 import { Component, computed, inject, signal } from '@angular/core';
 
 import { PsicologoDetalle } from '../../../core/models/psicologo.model';
@@ -12,6 +13,7 @@ import { claveDia, fechaLarga, hora, relativa } from '../../../core/utils/fechas
   styleUrl: './resumen.scss',
 })
 export class Resumen {
+  protected readonly etiquetaEstado = etiquetaEstadoCita;
   private readonly psicologoService = inject(PsicologoService);
 
   protected readonly datos = signal<PsicologoDetalle | null>(null);
