@@ -1,0 +1,43 @@
+<main class="tarjeta-pagina">
+  <div class="tarjeta">
+    <h1>Nueva contraseña</h1>
+
+    @if (!enlaceValido) {
+      <p class="tarjeta__error">El enlace está incompleto. Vuelve a pedir uno desde "¿Olvidaste tu contraseña?".</p>
+      <a class="tarjeta__enlace" routerLink="/olvide-password">Pedir un enlace nuevo</a>
+    } @else if (listo()) {
+      <p class="tarjeta__exito">¡Listo! Tu contraseña se cambió correctamente.</p>
+      <a class="tarjeta__boton" routerLink="/login">Iniciar sesión</a>
+    } @else {
+      <form [formGroup]="form" (ngSubmit)="cambiar()">
+        <label>
+          Contraseña nueva
+          <input type="password" formControlName="password" autocomplete="new-password" />
+          @if (form.controls.password.touched && form.controls.password.invalid) {
+            <small class="tarjeta__aviso">Mínimo 6 caracteres</small>
+          }
+        </label>
+
+        <label>
+          Confirmar contraseña
+          <input type="password" formControlName="confirmar" autocomplete="new-password" />
+          @if (form.controls.confirmar.touched && form.hasError('noCoinciden')) {
+            <small class="tarjeta__aviso">Las contraseñas no coinciden</small>
+          }
+        </label>
+
+        @if (error()) {
+          <p class="tarjeta__error">{{ error() }}</p>
+        }
+
+        <button type="submit" [disabled]="cargando()">
+          {{ cargando() ? 'Guardando...' : 'Cambiar contraseña' }}
+        </button>
+      </form>
+
+      @if (error()) {
+        <a class="tarjeta__enlace" routerLink="/olvide-password">Pedir un enlace nuevo</a>
+      }
+    }
+  </div>
+</main>

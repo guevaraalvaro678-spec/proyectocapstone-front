@@ -1,0 +1,78 @@
+<section class="solicitudes">
+  <header class="solicitudes__cabecera">
+    <div>
+      <h2>Solicitudes de orientación</h2>
+      <p>Pedidos de orientación de los usuarios. Asigna un psicólogo y avanza el estado: el usuario recibe un aviso por correo.</p>
+    </div>
+    <div class="solicitudes__acciones">
+      @if (pendientes() > 0) {
+        <span class="solicitudes__contador">{{ pendientes() }} pendientes</span>
+      }
+      <button type="button" (click)="cargar()" [disabled]="cargando()">Actualizar</button>
+    </div>
+  </header>
+
+  @if (error()) {
+    <p class="solicitudes__error">{{ error() }}</p>
+  }
+  @if (aviso()) {
+    <p class="solicitudes__exito">{{ aviso() }}</p>
+  }
+
+  @if (cargando()) {
+    <p class="solicitudes__vacio">Cargando solicitudes...</p>
+  } @else if (solicitudes().length === 0 && !error()) {
+    <p class="solicitudes__vacio">Todavía no hay solicitudes.</p>
+  } @else {
+    <div class="solicitudes__lista">
+      @for (solicitud of solicitudes(); track solicitud.id) {
+        <article class="solicitud">
+          <header class="solicitud__cabecera">
+            <div>
+              <strong>{{ solicitud.usuarioNombre }}</strong>
+              @if (solicitud.usuarioCorreo) {
+                <a [href]="'mailto:' + solicitud.usuarioCorreo">{{ solicitud.usuarioCorreo }}</a>
+              }
+            </div>
+            <span class="solicitud__fecha">{{ solicitud.fechaCreacion | date: 'dd/MM/yyyy HH:mm' }}</span>
+          </header>
+
+          <p class="solicitud__motivo">{{ solicitud.motivo }}</p>
+
+          @if (solicitud.psicologoAsignadoNombre) {
+            <p class="solicitud__asignado">Asignada a <strong>{{ solicitud.psicologoAsignadoNombre }}</strong></p>
+          }
+
+          <div class="solicitud__controles">
+            <label class="solicitud__estado">
+              Estado
+              <select [value]="borrador(solicitud).estado" (change)="elegirEstado(solicitud, $any($event.target).value)">
+                @for (estado of estados; track estado.valor) {
+                  <option [value]="estado.valor" [selected]="estado.valor === borrador(solicitud).estado">{{ estado.texto }}</option>
+                }
+              </select>
+            </label>
+
+            @if (borrador(solicitud).estado === 'Asignada') {
+              <label class="solicitud__estado">
+                Psicólogo
+                <select [value]="borrador(solicitud).psicologoId" (change)="elegirPsicologo(solicitud, $any($event.target).value)">
+                  <option value="0" [selected]="borrador(solicitud).psicologoId === 0">Elige un psicólogo</option>
+                  @for (p of psicologos(); track p.id) {
+                    <option [value]="p.id" [selected]="p.id === borrador(solicitud).psicologoId">
+                      {{ p.nombre }}{{ p.especialidad ? ' · ' + p.especialidad : '' }}
+                    </option>
+                  }
+                </select>
+              </label>
+            }
+
+            <button type="button" class="solicitud__guardar" [disabled]="!hayCambios(solicitud) || trabajandoEn() === solicitud.id" (click)="guardar(solicitud)">
+              {{ trabajandoEn() === solicitud.id ? 'Guardando...' : 'Guardar cambios' }}
+            </button>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</section>

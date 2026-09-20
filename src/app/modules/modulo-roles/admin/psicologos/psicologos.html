@@ -1,0 +1,198 @@
+<section>
+  <header class="ui-cabecera">
+    <div>
+      <h2>Psicólogos</h2>
+      <p>Crea cuentas de psicólogos, revisa su agenda, sus horarios y las solicitudes que atienden.</p>
+    </div>
+    <button type="button" class="ui-btn" (click)="nuevo()" [disabled]="editandoId() !== null">+ Nuevo psicólogo</button>
+  </header>
+
+  @if (error()) {
+    <p class="ui-mensaje ui-mensaje--error">{{ error() }}</p>
+  }
+  @if (aviso()) {
+    <p class="ui-mensaje ui-mensaje--exito">{{ aviso() }}</p>
+  }
+
+  @if (editandoId() !== null) {
+    <form class="ui-detalle ui-form" [formGroup]="formNuevo" (ngSubmit)="guardar()">
+      <h3>{{ editandoId() ? 'Editar perfil' : 'Nuevo psicólogo' }}</h3>
+
+      <div class="ui-form__fila">
+        <label>
+          Nombre completo
+          <input type="text" formControlName="nombre" />
+          @if (formNuevo.controls.nombre.touched && formNuevo.controls.nombre.invalid) {
+            <small class="ui-form__aviso">Escribe el nombre (mínimo 3 caracteres)</small>
+          }
+        </label>
+        <label>
+          Especialidad
+          <input type="text" formControlName="especialidad" placeholder="Ej. Psicología clínica" />
+          @if (formNuevo.controls.especialidad.touched && formNuevo.controls.especialidad.invalid) {
+            <small class="ui-form__aviso">Indica la especialidad</small>
+          }
+        </label>
+      </div>
+
+      @if (!editandoId()) {
+        <div class="ui-form__fila">
+          <label>
+            Correo (con el que iniciará sesión)
+            <input type="email" formControlName="correo" autocomplete="off" />
+            @if (formNuevo.controls.correo.touched && formNuevo.controls.correo.invalid) {
+              <small class="ui-form__aviso">Escribe un correo válido</small>
+            }
+          </label>
+          <label>
+            Contraseña inicial
+            <input type="password" formControlName="password" autocomplete="new-password" />
+            @if (formNuevo.controls.password.touched && formNuevo.controls.password.invalid) {
+              <small class="ui-form__aviso">Mínimo 6 caracteres</small>
+            }
+          </label>
+        </div>
+      }
+
+      <div class="ui-form__fila">
+        <label>
+          Teléfono
+          <input type="text" formControlName="telefono" />
+        </label>
+        <label>
+          N.º de colegiatura
+          <input type="text" formControlName="numeroColegiatura" />
+        </label>
+      </div>
+
+      <div class="ui-form__botones">
+        <button type="submit" class="ui-btn" [disabled]="guardando()">{{ guardando() ? 'Guardando...' : 'Guardar' }}</button>
+        <button type="button" class="ui-btn ui-btn--claro" (click)="cancelar()">Cancelar</button>
+      </div>
+    </form>
+  }
+
+  <div class="ui-filtros">
+    <label>
+      Buscar
+      <input type="search" [formControl]="buscar" placeholder="Nombre o correo" />
+    </label>
+  </div>
+
+  @if (cargandoDetalle()) {
+    <p class="ui-vacio">Cargando detalle...</p>
+  }
+
+  @if (detalle(); as d) {
+    <div class="ui-detalle">
+      <div class="ui-detalle__cabecera">
+        <div>
+          <h3>{{ d.nombre }}</h3>
+          <p>{{ d.especialidad }}</p>
+        </div>
+        <button type="button" class="ui-btn ui-btn--claro" (click)="cerrarDetalle()">Cerrar</button>
+      </div>
+
+      <dl class="ui-detalle__datos">
+        <div><dt>Correo</dt><dd>{{ d.correo }}</dd></div>
+        <div><dt>Teléfono</dt><dd>{{ d.telefono || 'Sin especificar' }}</dd></div>
+        <div><dt>Colegiatura</dt><dd>{{ d.numeroColegiatura || 'Sin especificar' }}</dd></div>
+        <div><dt>Último acceso</dt><dd>{{ d.ultimoAcceso ? fechaHora(d.ultimoAcceso) : 'Nunca' }}</dd></div>
+      </dl>
+
+      <h4>Horarios que ofrece</h4>
+      @for (dia of horarioPorDia(); track dia.nombre) {
+        <p class="psi__linea">
+          <strong>{{ dia.nombre }}:</strong>
+          @for (b of dia.bloques; track b.id) {
+            <span class="ui-etiqueta" [class.ui-etiqueta--azul]="b.activo">{{ b.horaInicio }}–{{ b.horaFin }} ({{ b.duracionMinutos }} min)</span>
+          }
+        </p>
+      } @empty {
+        <p class="psi__vacio">Todavía no definió horarios: los pacientes no pueden reservar con este psicólogo.</p>
+      }
+
+      <h4>Próximas citas ({{ d.citas.length }})</h4>
+      @if (d.citas.length > 0) {
+        <div class="ui-tabla">
+          <table>
+            <thead>
+              <tr><th>Cuándo</th><th>Paciente</th><th>Modalidad</th><th>Estado</th></tr>
+            </thead>
+            <tbody>
+              @for (c of d.citas; track c.id) {
+                <tr>
+                  <td>{{ fecha(c.fechaInicio) }}<small>{{ hora(c.fechaInicio) }}</small></td>
+                  <td>{{ c.pacienteNombre }}</td>
+                  <td>{{ c.modalidad }}</td>
+                  <td><span class="ui-etiqueta">{{ c.estado }}</span></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <p class="psi__vacio">Sin citas próximas.</p>
+      }
+
+      <h4>Solicitudes asignadas ({{ d.solicitudes.length }})</h4>
+      @for (s of d.solicitudes; track s.id) {
+        <p class="psi__linea"><strong>{{ s.usuarioNombre }}:</strong> {{ s.motivo }}</p>
+      } @empty {
+        <p class="psi__vacio">Sin solicitudes asignadas.</p>
+      }
+    </div>
+  }
+
+  @if (cargando()) {
+    <p class="ui-vacio">Cargando psicólogos...</p>
+  } @else if (psicologos().length === 0) {
+    <p class="ui-vacio">Todavía no hay psicólogos. Crea el primero con el botón "Nuevo psicólogo".</p>
+  } @else {
+    <div class="ui-tabla">
+      <table>
+        <thead>
+          <tr>
+            <th>Psicólogo</th>
+            <th>Contacto</th>
+            <th>Citas próximas</th>
+            <th>Solicitudes</th>
+            <th>Estado</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of psicologos(); track p.id) {
+            <tr>
+              <td>{{ p.nombre }}<small>{{ p.especialidad }}</small></td>
+              <td>{{ p.correo }}<small>{{ p.telefono }}</small></td>
+              <td>{{ p.citasProximas }}</td>
+              <td>{{ p.solicitudesAsignadas }}</td>
+              <td>
+                <span class="ui-etiqueta" [class.ui-etiqueta--verde]="p.activo" [class.ui-etiqueta--roja]="!p.activo">
+                  {{ p.activo ? 'Activo' : 'Desactivado' }}
+                </span>
+              </td>
+              <td>
+                <div class="ui-tabla__acciones">
+                  <button type="button" class="ui-btn ui-btn--claro ui-btn--chico" (click)="verDetalle(p)">Ver detalle</button>
+                  <button type="button" class="ui-btn ui-btn--claro ui-btn--chico" (click)="editar(p)">Editar</button>
+                  <button
+                    type="button"
+                    class="ui-btn ui-btn--chico"
+                    [class.ui-btn--peligro]="p.activo"
+                    [class.ui-btn--claro]="p.activo"
+                    [disabled]="trabajandoEn() === p.id"
+                    (click)="alternarActivo(p)"
+                  >
+                    {{ p.activo ? 'Desactivar' : 'Reactivar' }}
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

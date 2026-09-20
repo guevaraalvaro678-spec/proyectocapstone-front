@@ -1,0 +1,117 @@
+<section>
+  <header class="ui-cabecera">
+    <div>
+      <h2>Mis horarios</h2>
+      <p>Define cuándo atiendes cada semana (hora de Lima). Los pacientes reservan solo dentro de estos bloques.</p>
+    </div>
+    <div class="ui-acciones">
+      @if (citasPorSemana() > 0) {
+        <span class="ui-etiqueta ui-etiqueta--azul">{{ citasPorSemana() }} citas por semana</span>
+      }
+      <button type="button" class="ui-btn" (click)="nuevo()" [disabled]="editandoId() !== null">+ Agregar horario</button>
+    </div>
+  </header>
+
+  @if (error()) {
+    <p class="ui-mensaje ui-mensaje--error">{{ error() }}</p>
+  }
+  @if (aviso()) {
+    <p class="ui-mensaje ui-mensaje--exito">{{ aviso() }}</p>
+  }
+
+  @if (editandoId() !== null) {
+    <form class="ui-detalle ui-form" [formGroup]="form" (ngSubmit)="guardar()">
+      <h3>{{ editandoId() ? 'Editar horario' : 'Nuevo horario' }}</h3>
+
+      <div class="ui-form__fila">
+        <label>
+          Día
+          <select formControlName="diaSemana">
+            @for (dia of ordenDias; track dia) {
+              <option [ngValue]="dia">{{ diasSemana[dia] }}</option>
+            }
+          </select>
+        </label>
+        <label>
+          Desde
+          <input type="time" formControlName="horaInicio" />
+        </label>
+        <label>
+          Hasta
+          <input type="time" formControlName="horaFin" />
+        </label>
+        <label>
+          Duración de cada cita
+          <select formControlName="duracionMinutos">
+            @for (minutos of duraciones; track minutos) {
+              <option [ngValue]="minutos">{{ minutos }} minutos</option>
+            }
+          </select>
+        </label>
+      </div>
+
+      <div class="ui-form__fila">
+        <label>
+          Modalidad
+          <select formControlName="modalidad">
+            @for (modalidad of modalidades; track modalidad) {
+              <option [value]="modalidad">{{ modalidad === 'Mixta' ? 'Presencial o virtual (elige el paciente)' : modalidad }}</option>
+            }
+          </select>
+        </label>
+        <label>
+          Consultorio o enlace de videollamada
+          <input type="text" formControlName="lugar" maxlength="200" placeholder="Ej. Consultorio 2 o https://meet..." />
+        </label>
+      </div>
+
+      <label class="ui-form__opcion">
+        <input type="checkbox" formControlName="activo" />
+        <span>Activo (visible para los pacientes)</span>
+      </label>
+
+      <div class="ui-form__botones">
+        <button type="submit" class="ui-btn" [disabled]="guardando()">{{ guardando() ? 'Guardando...' : 'Guardar' }}</button>
+        <button type="button" class="ui-btn ui-btn--claro" (click)="cancelar()">Cancelar</button>
+      </div>
+    </form>
+  }
+
+  @if (cargando()) {
+    <p class="ui-vacio">Cargando tus horarios...</p>
+  } @else if (bloques().length === 0) {
+    <p class="ui-vacio">Todavía no tienes horarios. Agrega el primero para que los pacientes puedan reservar contigo.</p>
+  } @else {
+    <div class="semana">
+      @for (dia of porDia(); track dia.dia) {
+        <article class="ui-tarjeta dia">
+          <h3>{{ dia.nombre }}</h3>
+
+          @for (bloque of dia.bloques; track bloque.id) {
+            <div class="bloque" [class.bloque--inactivo]="!bloque.activo">
+              <div class="bloque__datos">
+                <strong>{{ bloque.horaInicio }} – {{ bloque.horaFin }}</strong>
+                <small>{{ bloque.duracionMinutos }} min · {{ bloque.modalidad === 'Mixta' ? 'Presencial o virtual' : bloque.modalidad }}</small>
+                @if (bloque.lugar) {
+                  <small>{{ bloque.lugar }}</small>
+                }
+                @if (!bloque.activo) {
+                  <span class="ui-etiqueta">Desactivado</span>
+                }
+              </div>
+              <div class="ui-tabla__acciones">
+                <button type="button" class="ui-btn ui-btn--claro ui-btn--chico" (click)="editar(bloque)">Editar</button>
+                <button type="button" class="ui-btn ui-btn--claro ui-btn--chico" (click)="alternarActivo(bloque)">
+                  {{ bloque.activo ? 'Desactivar' : 'Activar' }}
+                </button>
+                <button type="button" class="ui-btn ui-btn--peligro ui-btn--chico" (click)="eliminar(bloque)">Eliminar</button>
+              </div>
+            </div>
+          } @empty {
+            <p class="dia__libre">Sin atención</p>
+          }
+        </article>
+      }
+    </div>
+  }
+</section>

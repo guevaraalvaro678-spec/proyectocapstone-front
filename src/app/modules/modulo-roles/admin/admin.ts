@@ -21,10 +21,15 @@ export class Admin {
 
   private readonly menu: ItemMenu[] = [
     { ruta: 'dashboard', etiqueta: 'Dashboard', icono: '🏠' },
-    { ruta: 'usuarios', etiqueta: 'Usuarios', icono: '🔑', soloSuperAdmin: true },
-    { ruta: 'pacientes', etiqueta: 'Pacientes', icono: '🧑' },
+    { ruta: 'usuarios', etiqueta: 'Usuarios', icono: '🧑' },
     { ruta: 'psicologos', etiqueta: 'Psicólogos', icono: '🩺' },
+    { ruta: 'colaboradores', etiqueta: 'Colaboradores', icono: '🤝' },
     { ruta: 'citas', etiqueta: 'Citas', icono: '📅' },
+    { ruta: 'solicitudes', etiqueta: 'Solicitudes', icono: '📝' },
+    { ruta: 'mensajes', etiqueta: 'Mensajes', icono: '✉️' },
+    { ruta: 'correos', etiqueta: 'Correos', icono: '📧' },
+    { ruta: 'eventos', etiqueta: 'Eventos', icono: '🎉' },
+    { ruta: 'administradores', etiqueta: 'Administradores', icono: '🔑', soloSuperAdmin: true },
     { ruta: 'reportes', etiqueta: 'Reportes', icono: '📊' },
     { ruta: 'configuracion', etiqueta: 'Configuración', icono: '⚙️' },
   ];

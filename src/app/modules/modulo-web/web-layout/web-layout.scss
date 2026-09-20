@@ -1,0 +1,229 @@
+// Los colores se definen aquí y las páginas hijas los heredan (están dentro de este componente).
+:host {
+  --verde: #14524a;
+  --verde-oscuro: #0e3d37;
+  --arena: #ecdcae;
+  --crema: #f8f3e6;
+  --naranja: #e0824a;
+  --texto: #1f2937;
+  --gris: #6b7280;
+  display: block;
+}
+
+.web {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: #fff;
+  color: var(--texto);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  &__barra {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #fff;
+    box-shadow: 0 1px 6px rgb(0 0 0 / 0.08);
+  }
+
+  &__barra-interior {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 0.85rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    position: relative;
+  }
+
+  &__marca {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--verde);
+    text-decoration: none;
+
+    strong,
+    small {
+      display: block;
+    }
+
+    strong {
+      font-size: 1.15rem;
+    }
+
+    small {
+      color: var(--gris);
+      font-size: 0.7rem;
+      letter-spacing: 0.05em;
+    }
+  }
+
+  &__marca-acento {
+    color: var(--naranja);
+  }
+
+  &__logo {
+    display: grid;
+    place-items: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 50%;
+    background: var(--naranja);
+    font-size: 1.3rem;
+  }
+
+  &__nav {
+    display: flex;
+    align-items: center;
+    gap: 1.75rem;
+
+    a {
+      padding: 0.35rem 0;
+      color: var(--texto);
+      text-decoration: none;
+      font-weight: 500;
+      border-bottom: 2px solid transparent;
+
+      &:hover {
+        color: var(--verde);
+      }
+
+      &.activo {
+        color: var(--verde);
+        border-bottom-color: var(--naranja);
+      }
+    }
+  }
+
+  &__ingresar {
+    padding: 0.6rem 1.25rem !important;
+    border: 0 !important;
+    border-radius: 0.6rem;
+    background: var(--verde);
+    color: #fff !important;
+    font-weight: 600;
+
+    &:hover {
+      background: var(--verde-oscuro);
+    }
+  }
+
+  &__sesion {
+    color: var(--verde);
+    font-weight: 600;
+  }
+
+  &__salir {
+    padding: 0.55rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.6rem;
+    background: #fff;
+    color: var(--texto);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover {
+      background: #f3f4f6;
+    }
+  }
+
+  &__hamburguesa {
+    display: none;
+    padding: 0.3rem 0.7rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    background: #fff;
+    font-size: 1.25rem;
+    cursor: pointer;
+  }
+
+  &__contenido {
+    flex: 1;
+  }
+
+  &__pie {
+    background: var(--verde-oscuro);
+    color: #d1e0dc;
+  }
+
+  &__pie-interior {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 1.5rem;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 2rem;
+
+    strong {
+      display: block;
+      margin-bottom: 0.6rem;
+      color: #fff;
+    }
+
+    p {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+
+    a {
+      display: block;
+      margin-bottom: 0.35rem;
+      color: #d1e0dc;
+      text-decoration: none;
+      font-size: 0.9rem;
+
+      &:hover {
+        color: #fff;
+      }
+    }
+  }
+
+  &__derechos {
+    margin: 0;
+    padding: 1rem 1.5rem 1.5rem;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #9db7b1;
+  }
+}
+
+@media (max-width: 48rem) {
+  .web {
+    &__hamburguesa {
+      display: block;
+    }
+
+    &__nav {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.25rem;
+      padding: 1rem 1.5rem 1.5rem;
+      background: #fff;
+      box-shadow: 0 8px 12px rgb(0 0 0 / 0.1);
+
+      &.abierto {
+        display: flex;
+      }
+
+      a {
+        padding: 0.6rem 0;
+      }
+    }
+
+    &__ingresar {
+      text-align: center;
+    }
+
+    &__pie-interior {
+      grid-template-columns: 1fr;
+    }
+  }
+}

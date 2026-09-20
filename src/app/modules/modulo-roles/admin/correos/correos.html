@@ -1,0 +1,127 @@
+<section>
+  <header class="ui-cabecera">
+    <div>
+      <h2>Correos y notificaciones</h2>
+      <p>Escribe un mensaje para una persona o para un grupo. También ves todo lo que el sistema envía solo (bienvenidas, avisos, recordatorios).</p>
+    </div>
+    <button type="button" class="ui-btn ui-btn--claro" (click)="cargar()" [disabled]="cargando()">Actualizar</button>
+  </header>
+
+  @if (estado(); as e) {
+    @if (!e.smtpConfigurado) {
+      <p class="ui-mensaje ui-mensaje--aviso">
+        <strong>El envío de correos todavía no está configurado en el servidor.</strong>
+        Los mensajes se guardan y quedan como <em>Pendientes</em>; saldrán solos cuando se configure la sección
+        <code>Correo</code> del <code>appsettings.json</code> del backend (servidor SMTP y remitente).
+      </p>
+    }
+  }
+
+  @if (error()) {
+    <p class="ui-mensaje ui-mensaje--error">{{ error() }}</p>
+  }
+  @if (aviso()) {
+    <p class="ui-mensaje ui-mensaje--exito">{{ aviso() }}</p>
+  }
+
+  <form class="ui-detalle ui-form" [formGroup]="form" (ngSubmit)="enviar()">
+    <h3>Nuevo mensaje</h3>
+
+    <div class="ui-form__fila">
+      <label>
+        Para
+        <select formControlName="audiencia" (change)="cambiarAudiencia($any($event.target).value)">
+          @for (a of audiencias; track a.valor) {
+            <option [value]="a.valor">{{ a.texto }}</option>
+          }
+        </select>
+      </label>
+
+      @if (esIndividual()) {
+        <label>
+          Correo del destinatario
+          <input type="email" formControlName="correo" />
+          @if (form.controls.correo.touched && form.controls.correo.invalid) {
+            <small class="ui-form__aviso">Escribe un correo válido</small>
+          }
+        </label>
+      }
+    </div>
+
+    <label>
+      Asunto
+      <input type="text" formControlName="asunto" maxlength="150" />
+      @if (form.controls.asunto.touched && form.controls.asunto.invalid) {
+        <small class="ui-form__aviso">Escribe un asunto (mínimo 3 caracteres)</small>
+      }
+    </label>
+
+    <label>
+      Mensaje
+      <textarea rows="7" formControlName="mensaje" maxlength="5000" placeholder="Cada línea nueva será un párrafo."></textarea>
+      @if (form.controls.mensaje.touched && form.controls.mensaje.invalid) {
+        <small class="ui-form__aviso">Escribe el mensaje (mínimo 5 caracteres)</small>
+      }
+    </label>
+
+    @if (incluyeUsuarios()) {
+      <label class="ui-form__opcion">
+        <input type="checkbox" formControlName="incluirSinPreferencia" />
+        <span>Incluir también a los usuarios que desactivaron los correos</span>
+      </label>
+    }
+
+    <div class="ui-form__botones">
+      <button type="submit" class="ui-btn" [disabled]="enviando()">{{ enviando() ? 'Enviando...' : 'Enviar' }}</button>
+    </div>
+  </form>
+
+  <div class="ui-cabecera correos__titulo">
+    <h3>Historial de envíos</h3>
+    @if (pendientes() > 0) {
+      <span class="ui-etiqueta ui-etiqueta--amarilla">{{ pendientes() }} pendientes</span>
+    }
+  </div>
+
+  @if (cargando()) {
+    <p class="ui-vacio">Cargando historial...</p>
+  } @else if (historial().length === 0) {
+    <p class="ui-vacio">Todavía no se envió ningún correo.</p>
+  } @else {
+    <div class="ui-tabla">
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Para</th>
+            <th>Asunto</th>
+            <th>Tipo</th>
+            <th>Estado</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of historial(); track c.id) {
+            <tr>
+              <td>{{ fechaHora(c.fechaCreacion) }}</td>
+              <td>{{ c.nombreDestinatario ?? c.destinatario }}<small>{{ c.destinatario }}</small></td>
+              <td>{{ c.asunto }}</td>
+              <td>{{ c.tipo }}</td>
+              <td>
+                <span class="ui-etiqueta" [class]="'ui-etiqueta ' + claseEstado(c.estado)">{{ c.estado }}</span>
+                @if (c.error) {
+                  <small [title]="c.error">{{ c.error }}</small>
+                }
+              </td>
+              <td>
+                @if (c.estado === 'Fallido') {
+                  <button type="button" class="ui-btn ui-btn--claro ui-btn--chico" [disabled]="trabajandoEn() === c.id" (click)="reintentar(c)">Reintentar</button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

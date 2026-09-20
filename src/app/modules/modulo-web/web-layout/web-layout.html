@@ -1,0 +1,76 @@
+<div class="web">
+  <header class="web__barra">
+    <div class="web__barra-interior">
+      <a class="web__marca" routerLink="/" (click)="cerrarMenu()">
+        <span class="web__logo">🧠</span>
+        <span>
+          <strong>Capstone<span class="web__marca-acento">Psicología</span></strong>
+          <small>Bienestar emocional</small>
+        </span>
+      </a>
+
+      <button
+        type="button"
+        class="web__hamburguesa"
+        aria-label="Abrir menú"
+        [attr.aria-expanded]="menuAbierto()"
+        (click)="alternarMenu()"
+      >
+        ☰
+      </button>
+
+      <nav class="web__nav" [class.abierto]="menuAbierto()">
+        @for (enlace of enlaces(); track enlace.ruta) {
+          <a
+            [routerLink]="enlace.ruta"
+            routerLinkActive="activo"
+            [routerLinkActiveOptions]="{ exact: enlace.exacto }"
+            (click)="cerrarMenu()"
+          >
+            {{ enlace.etiqueta }}
+          </a>
+        }
+        @if (auth.autenticado()) {
+          <span class="web__sesion">👤 {{ primerNombre() }}</span>
+          <a class="web__ingresar" [routerLink]="auth.rutaInicial()" (click)="cerrarMenu()">
+            {{ etiquetaMiZona() }}
+          </a>
+          <button type="button" class="web__salir" (click)="salir()">Salir</button>
+        } @else {
+          <a routerLink="/registro" (click)="cerrarMenu()">Crear cuenta</a>
+          <a class="web__ingresar" routerLink="/login" (click)="cerrarMenu()">Ingresar</a>
+        }
+      </nav>
+    </div>
+  </header>
+
+  <main class="web__contenido">
+    <router-outlet />
+  </main>
+
+  <footer class="web__pie">
+    <div class="web__pie-interior">
+      <div>
+        <strong>Capstone Psicología</strong>
+        <p>Acompañamiento profesional para tu bienestar emocional.</p>
+      </div>
+      <div>
+        <strong>Enlaces</strong>
+        <a routerLink="/nosotros">Nosotros</a>
+        <a routerLink="/servicios">Servicios</a>
+        @if (!auth.autenticado()) {
+          <a routerLink="/contacto">Contacto</a>
+        }
+      </div>
+      <div>
+        <strong>Acceso</strong>
+        @if (auth.autenticado()) {
+          <a [routerLink]="auth.rutaInicial()">Ir a {{ etiquetaMiZona() }}</a>
+        } @else {
+          <a routerLink="/login">Ingresar al sistema</a>
+        }
+      </div>
+    </div>
+    <p class="web__derechos">© {{ anio }} Capstone Psicología. Proyecto académico.</p>
+  </footer>
+</div>

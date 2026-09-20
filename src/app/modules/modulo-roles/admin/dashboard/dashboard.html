@@ -2,45 +2,56 @@
   <header class="dash__cabecera">
     <div>
       <h2>Dashboard</h2>
-      <p>Resumen general de la operación.</p>
+      <p>Resumen del sistema en tiempo real.</p>
     </div>
-    <span class="dash__etiqueta">Datos de ejemplo</span>
   </header>
 
-  <div class="dash__indicadores">
-    @for (item of indicadores; track item.titulo) {
-      <article class="dash__tarjeta">
-        <span>{{ item.titulo }}</span>
-        <strong>{{ item.valor }}</strong>
+  @if (error()) {
+    <p class="dash__error">{{ error() }}</p>
+  }
+
+  @if (cargando()) {
+    <p class="dash__vacio">Cargando resumen...</p>
+  } @else if (datos(); as d) {
+    <div class="dash__indicadores">
+      @for (item of indicadores(); track item.titulo) {
+        <a class="dash__tarjeta" [class.dash__tarjeta--atencion]="item.atencion" [routerLink]="'../' + item.ruta">
+          <span>{{ item.titulo }}</span>
+          <strong>{{ item.valor }}</strong>
+        </a>
+      }
+    </div>
+
+    <div class="dash__paneles">
+      <article class="dash__panel">
+        <h3>Citas de los próximos 7 días</h3>
+        <div class="dash__barras">
+          @for (dia of d.citasPorDia; track dia.fecha) {
+            <div class="dash__barra">
+              <span class="dash__valor">{{ dia.cantidad }}</span>
+              <div class="dash__columna" [style.height.%]="(dia.cantidad / maximoCitas()) * 100"></div>
+              <span>{{ etiquetaDia(dia.fecha) }}</span>
+            </div>
+          }
+        </div>
       </article>
-    }
-  </div>
 
-  <div class="dash__paneles">
-    <article class="dash__panel">
-      <h3>Citas por día</h3>
-      <div class="dash__barras">
-        @for (d of citasPorDia; track d.dia) {
-          <div class="dash__barra">
-            <span class="dash__valor">{{ d.cantidad }}</span>
-            <div class="dash__columna" [style.height.%]="(d.cantidad / maximoCitas) * 100"></div>
-            <span>{{ d.dia }}</span>
-          </div>
+      <article class="dash__panel">
+        <h3>Próximas citas</h3>
+        @if (d.proximasCitas.length === 0) {
+          <p class="dash__vacio-panel">No hay citas próximas.</p>
+        } @else {
+          <ul class="dash__lista">
+            @for (cita of d.proximasCitas; track cita.id) {
+              <li>
+                <strong>{{ hora(cita.fechaInicio) }}</strong>
+                <span>{{ cita.pacienteNombre }}<small>{{ fecha(cita.fechaInicio) }}</small></span>
+                <small>{{ cita.psicologoNombre }}</small>
+              </li>
+            }
+          </ul>
         }
-      </div>
-    </article>
-
-    <article class="dash__panel">
-      <h3>Próximas citas</h3>
-      <ul class="dash__lista">
-        @for (cita of proximasCitas; track cita.hora) {
-          <li>
-            <strong>{{ cita.hora }}</strong>
-            <span>{{ cita.paciente }}</span>
-            <small>{{ cita.psicologo }}</small>
-          </li>
-        }
-      </ul>
-    </article>
-  </div>
+      </article>
+    </div>
+  }
 </section>

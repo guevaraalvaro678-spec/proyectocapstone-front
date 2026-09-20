@@ -1,0 +1,161 @@
+<section>
+  <header class="ui-cabecera">
+    <div>
+      <h2>Usuarios</h2>
+      <p>Cuentas registradas en el sistema. Abre una para ver su detalle, sus solicitudes y sus citas.</p>
+    </div>
+    <span class="ui-etiqueta ui-etiqueta--azul">{{ total() }} {{ total() === 1 ? 'resultado' : 'resultados' }}</span>
+  </header>
+
+  @if (error()) {
+    <p class="ui-mensaje ui-mensaje--error">{{ error() }}</p>
+  }
+  @if (aviso()) {
+    <p class="ui-mensaje ui-mensaje--exito">{{ aviso() }}</p>
+  }
+
+  <div class="ui-filtros">
+    <label>
+      Buscar
+      <input type="search" [formControl]="buscar" placeholder="Nombre o correo" />
+    </label>
+    <label>
+      Estado
+      <select [value]="estado()" (change)="cambiarEstado($any($event.target).value)">
+        <option value="todos">Todos</option>
+        <option value="activos">Activos</option>
+        <option value="desactivados">Desactivados</option>
+      </select>
+    </label>
+    @if (auth.esSuperAdmin()) {
+      <label>
+        Tipo de cuenta
+        <select [value]="tipo()" (change)="cambiarTipo($any($event.target).value)">
+          <option value="Usuario">Usuarios (pacientes)</option>
+          <option value="Administrador">Administradores</option>
+        </select>
+      </label>
+    }
+  </div>
+
+  @if (cargandoDetalle()) {
+    <p class="ui-vacio">Cargando detalle...</p>
+  }
+
+  @if (detalle(); as d) {
+    <div class="ui-detalle">
+      <div class="ui-detalle__cabecera">
+        <div>
+          <h3>{{ d.nombre }}</h3>
+          <p>{{ d.correo ?? d.nombreUsuario }}</p>
+        </div>
+        <button type="button" class="ui-btn ui-btn--claro" (click)="cerrarDetalle()">Cerrar</button>
+      </div>
+
+      <dl class="ui-detalle__datos">
+        <div><dt>Rol</dt><dd>{{ d.rol }}</dd></div>
+        <div>
+          <dt>Estado</dt>
+          <dd>
+            <span class="ui-etiqueta" [class.ui-etiqueta--verde]="d.activo" [class.ui-etiqueta--roja]="!d.activo">
+              {{ d.activo ? 'Activo' : 'Desactivado' }}
+            </span>
+          </dd>
+        </div>
+        <div><dt>Registro</dt><dd>{{ fechaHora(d.fechaRegistro) }}</dd></div>
+        <div><dt>Último acceso</dt><dd>{{ d.ultimoAcceso ? fechaHora(d.ultimoAcceso) : 'Nunca' }}</dd></div>
+        <div><dt>Ubicación</dt><dd>{{ d.ubicacion || 'Sin especificar' }}</dd></div>
+        <div><dt>Intereses</dt><dd>{{ d.intereses || 'Sin especificar' }}</dd></div>
+        <div><dt>Recordatorios por correo</dt><dd>{{ d.recordatoriosCorreo ? 'Sí' : 'No' }}</dd></div>
+        <div><dt>Prefiere atención virtual</dt><dd>{{ d.preferenciaVirtual ? 'Sí' : 'No' }}</dd></div>
+      </dl>
+
+      <h4>Solicitudes de orientación ({{ d.solicitudes.length }})</h4>
+      @for (s of d.solicitudes; track s.id) {
+        <p class="usuarios__linea">
+          <span class="ui-etiqueta ui-etiqueta--azul">{{ s.estado === 'EnRevision' ? 'En revisión' : s.estado }}</span>
+          {{ s.motivo }}
+          @if (s.psicologoAsignadoNombre) {
+            <small>· Asignada a {{ s.psicologoAsignadoNombre }}</small>
+          }
+        </p>
+      } @empty {
+        <p class="usuarios__vacio">No ha pedido orientación.</p>
+      }
+
+      <h4>Citas ({{ d.citas.length }})</h4>
+      @if (d.citas.length > 0) {
+        <div class="ui-tabla">
+          <table>
+            <thead>
+              <tr><th>Cuándo</th><th>Psicólogo</th><th>Modalidad</th><th>Estado</th></tr>
+            </thead>
+            <tbody>
+              @for (c of d.citas; track c.id) {
+                <tr>
+                  <td>{{ fecha(c.fechaInicio) }}<small>{{ hora(c.fechaInicio) }}</small></td>
+                  <td>{{ c.psicologoNombre }}</td>
+                  <td>{{ c.modalidad }}</td>
+                  <td><span class="ui-etiqueta">{{ c.estado }}</span></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <p class="usuarios__vacio">Sin citas.</p>
+      }
+    </div>
+  }
+
+  @if (cargando()) {
+    <p class="ui-vacio">Cargando usuarios...</p>
+  } @else if (usuarios().length === 0 && !error()) {
+    <p class="ui-vacio">No hay usuarios con esos filtros.</p>
+  } @else {
+    <div class="ui-tabla">
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Registro</th>
+            <th>Último acceso</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (u of usuarios(); track u.id) {
+            <tr>
+              <td>{{ u.nombre }}<small>{{ u.correo ?? u.nombreUsuario }}</small></td>
+              <td>{{ u.rol }}</td>
+              <td>
+                <span class="ui-etiqueta" [class.ui-etiqueta--verde]="u.activo" [class.ui-etiqueta--roja]="!u.activo">
+                  {{ u.activo ? 'Activo' : 'Desactivado' }}
+                </span>
+              </td>
+              <td>{{ fechaHora(u.fechaRegistro) }}</td>
+              <td>{{ u.ultimoAcceso ? fechaHora(u.ultimoAcceso) : 'Nunca' }}</td>
+              <td>
+                <div class="ui-tabla__acciones">
+                  <button type="button" class="ui-btn ui-btn--claro ui-btn--chico" (click)="verDetalle(u)">Ver detalle</button>
+                  <button
+                    type="button"
+                    class="ui-btn ui-btn--chico"
+                    [class.ui-btn--peligro]="u.activo"
+                    [class.ui-btn--claro]="u.activo"
+                    [disabled]="trabajandoEn() === u.id"
+                    (click)="alternarActivo(u)"
+                  >
+                    {{ u.activo ? 'Desactivar' : 'Reactivar' }}
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

@@ -1,0 +1,256 @@
+<div class="espacio">
+  <header class="espacio__barra">
+    <div class="espacio__barra-interior">
+      <a class="espacio__marca" routerLink="/">
+        <span class="espacio__logo">🧠</span>
+        <strong>Capstone<span>Psicología</span></strong>
+      </a>
+
+      <nav class="espacio__nav">
+        <a routerLink="/">Inicio</a>
+        <a routerLink="/nosotros">Nosotros</a>
+        <a routerLink="/servicios">Servicios</a>
+      </nav>
+
+      <div class="espacio__cuenta">
+        <span class="espacio__nombre">👤 {{ primerNombre() }}</span>
+        <button type="button" (click)="auth.logout()">Salir</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="espacio__portada">
+    <div class="espacio__portada-interior">
+      <span class="espacio__avatar">{{ inicial() }}</span>
+      <div>
+        <p class="espacio__etiqueta">Mi espacio</p>
+        <h1>Hola, {{ primerNombre() }}</h1>
+        <p>Gracias por confiar en nosotros.</p>
+      </div>
+    </div>
+  </section>
+
+  <main class="espacio__cuerpo">
+    <aside class="menu">
+      <h2>Mi perfil</h2>
+      <button type="button" [class.activo]="seccion() === 'resumen'" (click)="cambiarSeccion('resumen')">
+        Resumen
+      </button>
+      <button type="button" [class.activo]="seccion() === 'reservar'" (click)="cambiarSeccion('reservar')">
+        Reservar cita
+      </button>
+      <button type="button" [class.activo]="seccion() === 'citas'" (click)="cambiarSeccion('citas')">
+        Mis citas
+      </button>
+      <button type="button" [class.activo]="seccion() === 'solicitud'" (click)="cambiarSeccion('solicitud')">
+        Mi solicitud de orientación
+      </button>
+      <button
+        type="button"
+        [class.activo]="seccion() === 'preferencias'"
+        (click)="cambiarSeccion('preferencias')"
+      >
+        Preferencias
+      </button>
+    </aside>
+
+    <div class="contenido">
+      @if (error()) {
+        <p class="aviso aviso--error">{{ error() }}</p>
+      }
+      @if (aviso()) {
+        <p class="aviso aviso--exito">{{ aviso() }}</p>
+      }
+
+      @if (cargando()) {
+        <p class="vacio">Cargando tu espacio...</p>
+      } @else {
+        @switch (seccion()) {
+          @case ('resumen') {
+            <div class="indicadores">
+              <article class="indicador">
+                <span class="indicador__icono">📝</span>
+                <strong>{{ estadoCorto() }}</strong>
+                <small>Estado de tu solicitud</small>
+              </article>
+              <article class="indicador">
+                <span class="indicador__icono">📅</span>
+                <strong>{{ perfil()?.fechaRegistro | date: 'dd/MM/yyyy' }}</strong>
+                <small>Miembro desde</small>
+              </article>
+              <article class="indicador">
+                <span class="indicador__icono">🗓️</span>
+                <strong>{{ citasPendientes() }}</strong>
+                <small>Citas pendientes</small>
+              </article>
+            </div>
+
+            <app-mis-citas modo="resumen" [citas]="citas()" (irAReservar)="cambiarSeccion('reservar')" />
+
+            @if (citasPendientes() > 0) {
+              <button type="button" class="boton boton--claro" (click)="cambiarSeccion('citas')">Ver todas mis citas</button>
+            }
+
+            <article class="banner">
+              <div>
+                <p class="tarjeta__etiqueta">Orientación psicológica</p>
+                <h2>{{ tituloEstado() }}</h2>
+                <p>
+                  @if (solicitud()) {
+                    Puedes consultar el estado de tu solicitud en cualquier momento.
+                  } @else {
+                    Cuéntanos qué necesitas y te ayudaremos a encontrar el apoyo adecuado.
+                  }
+                </p>
+              </div>
+              <button type="button" class="boton" (click)="cambiarSeccion('solicitud')">
+                {{ solicitud() ? 'Ver estado' : 'Pedir orientación' }} →
+              </button>
+            </article>
+
+            <article class="tarjeta">
+              <header class="tarjeta__cabecera">
+                <div>
+                  <p class="tarjeta__etiqueta">Datos personales</p>
+                  <h2>Información básica</h2>
+                </div>
+                @if (!editando()) {
+                  <button type="button" class="boton boton--claro" (click)="editarPerfil()">Editar</button>
+                }
+              </header>
+
+              @if (editando()) {
+                <form class="formulario" [formGroup]="formPerfil" (ngSubmit)="guardarPerfil()">
+                  <label>
+                    Nombre
+                    <input type="text" formControlName="nombre" />
+                    @if (formPerfil.controls.nombre.touched && formPerfil.controls.nombre.invalid) {
+                      <small class="formulario__aviso">Escribe tu nombre (mínimo 3 caracteres)</small>
+                    }
+                  </label>
+                  <label>
+                    Ubicación
+                    <input type="text" formControlName="ubicacion" placeholder="Ej. Lima, Perú" />
+                  </label>
+                  <label>
+                    Intereses
+                    <input type="text" formControlName="intereses" placeholder="Ej. Ansiedad, estrés" />
+                  </label>
+                  <div class="formulario__botones">
+                    <button type="submit" class="boton" [disabled]="guardando()">
+                      {{ guardando() ? 'Guardando...' : 'Guardar' }}
+                    </button>
+                    <button type="button" class="boton boton--claro" (click)="cancelarEdicion()">
+                      Cancelar
+                    </button>
+                  </div>
+                </form>
+              } @else {
+                <dl class="datos">
+                  <div>
+                    <dt>Nombre</dt>
+                    <dd>{{ perfil()?.nombre }}</dd>
+                  </div>
+                  <div>
+                    <dt>Correo</dt>
+                    <dd>{{ perfil()?.correo }}</dd>
+                  </div>
+                  <div>
+                    <dt>Ubicación</dt>
+                    <dd>{{ perfil()?.ubicacion || 'Sin especificar' }}</dd>
+                  </div>
+                  <div>
+                    <dt>Intereses</dt>
+                    <dd>{{ perfil()?.intereses || 'Sin especificar' }}</dd>
+                  </div>
+                </dl>
+              }
+            </article>
+          }
+
+          @case ('reservar') {
+            <app-reservar-cita (reservada)="alReservar($event)" />
+          }
+
+          @case ('citas') {
+            <app-mis-citas modo="lista" [citas]="citas()" (cancelada)="alCancelar($event)" (irAReservar)="cambiarSeccion('reservar')" />
+          }
+
+          @case ('solicitud') {
+            <article class="tarjeta">
+              <p class="tarjeta__etiqueta">Orientación psicológica</p>
+              <h2>{{ tituloEstado() }}</h2>
+
+              @if (solicitud(); as s) {
+                <ol class="pasos">
+                  @for (paso of pasos; track paso.estado; let i = $index) {
+                    <li [class.hecho]="i < pasoActual()" [class.actual]="i === pasoActual()">
+                      <span class="pasos__punto">{{ i < pasoActual() ? '✓' : i + 1 }}</span>
+                      {{ paso.texto }}
+                    </li>
+                  }
+                </ol>
+
+                <p class="tarjeta__etiqueta">Tu motivo</p>
+                <p class="motivo">{{ s.motivo }}</p>
+                <small class="tarjeta__vacio">
+                  Enviada el {{ s.fechaCreacion | date: 'dd/MM/yyyy HH:mm' }} · Última actualización
+                  {{ s.fechaActualizacion | date: 'dd/MM/yyyy HH:mm' }}
+                </small>
+              }
+
+              @if (puedePedir() && !nuevaSolicitud()) {
+                <button type="button" class="boton" (click)="mostrarFormularioSolicitud()">
+                  {{ solicitud() ? 'Pedir una nueva orientación' : 'Pedir orientación' }}
+                </button>
+              }
+
+              @if (puedePedir() && nuevaSolicitud()) {
+                <form class="formulario" [formGroup]="formSolicitud" (ngSubmit)="enviarSolicitud()">
+                  <label>
+                    Cuéntanos qué necesitas
+                    <textarea rows="5" formControlName="motivo"></textarea>
+                    @if (formSolicitud.controls.motivo.touched && formSolicitud.controls.motivo.invalid) {
+                      <small class="formulario__aviso">Cuéntanos un poco más (mínimo 10 caracteres)</small>
+                    }
+                  </label>
+                  <div class="formulario__botones">
+                    <button type="submit" class="boton" [disabled]="guardando()">
+                      {{ guardando() ? 'Enviando...' : 'Enviar solicitud' }}
+                    </button>
+                    <button type="button" class="boton boton--claro" (click)="nuevaSolicitud.set(false)">
+                      Cancelar
+                    </button>
+                  </div>
+                </form>
+              }
+            </article>
+          }
+
+          @case ('preferencias') {
+            <article class="tarjeta">
+              <p class="tarjeta__etiqueta">Preferencias</p>
+              <h2>Cómo quieres que te atendamos</h2>
+
+              <form class="formulario" [formGroup]="formPreferencias" (ngSubmit)="guardarPreferencias()">
+                <label class="opcion">
+                  <input type="checkbox" formControlName="recordatoriosCorreo" />
+                  <span>Recibir recordatorios por correo</span>
+                </label>
+                <label class="opcion">
+                  <input type="checkbox" formControlName="preferenciaVirtual" />
+                  <span>Prefiero atención virtual</span>
+                </label>
+                <div class="formulario__botones">
+                  <button type="submit" class="boton" [disabled]="guardando()">
+                    {{ guardando() ? 'Guardando...' : 'Guardar preferencias' }}
+                  </button>
+                </div>
+              </form>
+            </article>
+          }
+        }
+      }
+    </div>
+  </main>
+</div>

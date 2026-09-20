@@ -1,0 +1,100 @@
+<section class="unete">
+  <header class="unete__cabecera">
+    <h1>Únete a Capstone Psicología</h1>
+    <p>Elige cómo quieres formar parte de nuestra comunidad.</p>
+  </header>
+
+  <div class="unete__opciones">
+    <article class="opcion">
+      <span class="opcion__icono">🙂</span>
+      <h2>Soy usuario</h2>
+      <p>Crea tu cuenta para pedir orientación, agendar citas con nuestros psicólogos y seguir tu proceso.</p>
+      <a class="opcion__boton" routerLink="/registro">Crear mi cuenta</a>
+    </article>
+
+    <article class="opcion opcion--colaborador">
+      <span class="opcion__icono">🩺</span>
+      <h2>Soy psicólogo/a</h2>
+      <p>Trabaja con nosotros. Envía tu postulación: el equipo administrador la revisará y, si es aprobada, activará tu cuenta.</p>
+      <button type="button" class="opcion__boton" (click)="mostrarForm.set(true)">Postular como colaborador</button>
+    </article>
+  </div>
+
+  @if (enviado()) {
+    <div class="unete__exito">
+      <h3>¡Postulación enviada!</h3>
+      <p>
+        Recibimos tu solicitud. Te avisaremos por correo cuando el administrador la revise; hasta entonces todavía no puedes iniciar sesión como psicólogo.
+      </p>
+    </div>
+  } @else if (mostrarForm()) {
+    <form class="unete__form" [formGroup]="form" (ngSubmit)="enviar()">
+      <h3>Postulación de colaborador</h3>
+
+      <label>
+        Nombre completo
+        <input type="text" formControlName="nombre" autocomplete="name" />
+        @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
+          <small>Escribe tu nombre (mínimo 3 caracteres)</small>
+        }
+      </label>
+
+      <label>
+        Correo
+        <input type="email" formControlName="correo" autocomplete="email" />
+        @if (form.controls.correo.touched && form.controls.correo.invalid) {
+          <small>Escribe un correo válido</small>
+        }
+      </label>
+
+      <div class="unete__fila">
+        <label>
+          Especialidad
+          <input type="text" formControlName="especialidad" placeholder="Ej. Psicología clínica" />
+          @if (form.controls.especialidad.touched && form.controls.especialidad.invalid) {
+            <small>Indica tu especialidad</small>
+          }
+        </label>
+        <label>
+          N.º de colegiatura
+          <input type="text" formControlName="numeroColegiatura" />
+        </label>
+      </div>
+
+      <label>
+        Teléfono
+        <input type="tel" formControlName="telefono" autocomplete="tel" />
+      </label>
+
+      <label>
+        Cuéntanos sobre ti
+        <textarea rows="4" formControlName="presentacion" placeholder="Experiencia, enfoque, por qué quieres colaborar..."></textarea>
+      </label>
+
+      <div class="unete__fila">
+        <label>
+          Contraseña
+          <input type="password" formControlName="password" autocomplete="new-password" />
+          @if (form.controls.password.touched && form.controls.password.invalid) {
+            <small>Mínimo 6 caracteres</small>
+          }
+        </label>
+        <label>
+          Confirmar contraseña
+          <input type="password" formControlName="confirmar" autocomplete="new-password" />
+          @if (form.controls.confirmar.touched && form.hasError('noCoinciden')) {
+            <small>No coinciden</small>
+          }
+        </label>
+      </div>
+
+      @if (error()) {
+        <p class="unete__error">{{ error() }}</p>
+      }
+
+      <button type="submit" [disabled]="cargando()">
+        {{ cargando() ? 'Enviando...' : 'Enviar postulación' }}
+      </button>
+    </form>
+  }
+</section>

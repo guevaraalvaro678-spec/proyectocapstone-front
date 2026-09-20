@@ -1,0 +1,75 @@
+<section class="mensajes">
+  <header class="mensajes__cabecera">
+    <div>
+      <h2>Mensajes</h2>
+      <p>Mensajes recibidos desde el formulario de contacto del sitio web.</p>
+    </div>
+    <div class="mensajes__acciones">
+      @if (sinLeer() > 0) {
+        <span class="mensajes__contador">{{ sinLeer() }} sin leer</span>
+      }
+      <button type="button" (click)="cargar()" [disabled]="cargando()">Actualizar</button>
+    </div>
+  </header>
+
+  @if (error()) {
+    <p class="mensajes__error">{{ error() }}</p>
+  }
+  @if (aviso()) {
+    <p class="mensajes__exito">{{ aviso() }}</p>
+  }
+
+  @if (cargando()) {
+    <p class="mensajes__estado">Cargando mensajes...</p>
+  } @else if (mensajes().length === 0 && !error()) {
+    <p class="mensajes__estado">Todavía no hay mensajes.</p>
+  } @else {
+    <div class="mensajes__lista">
+      @for (mensaje of mensajes(); track mensaje.id) {
+        <article class="mensaje" [class.mensaje--nuevo]="!mensaje.leido">
+          <header class="mensaje__cabecera">
+            <div>
+              <strong>{{ mensaje.nombre }}</strong>
+              <a [href]="'mailto:' + mensaje.correo">{{ mensaje.correo }}</a>
+            </div>
+            <div class="mensaje__meta">
+              <span>{{ mensaje.fechaEnvio | date: 'dd/MM/yyyy HH:mm' }}</span>
+              <span class="mensaje__estado" [class.mensaje__estado--nuevo]="!mensaje.leido">
+                {{ mensaje.leido ? 'Leído' : 'Nuevo' }}
+              </span>
+            </div>
+          </header>
+
+          <p class="mensaje__texto">{{ mensaje.mensaje }}</p>
+
+          <div class="mensaje__acciones">
+            <button type="button" class="mensaje__boton" (click)="abrirRespuesta(mensaje)">Responder por correo</button>
+            @if (!mensaje.leido) {
+              <button type="button" class="mensaje__boton mensaje__boton--claro" (click)="marcarLeido(mensaje)">
+                Marcar como leído
+              </button>
+            }
+          </div>
+
+          @if (respondiendoA()?.id === mensaje.id) {
+            <div class="mensaje__respuesta">
+              <label>
+                Tu respuesta para {{ mensaje.nombre }}
+                <textarea rows="5" [formControl]="respuesta" maxlength="3000"></textarea>
+              </label>
+              @if (respuesta.touched && respuesta.invalid) {
+                <small class="mensaje__aviso">Escribe la respuesta (mínimo 5 caracteres)</small>
+              }
+              <div class="mensaje__acciones">
+                <button type="button" class="mensaje__boton" [disabled]="enviando()" (click)="enviarRespuesta()">
+                  {{ enviando() ? 'Enviando...' : 'Enviar respuesta' }}
+                </button>
+                <button type="button" class="mensaje__boton mensaje__boton--claro" (click)="cancelarRespuesta()">Cancelar</button>
+              </div>
+            </div>
+          }
+        </article>
+      }
+    </div>
+  }
+</section>

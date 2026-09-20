@@ -65,4 +65,27 @@
     font-size: 0.875rem;
     text-align: center;
   }
+
+  &__enlace {
+    margin: 0;
+    color: #374151;
+    font-size: 0.875rem;
+    text-align: center;
+
+    a {
+      color: #4f46e5;
+      font-weight: 600;
+    }
+  }
+
+  &__volver {
+    color: #4f46e5;
+    font-size: 0.875rem;
+    text-align: center;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }

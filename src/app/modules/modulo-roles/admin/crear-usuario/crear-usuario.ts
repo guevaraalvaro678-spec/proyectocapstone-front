@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { AbstractControl, FormBuilder, ValidationErrors, Validators } from '@angular/forms';
 
-import { Rol } from '../../../../core/models/auth.model';
+import { RolAdmin } from '../../../../core/models/auth.model';
 import { AuthService } from '../../../../core/services/auth.service';
 
 function passwordsIguales(control: AbstractControl): ValidationErrors | null {
@@ -21,7 +21,7 @@ export class CrearUsuario {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
 
-  protected readonly roles: Rol[] = ['Admin', 'SuperAdmin'];
+  protected readonly roles: RolAdmin[] = ['Admin', 'SuperAdmin'];
   protected readonly cargando = signal(false);
   protected readonly error = signal('');
   protected readonly exito = signal('');
@@ -31,7 +31,7 @@ export class CrearUsuario {
       usuario: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
       password: ['', [Validators.required, Validators.minLength(3)]],
       confirmar: ['', Validators.required],
-      rol: ['Admin' as Rol, Validators.required],
+      rol: ['Admin' as RolAdmin, Validators.required],
     },
     { validators: passwordsIguales },
   );

@@ -1,1 +1,363 @@
-/* You can add global styles to this file, and also import other style files */
+/* Estilos globales compartidos por las pantallas de los paneles (administrador y psicólogo). */
+
+/* ---- Cabecera de página ---- */
+
+.ui-cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+
+  h2 {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+
+  p {
+    margin: 0.25rem 0 0;
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+}
+
+.ui-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+/* ---- Botones ---- */
+
+.ui-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid #4f46e5;
+  border-radius: 0.5rem;
+  background: #4f46e5;
+  color: #fff;
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+
+  &--claro {
+    border-color: #d1d5db;
+    background: #fff;
+    color: #111827;
+
+    &:hover:not(:disabled) {
+      background: #f3f4f6;
+    }
+  }
+
+  &--peligro {
+    border-color: #fecaca;
+    background: #fff;
+    color: #b91c1c;
+
+    &:hover:not(:disabled) {
+      background: #fef2f2;
+    }
+  }
+
+  &--chico {
+    padding: 0.3rem 0.65rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* ---- Mensajes ---- */
+
+.ui-mensaje {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+
+  &--error {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  &--exito {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  &--aviso {
+    background: #fef3c7;
+    color: #92400e;
+  }
+}
+
+.ui-vacio {
+  margin: 0;
+  padding: 2rem;
+  border-radius: 0.75rem;
+  background: #fff;
+  color: #6b7280;
+  text-align: center;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.08);
+}
+
+/* ---- Tarjeta y filtros ---- */
+
+.ui-tarjeta {
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  background: #fff;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.08);
+
+  h3 {
+    margin: 0 0 0.75rem;
+    font-size: 1rem;
+  }
+}
+
+.ui-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.8rem;
+    color: #4b5563;
+  }
+
+  input,
+  select {
+    padding: 0.45rem 0.65rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    background: #fff;
+    font: inherit;
+    font-size: 0.9rem;
+  }
+}
+
+/* ---- Tabla ---- */
+
+.ui-tabla {
+  overflow-x: auto;
+  border-radius: 0.75rem;
+  background: #fff;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.08);
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+
+  th,
+  td {
+    padding: 0.7rem 1rem;
+    text-align: left;
+    vertical-align: middle;
+    border-bottom: 1px solid #f3f4f6;
+  }
+
+  th {
+    background: #f9fafb;
+    color: #6b7280;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  tbody tr:hover {
+    background: #fafafa;
+  }
+
+  small {
+    display: block;
+    color: #6b7280;
+  }
+
+  .ui-tabla__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    justify-content: flex-end;
+  }
+}
+
+/* ---- Etiquetas de estado ---- */
+
+.ui-etiqueta {
+  display: inline-block;
+  padding: 0.1rem 0.6rem;
+  border-radius: 999px;
+  background: #f3f4f6;
+  color: #374151;
+  font-size: 0.72rem;
+  white-space: nowrap;
+
+  &--verde {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  &--azul {
+    background: #e0e7ff;
+    color: #3730a3;
+  }
+
+  &--amarilla {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  &--roja {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+}
+
+/* ---- Formularios de panel ---- */
+
+.ui-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    font-size: 0.875rem;
+    color: #374151;
+  }
+
+  input:not([type='checkbox']),
+  textarea,
+  select {
+    padding: 0.6rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    background: #fff;
+    font: inherit;
+
+    &:focus {
+      outline: 2px solid #6366f1;
+      border-color: transparent;
+    }
+  }
+
+  &__fila {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: 1rem;
+  }
+
+  &__opcion {
+    flex-direction: row !important;
+    align-items: center;
+    gap: 0.5rem !important;
+  }
+
+  &__aviso {
+    color: #dc2626;
+    font-size: 0.8rem;
+  }
+
+  &__botones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+}
+
+/* ---- Panel de detalle (se abre sobre la página) ---- */
+
+.ui-detalle {
+  margin-bottom: 1.25rem;
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  background: #fff;
+  box-shadow: 0 2px 10px rgb(0 0 0 / 0.1);
+
+  &__cabecera {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+
+    h3 {
+      margin: 0;
+    }
+
+    p {
+      margin: 0.2rem 0 0;
+      color: #6b7280;
+      font-size: 0.85rem;
+    }
+  }
+
+  &__datos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: 0.9rem 1.25rem;
+    margin: 0 0 1.25rem;
+
+    dt {
+      color: #6b7280;
+      font-size: 0.8rem;
+    }
+
+    dd {
+      margin: 0.15rem 0 0;
+      font-weight: 600;
+      word-break: break-word;
+    }
+  }
+
+  h4 {
+    margin: 1.25rem 0 0.5rem;
+    font-size: 0.95rem;
+  }
+}
+
+/* ---- Indicadores (tarjetas con un número) ---- */
+
+.ui-indicadores {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.ui-indicador {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: #fff;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.08);
+
+  span {
+    color: #6b7280;
+    font-size: 0.8rem;
+  }
+
+  strong {
+    font-size: 1.6rem;
+  }
+}

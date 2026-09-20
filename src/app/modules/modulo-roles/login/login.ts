@@ -34,13 +34,16 @@ export class Login {
     this.error.set('');
 
     this.auth.login(this.form.getRawValue()).subscribe({
-      next: () => this.router.navigate(['/admin']),
+      // Cada cuenta va a su lugar: administradores al panel, psicólogos a su agenda y usuarios a su espacio.
+      next: () => this.router.navigate([this.auth.rutaInicial()]),
       error: (err: HttpErrorResponse) => {
         this.cargando.set(false);
         this.error.set(
           err.status === 401
             ? 'Usuario o contraseña incorrectos'
-            : 'No se pudo conectar con el servidor',
+            : err.status === 403
+              ? (err.error?.mensaje ?? 'Tu cuenta está desactivada')
+              : 'No se pudo conectar con el servidor',
         );
       },
     });

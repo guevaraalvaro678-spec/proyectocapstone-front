@@ -1,0 +1,55 @@
+<section class="cabecera">
+  <div class="cabecera__interior">
+    <h1>Contacto</h1>
+    <p>Cuéntanos qué necesitas y te responderemos pronto.</p>
+  </div>
+</section>
+
+<section class="contacto">
+  <div class="contacto__interior">
+    <form class="formulario" [formGroup]="form" (ngSubmit)="enviar()">
+      <label>
+        Nombre
+        <input type="text" formControlName="nombre" autocomplete="name" />
+        @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
+          <small class="formulario__aviso">Escribe tu nombre (mínimo 3 caracteres)</small>
+        }
+      </label>
+
+      <label>
+        Correo
+        <input type="email" formControlName="correo" autocomplete="email" />
+        @if (form.controls.correo.touched && form.controls.correo.invalid) {
+          <small class="formulario__aviso">Escribe un correo válido</small>
+        }
+      </label>
+
+      <label>
+        Mensaje
+        <textarea rows="5" formControlName="mensaje"></textarea>
+        @if (form.controls.mensaje.touched && form.controls.mensaje.invalid) {
+          <small class="formulario__aviso">Cuéntanos un poco más (mínimo 10 caracteres)</small>
+        }
+      </label>
+
+      @if (error()) {
+        <p class="formulario__error">{{ error() }}</p>
+      }
+      @if (enviado()) {
+        <p class="formulario__exito">¡Gracias! Recibimos tu mensaje y te responderemos pronto.</p>
+      }
+
+      <button type="submit" [disabled]="cargando()">
+        {{ cargando() ? 'Enviando...' : 'Enviar mensaje' }}
+      </button>
+    </form>
+
+    <aside class="datos">
+      <h2>Información</h2>
+      <p><strong>📍 Dirección</strong><br />Lima, Perú (dato de ejemplo)</p>
+      <p><strong>📞 Teléfono</strong><br />+51 999 999 999 (dato de ejemplo)</p>
+      <p><strong>✉️ Correo</strong><br />contacto&#64;capstonepsicologia.pe (dato de ejemplo)</p>
+      <p><strong>🕗 Horario</strong><br />Lunes a viernes, 8:00 a 20:00</p>
+    </aside>
+  </div>
+</section>

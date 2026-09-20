@@ -1,0 +1,210 @@
+<!-- Botones de la portada: los mismos para el banner de eventos y para la portada de bienvenida. -->
+<ng-template #acciones>
+  <a class="boton boton--claro" routerLink="/servicios">Ver servicios →</a>
+  @if (!auth.autenticado()) {
+    <a class="portada__enlace" routerLink="/contacto">Necesito orientación ›</a>
+  } @else if (auth.esUsuario()) {
+    <a class="portada__enlace" routerLink="/mi-espacio" [queryParams]="{ seccion: 'solicitud' }">
+      Pedir orientación ›
+    </a>
+  }
+</ng-template>
+
+<!--
+  Carrusel de la portada. La bienvenida es siempre la primera diapositiva (fija) y los eventos
+  publicados desde el panel se suman después. Avanza solo, y también con flechas, puntos o deslizando.
+-->
+<section
+  class="carrusel"
+  aria-roledescription="carrusel"
+  aria-label="Portada y próximos eventos"
+  (mouseenter)="pausar()"
+  (mouseleave)="reanudar()"
+  (pointerdown)="empezarArrastre($event)"
+  (pointerup)="terminarArrastre($event)"
+  (pointercancel)="cancelarArrastre()"
+>
+  <div class="carrusel__pista" [style.transform]="'translateX(-' + indice() * 100 + '%)'">
+    <!-- Diapositiva fija: bienvenida -->
+    <div
+      class="carrusel__slide"
+      role="group"
+      aria-roledescription="diapositiva"
+      [attr.aria-hidden]="indice() !== 0"
+      [attr.inert]="indice() !== 0 ? '' : null"
+    >
+      <div class="portada">
+        <div class="portada__interior">
+          <div class="portada__texto">
+            <p class="portada__etiqueta">✨ Cuidamos tu bienestar emocional</p>
+            <h1>
+              Cuidar tu mente
+              <span>es el primer paso.</span>
+            </h1>
+            <p class="portada__descripcion">
+              Conoce nuestros servicios de psicología, recibe orientación profesional y agenda tu cita
+              con un equipo que te escucha, sin juicios y con total confidencialidad.
+            </p>
+            <div class="portada__acciones">
+              <ng-container [ngTemplateOutlet]="acciones" />
+            </div>
+          </div>
+
+          <div class="portada__ilustracion" aria-hidden="true">
+            <div class="portada__arco">
+              <span class="portada__emoji">🧘‍♀️</span>
+              <span class="portada__hoja">🌿</span>
+            </div>
+            <span class="portada__circulo"></span>
+            <div class="portada__tarjeta">
+              <span class="portada__corazon">♥</span>
+              <div>
+                <strong>Un espacio para ti</strong>
+                <small>Atención cercana y confidencial</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Un evento por diapositiva: lo controla el administrador desde el módulo Eventos. -->
+    @for (evento of eventos(); track evento.id; let i = $index) {
+      <div
+        class="carrusel__slide"
+        role="group"
+        aria-roledescription="diapositiva"
+        [attr.aria-hidden]="indice() !== i + 1"
+        [attr.inert]="indice() !== i + 1 ? '' : null"
+      >
+        <div class="portada">
+          <div class="portada__interior">
+            <div class="portada__texto">
+              <p class="portada__etiqueta">🎉 Próximo evento</p>
+              <h2 class="portada__evento">{{ evento.titulo }}</h2>
+
+              <ul class="portada__datos">
+                <li>📅 {{ fecha(evento.fechaInicio) }}</li>
+                <li>🕒 {{ hora(evento.fechaInicio) }}</li>
+                <li>📍 {{ evento.lugar }}</li>
+                <li class="portada__modalidad">{{ evento.modalidad }}</li>
+              </ul>
+
+              <p class="portada__descripcion">{{ evento.descripcion }}</p>
+
+              <div class="portada__acciones">
+                <ng-container [ngTemplateOutlet]="acciones" />
+              </div>
+            </div>
+
+            <div class="portada__ilustracion" aria-hidden="true">
+              <div class="portada__arco">
+                <span class="portada__emoji">{{ icono(evento) }}</span>
+                @if (evento.imagenUrl) {
+                  <img class="portada__imagen" [src]="evento.imagenUrl" alt="" (error)="ocultarImagen($event)" />
+                }
+              </div>
+              <span class="portada__circulo"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (totalSlides() > 1) {
+    <div class="portada__control">
+      <button type="button" aria-label="Anterior" (click)="ir(indice() - 1)">‹</button>
+      @for (n of puntos(); track n) {
+        <button
+          type="button"
+          class="portada__punto"
+          [class.activo]="n === indice()"
+          [attr.aria-label]="'Ir a la diapositiva ' + (n + 1)"
+          (click)="ir(n)"
+        ></button>
+      }
+      <button type="button" aria-label="Siguiente" (click)="ir(indice() + 1)">›</button>
+    </div>
+  }
+</section>
+
+<section class="seccion">
+  <div class="seccion__interior">
+    <h2>Nuestros servicios</h2>
+    <p class="seccion__subtitulo">Acompañamiento adaptado a cada etapa y necesidad.</p>
+
+    <div class="tarjetas">
+      @for (servicio of serviciosDestacados; track servicio.titulo) {
+        <article class="tarjeta">
+          <span class="tarjeta__icono">{{ servicio.icono }}</span>
+          <h3>{{ servicio.titulo }}</h3>
+          <p>{{ servicio.texto }}</p>
+        </article>
+      }
+    </div>
+
+    <a class="seccion__mas" routerLink="/servicios">Conocer todos los servicios →</a>
+  </div>
+</section>
+
+<section class="seccion seccion--crema">
+  <div class="seccion__interior">
+    <h2>Cómo funciona</h2>
+    <p class="seccion__subtitulo">Empezar es más sencillo de lo que parece.</p>
+
+    <div class="pasos">
+      @for (paso of pasos; track paso.numero) {
+        <article class="paso">
+          <span class="paso__numero">{{ paso.numero }}</span>
+          <h3>{{ paso.titulo }}</h3>
+          <p>{{ paso.texto }}</p>
+        </article>
+      }
+    </div>
+  </div>
+</section>
+
+<section class="seccion">
+  <div class="seccion__interior">
+    <div class="valores">
+      @for (valor of valores; track valor.titulo) {
+        <div class="valor">
+          <span>{{ valor.icono }}</span>
+          <div>
+            <strong>{{ valor.titulo }}</strong>
+            <p>{{ valor.texto }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+@if (!auth.autenticado()) {
+  <section class="seccion">
+    <div class="seccion__interior unete-inicio">
+      <div>
+        <h2>Trabaja con nosotros</h2>
+        <p>
+          ¿Eres psicólogo/a? Únete como colaborador. También puedes crear tu cuenta de usuario para pedir orientación.
+        </p>
+      </div>
+      <a class="boton" routerLink="/unete">Únete</a>
+    </div>
+  </section>
+}
+
+<section class="llamado">
+  <div class="llamado__interior">
+    <h2>¿Listo para dar el primer paso?</h2>
+    <p>Escríbenos y te ayudamos a encontrar el apoyo que necesitas.</p>
+    @if (!auth.autenticado()) {
+      <a class="boton boton--claro" routerLink="/contacto">Contactar ahora</a>
+    } @else if (auth.esUsuario()) {
+      <a class="boton boton--claro" routerLink="/mi-espacio" [queryParams]="{ seccion: 'solicitud' }">
+        Pedir orientación
+      </a>
+    }
+  </div>
+</section>

@@ -1,0 +1,136 @@
+<section class="eventos">
+  <header class="eventos__cabecera">
+    <div>
+      <h2>Eventos</h2>
+      <p>Los eventos publicados aparecen en el banner de la portada del sitio web.</p>
+    </div>
+    <div class="eventos__acciones">
+      @if (eventos().length > 0) {
+        <span class="eventos__contador">{{ publicados() }} de {{ eventos().length }} publicados</span>
+      }
+      <button type="button" class="boton" (click)="nuevo()" [disabled]="formularioAbierto()">
+        + Nuevo evento
+      </button>
+    </div>
+  </header>
+
+  @if (error()) {
+    <p class="eventos__mensaje eventos__mensaje--error">{{ error() }}</p>
+  }
+  @if (aviso()) {
+    <p class="eventos__mensaje eventos__mensaje--exito">{{ aviso() }}</p>
+  }
+
+  @if (formularioAbierto()) {
+    <form class="formulario" [formGroup]="form" (ngSubmit)="guardar()">
+      <h3>{{ editandoId() ? 'Editar evento' : 'Nuevo evento' }}</h3>
+
+      <label>
+        Título
+        <input type="text" formControlName="titulo" maxlength="150" />
+        @if (form.controls.titulo.touched && form.controls.titulo.invalid) {
+          <small class="formulario__aviso">Escribe un título (mínimo 3 caracteres)</small>
+        }
+      </label>
+
+      <label>
+        Descripción
+        <textarea rows="3" formControlName="descripcion" maxlength="600"></textarea>
+        @if (form.controls.descripcion.touched && form.controls.descripcion.invalid) {
+          <small class="formulario__aviso">Describe el evento (mínimo 10 caracteres)</small>
+        }
+      </label>
+
+      <div class="formulario__fila">
+        <label>
+          Fecha y hora
+          <input type="datetime-local" formControlName="fechaInicio" />
+          @if (form.controls.fechaInicio.touched && form.controls.fechaInicio.invalid) {
+            <small class="formulario__aviso">Elige la fecha y la hora</small>
+          }
+        </label>
+
+        <label>
+          Modalidad
+          <select formControlName="modalidad">
+            @for (modalidad of modalidades; track modalidad) {
+              <option [value]="modalidad">{{ modalidad }}</option>
+            }
+          </select>
+        </label>
+      </div>
+
+      <label>
+        Lugar o enlace
+        <input type="text" formControlName="lugar" maxlength="150" placeholder="Ej. Auditorio Central o Zoom" />
+        @if (form.controls.lugar.touched && form.controls.lugar.invalid) {
+          <small class="formulario__aviso">Indica dónde será</small>
+        }
+      </label>
+
+      <label>
+        Imagen (opcional)
+        <input type="url" formControlName="imagenUrl" placeholder="https://..." />
+        @if (form.controls.imagenUrl.touched && form.controls.imagenUrl.invalid) {
+          <small class="formulario__aviso">Debe ser una dirección que empiece con http o https</small>
+        }
+      </label>
+
+      <label class="formulario__opcion">
+        <input type="checkbox" formControlName="publicado" />
+        <span>Publicado (visible en el sitio web)</span>
+      </label>
+
+      <div class="formulario__botones">
+        <button type="submit" class="boton" [disabled]="guardando()">
+          {{ guardando() ? 'Guardando...' : 'Guardar' }}
+        </button>
+        <button type="button" class="boton boton--claro" (click)="cancelar()">Cancelar</button>
+      </div>
+    </form>
+  }
+
+  @if (cargando()) {
+    <p class="eventos__vacio">Cargando eventos...</p>
+  } @else if (eventos().length === 0 && !error()) {
+    <p class="eventos__vacio">Todavía no hay eventos. Crea el primero con el botón "Nuevo evento".</p>
+  } @else {
+    <div class="eventos__lista">
+      @for (evento of eventos(); track evento.id) {
+        <article class="evento" [class.evento--oculto]="!evento.publicado">
+          <div class="evento__fecha">
+            <strong>{{ evento.fechaInicio | date: 'dd' }}</strong>
+            <small>{{ evento.fechaInicio | date: 'MMM' }}</small>
+          </div>
+
+          <div class="evento__datos">
+            <div class="evento__etiquetas">
+              <span class="etiqueta">{{ evento.modalidad }}</span>
+              @if (evento.publicado) {
+                <span class="etiqueta etiqueta--publicado">Publicado</span>
+              } @else {
+                <span class="etiqueta etiqueta--borrador">Borrador</span>
+              }
+              @if (yaPaso(evento)) {
+                <span class="etiqueta etiqueta--pasado">Ya pasó</span>
+              }
+            </div>
+            <h3>{{ evento.titulo }}</h3>
+            <p>{{ evento.descripcion }}</p>
+            <small>
+              🕒 {{ evento.fechaInicio | date: 'dd/MM/yyyy HH:mm' }} · 📍 {{ evento.lugar }}
+            </small>
+          </div>
+
+          <div class="evento__botones">
+            <button type="button" class="boton boton--claro" (click)="editar(evento)">Editar</button>
+            <button type="button" class="boton boton--claro" (click)="alternarPublicado(evento)">
+              {{ evento.publicado ? 'Ocultar' : 'Publicar' }}
+            </button>
+            <button type="button" class="boton boton--peligro" (click)="eliminar(evento)">Eliminar</button>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</section>

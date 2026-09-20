@@ -1,0 +1,38 @@
+<section class="cabecera">
+  <div class="cabecera__interior">
+    <h1>Nosotros</h1>
+    <p>Un equipo comprometido con tu bienestar emocional.</p>
+  </div>
+</section>
+
+<section class="bloque">
+  <div class="bloque__interior">
+    <div class="dos">
+      <article class="panel">
+        <h2>Nuestra misión</h2>
+        <p>
+          Brindar atención psicológica accesible, cercana y de calidad, ayudando a las personas a
+          comprender sus emociones, fortalecer sus relaciones y mejorar su calidad de vida.
+        </p>
+      </article>
+      <article class="panel">
+        <h2>Nuestra visión</h2>
+        <p>
+          Ser un referente en salud mental, reconocido por el trato humano, la ética profesional y
+          el uso de la tecnología para acompañar mejor a cada persona.
+        </p>
+      </article>
+    </div>
+
+    <h2 class="bloque__titulo">Nuestros valores</h2>
+    <div class="valores">
+      @for (valor of valores; track valor.titulo) {
+        <article class="valor">
+          <span>{{ valor.icono }}</span>
+          <h3>{{ valor.titulo }}</h3>
+          <p>{{ valor.texto }}</p>
+        </article>
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,36 @@
+<section>
+  <header class="ui-cabecera">
+    <div>
+      <h2>Solicitudes asignadas</h2>
+      <p>Personas que pidieron orientación y que la administración te asignó. Pueden reservar cita contigo desde su espacio.</p>
+    </div>
+  </header>
+
+  @if (error()) {
+    <p class="ui-mensaje ui-mensaje--error">{{ error() }}</p>
+  }
+
+  @if (cargando()) {
+    <p class="ui-vacio">Cargando solicitudes...</p>
+  } @else if (solicitudes().length === 0 && !error()) {
+    <p class="ui-vacio">No tienes solicitudes asignadas por ahora.</p>
+  } @else {
+    <div class="lista">
+      @for (solicitud of solicitudes(); track solicitud.id) {
+        <article class="ui-tarjeta">
+          <header class="solicitud__cabecera">
+            <div>
+              <strong>{{ solicitud.usuarioNombre }}</strong>
+              @if (solicitud.usuarioCorreo) {
+                <a [href]="'mailto:' + solicitud.usuarioCorreo">{{ solicitud.usuarioCorreo }}</a>
+              }
+            </div>
+            <span class="ui-etiqueta ui-etiqueta--azul">{{ solicitud.estado === 'EnRevision' ? 'En revisión' : solicitud.estado }}</span>
+          </header>
+          <p class="solicitud__motivo">{{ solicitud.motivo }}</p>
+          <small class="solicitud__fecha">Recibida el {{ fechaHora(solicitud.fechaCreacion) }}</small>
+        </article>
+      }
+    </div>
+  }
+</section>
