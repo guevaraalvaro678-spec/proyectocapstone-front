@@ -67,6 +67,13 @@ export class Unete {
   constructor() {
     void this.google.preparar();
 
+    // Llegó desde el login con una cuenta de Google que aún no está registrada: se continúa desde aquí.
+    const pendiente = this.google.credencialPendiente();
+    if (pendiente) {
+      this.google.credencialPendiente.set(null);
+      this.usarGoogle(pendiente);
+    }
+
     // Dibuja el botón de Google cuando ya está disponible y hay un formulario elegido.
     effect(() => {
       const contenedor = this.botonGoogle()?.nativeElement;

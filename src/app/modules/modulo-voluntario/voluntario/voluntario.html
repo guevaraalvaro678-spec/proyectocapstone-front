@@ -19,9 +19,9 @@
       <h2>Mis datos</h2>
       @if (perfil(); as p) {
         <dl>
-          <div><dt>DNI</dt><dd>{{ p.dni }}</dd></div>
+          <div><dt>DNI</dt><dd>{{ p.dni || 'Sin registrar' }}</dd></div>
           <div><dt>Nombres</dt><dd>{{ p.nombre }}</dd></div>
-          <div><dt>Apellidos</dt><dd>{{ p.apellidos }}</dd></div>
+          <div><dt>Apellidos</dt><dd>{{ p.apellidos || 'Sin registrar' }}</dd></div>
           <div><dt>Correo</dt><dd>{{ p.correo }}</dd></div>
           <div><dt>Teléfono</dt><dd>{{ p.telefono }}</dd></div>
           <div><dt>Voluntario desde</dt><dd>{{ p.fechaRegistro | date: 'dd/MM/yyyy' }}</dd></div>

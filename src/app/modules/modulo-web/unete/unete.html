@@ -20,10 +20,13 @@
     </article>
   </div>
 
-  @if (tipo() && google.disponible()) {
+  @if (googleCredential() || (tipo() && google.disponible())) {
     <div class="unete__google">
       @if (googleCredential()) {
-        <p>✔ Usando tu cuenta de Google. Completa los datos que faltan.</p>
+        <p>
+          ✔ Cuenta de Google lista.
+          {{ tipo() ? 'Completa los datos que faltan.' : 'Ahora elige si serás voluntario/a o practicante.' }}
+        </p>
       } @else {
         <p>Regístrate más rápido con tu cuenta de Google:</p>
         <div #botonGoogle></div>

@@ -47,11 +47,15 @@ export class Login {
       next: () => this.router.navigate([this.auth.rutaInicial()]),
       error: (err: HttpErrorResponse) => {
         this.cargando.set(false);
-        this.error.set(
-          err.status === 404
-            ? 'No hay una cuenta con ese correo. Regístrate primero en "Únete".'
-            : (err.error?.mensaje ?? 'No se pudo iniciar sesión con Google'),
-        );
+
+        // Cuenta de Google sin registro: se pasa a "Únete" para que elija voluntario o practicante.
+        if (err.status === 404) {
+          this.google.credencialPendiente.set(credential);
+          void this.router.navigate(['/unete']);
+          return;
+        }
+
+        this.error.set(err.error?.mensaje ?? 'No se pudo iniciar sesión con Google');
       },
     });
   }
