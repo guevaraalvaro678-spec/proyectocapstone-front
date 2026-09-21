@@ -1,0 +1,52 @@
+<section>
+  <header class="ui-cabecera">
+    <div>
+      <h2>Asistencia</h2>
+      <p>Entradas y salidas que marcan los practicantes (hora de Lima).</p>
+    </div>
+    <button type="button" class="ui-btn ui-btn--claro" (click)="cargar()" [disabled]="cargando()">Actualizar</button>
+  </header>
+
+  @if (error()) {
+    <p class="ui-mensaje ui-mensaje--error">{{ error() }}</p>
+  }
+
+  <div class="ui-filtros">
+    <label>
+      Mostrar
+      <select [value]="soloHoy() ? 'hoy' : 'todas'" (change)="cambiarRango($any($event.target).value)">
+        <option value="hoy">Solo hoy</option>
+        <option value="todas">Últimas marcaciones</option>
+      </select>
+    </label>
+  </div>
+
+  @if (cargando()) {
+    <p class="ui-vacio">Cargando asistencia...</p>
+  } @else if (marcaciones().length === 0) {
+    <p class="ui-vacio">Todavía no hay marcaciones.</p>
+  } @else {
+    <div class="ui-tabla">
+      <table>
+        <thead>
+          <tr><th>Practicante</th><th>Fecha</th><th>Entrada</th><th>Salida</th><th>Estado</th></tr>
+        </thead>
+        <tbody>
+          @for (m of marcaciones(); track m.id) {
+            <tr>
+              <td>{{ m.usuarioNombre }}</td>
+              <td>{{ m.entrada | date: 'dd/MM/yyyy' : '-0500' }}</td>
+              <td>{{ m.entrada | date: 'HH:mm' : '-0500' }}</td>
+              <td>{{ m.salida ? (m.salida | date: 'HH:mm' : '-0500') : '—' }}</td>
+              <td>
+                <span class="ui-etiqueta" [class.ui-etiqueta--verde]="!!m.salida" [class.ui-etiqueta--amarilla]="!m.salida">
+                  {{ m.salida ? 'Completa' : 'En curso' }}
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

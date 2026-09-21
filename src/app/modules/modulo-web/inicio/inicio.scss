@@ -456,3 +456,134 @@
     color: #4b5563;
   }
 }
+
+.etiqueta-titulo {
+  display: table;
+  margin: 0 auto 0.6rem;
+  padding: 0.35rem 1.6rem;
+  border-radius: 999px;
+  background: var(--verde);
+  color: #fff;
+  font-size: 1.4rem;
+}
+
+.quienes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+
+  &__panel {
+    padding: 0.5rem 1.5rem;
+    border-left: 5px solid var(--lima);
+
+    &--naranja {
+      border-left-color: var(--naranja);
+    }
+
+    h3 {
+      margin: 1rem 0 0.4rem;
+      font-size: 1.4rem;
+    }
+
+    p {
+      color: #374151;
+      line-height: 1.6;
+    }
+  }
+}
+
+.iniciativas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.iniciativa {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.1rem 1.3rem;
+  border-radius: 1.5rem;
+  background: #fff;
+  border: 2px solid var(--arena);
+
+  &__icono {
+    font-size: 2.2rem;
+  }
+
+  h3 {
+    margin: 0 0 0.25rem;
+    font-size: 1.05rem;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.88rem;
+    color: #4b5563;
+  }
+
+  &--rojo {
+    border-color: var(--verde);
+  }
+
+  &--verde {
+    border-color: var(--lima);
+  }
+
+  &--naranja {
+    border-color: var(--naranja);
+  }
+
+  &--gris {
+    border-color: var(--barra);
+  }
+}
+
+.canales {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.canal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--barra);
+  font-weight: 700;
+  text-decoration: none;
+
+  &__icono {
+    display: grid;
+    place-items: center;
+    width: 3.6rem;
+    height: 3.6rem;
+    border-radius: 50%;
+    background: var(--verde);
+    color: #fff;
+    font-size: 1.6rem;
+    font-weight: 800;
+  }
+
+  small {
+    color: var(--gris);
+    font-weight: 400;
+  }
+
+  &:hover .canal__icono {
+    background: var(--verde-oscuro);
+  }
+}
+
+.iniciativa__imagen {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 1rem;
+  object-fit: cover;
+  flex-shrink: 0;
+}

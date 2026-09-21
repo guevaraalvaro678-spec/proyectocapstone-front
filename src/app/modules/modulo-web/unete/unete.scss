@@ -1,6 +1,4 @@
 :host {
-  --verde: #14524a;
-  --naranja: #e0824a;
   display: block;
 }
 
@@ -157,5 +155,59 @@
 
   &--colaborador &__boton {
     background: var(--naranja);
+  }
+}
+
+.opcion--activa {
+  outline: 3px solid var(--verde);
+}
+
+.opcion--practicante.opcion--activa {
+  outline-color: var(--naranja);
+}
+
+.unete__detalle {
+  max-width: 38rem;
+  margin: 1.5rem auto 0;
+  padding: 0.9rem 1.2rem;
+  border-left: 4px solid var(--verde);
+  border-radius: 0.6rem;
+  background: #f0f7f5;
+
+  summary {
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  p {
+    margin: 0.6rem 0 0;
+    color: #374151;
+  }
+
+  &--practicante {
+    border-left-color: var(--naranja);
+    background: #fdf0e6;
+  }
+}
+
+.unete__exito .opcion__boton {
+  display: inline-block;
+  margin-top: 0.6rem;
+  background: var(--verde);
+}
+
+.unete__google {
+  max-width: 38rem;
+  margin: 1.5rem auto 0;
+  text-align: center;
+
+  p {
+    margin: 0 0 0.6rem;
+    color: #4b5563;
+  }
+
+  div {
+    display: flex;
+    justify-content: center;
   }
 }

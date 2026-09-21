@@ -1,0 +1,74 @@
+<div class="vol">
+  <header class="vol__barra">
+    <a class="vol__marca" routerLink="/">🧠 <strong>Capstone</strong></a>
+    <div class="vol__sesion">
+      <span>{{ auth.sesion()?.nombre }}</span>
+      <span class="vol__rol">Voluntario</span>
+      <button type="button" (click)="auth.logout('/')">Salir</button>
+    </div>
+  </header>
+
+  <main class="vol__contenido">
+    <h1>Hola, {{ auth.sesion()?.nombre }}</h1>
+
+    @if (error()) {
+      <p class="vol__error">{{ error() }}</p>
+    }
+
+    <section class="vol__tarjeta">
+      <h2>Mis datos</h2>
+      @if (perfil(); as p) {
+        <dl>
+          <div><dt>DNI</dt><dd>{{ p.dni }}</dd></div>
+          <div><dt>Nombres</dt><dd>{{ p.nombre }}</dd></div>
+          <div><dt>Apellidos</dt><dd>{{ p.apellidos }}</dd></div>
+          <div><dt>Correo</dt><dd>{{ p.correo }}</dd></div>
+          <div><dt>Teléfono</dt><dd>{{ p.telefono }}</dd></div>
+          <div><dt>Voluntario desde</dt><dd>{{ p.fechaRegistro | date: 'dd/MM/yyyy' }}</dd></div>
+        </dl>
+      } @else if (!error()) {
+        <p class="vol__vacio">Cargando...</p>
+      }
+    </section>
+
+    <section class="vol__tarjeta">
+      <h2>Futuras tareas</h2>
+      @if (cargando()) {
+        <p class="vol__vacio">Cargando tareas...</p>
+      } @else if (tareas().length === 0) {
+        <p class="vol__vacio">Todavía no tienes tareas asignadas. Cuando te asignen una, aparecerá aquí.</p>
+      } @else {
+        <ul class="vol__tareas">
+          @for (t of pendientes(); track t.id) {
+            <li [class.urgente]="t.urgente">
+              <div>
+                <strong>{{ t.titulo }}</strong>
+                @if (t.urgente) {
+                  <span class="vol__urgente">Urgente</span>
+                }
+                @if (t.descripcion) {
+                  <p>{{ t.descripcion }}</p>
+                }
+                @if (t.fechaLimite) {
+                  <small>Para el {{ t.fechaLimite | date: 'dd/MM/yyyy' : '-0500' }}</small>
+                }
+              </div>
+              <button type="button" (click)="alternar(t)">Marcar como hecha</button>
+            </li>
+          }
+        </ul>
+        @if (completadas().length) {
+          <h3>Completadas</h3>
+          <ul class="vol__tareas vol__tareas--hechas">
+            @for (t of completadas(); track t.id) {
+              <li>
+                <div><strong>{{ t.titulo }}</strong></div>
+                <button type="button" (click)="alternar(t)">Reabrir</button>
+              </li>
+            }
+          </ul>
+        }
+      }
+    </section>
+  </main>
+</div>

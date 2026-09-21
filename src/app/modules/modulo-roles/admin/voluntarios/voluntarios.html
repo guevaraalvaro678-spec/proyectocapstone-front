@@ -1,0 +1,50 @@
+<section>
+  <header class="ui-cabecera">
+    <div>
+      <h2>Voluntarios</h2>
+      <p>Personas registradas como voluntarias.</p>
+    </div>
+    <span class="ui-etiqueta ui-etiqueta--azul">{{ voluntarios().length }} registrados</span>
+  </header>
+
+  @if (error()) {
+    <p class="ui-mensaje ui-mensaje--error">{{ error() }}</p>
+  }
+
+  <div class="ui-filtros">
+    <label>
+      Buscar
+      <input type="search" [formControl]="buscar" placeholder="DNI, nombre o correo" />
+    </label>
+  </div>
+
+  @if (cargando()) {
+    <p class="ui-vacio">Cargando voluntarios...</p>
+  } @else if (voluntarios().length === 0) {
+    <p class="ui-vacio">No hay voluntarios registrados.</p>
+  } @else {
+    <div class="ui-tabla">
+      <table>
+        <thead>
+          <tr><th>DNI</th><th>Nombre</th><th>Correo</th><th>Teléfono</th><th>Registro</th><th>Estado</th></tr>
+        </thead>
+        <tbody>
+          @for (v of voluntarios(); track v.usuarioId) {
+            <tr>
+              <td>{{ v.dni }}</td>
+              <td>{{ v.nombre }} {{ v.apellidos }}</td>
+              <td>{{ v.correo }}</td>
+              <td>{{ v.telefono }}</td>
+              <td>{{ v.fechaRegistro | date: 'dd/MM/yyyy' }}</td>
+              <td>
+                <span class="ui-etiqueta" [class.ui-etiqueta--verde]="v.activo" [class.ui-etiqueta--roja]="!v.activo">
+                  {{ v.activo ? 'Activo' : 'Desactivado' }}
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

@@ -7,7 +7,6 @@ import { API_URL } from '../config/api.config';
 import {
   LoginRequest,
   RegistroRequest,
-  RegistroUsuarioRequest,
   Sesion,
   UsuarioCreado,
 } from '../models/auth.model';
@@ -28,20 +27,24 @@ export class AuthService {
     const rol = this._sesion()?.rol;
     return rol === 'SuperAdmin' || rol === 'Admin';
   });
-  readonly esPsicologo = computed(() => this._sesion()?.rol === 'Psicologo');
-  readonly esUsuario = computed(() => this._sesion()?.rol === 'Usuario');
+  readonly esRRHH = computed(() => this._sesion()?.rol === 'RRHH');
+  readonly esVoluntario = computed(() => this._sesion()?.rol === 'Voluntario');
+  readonly esPracticante = computed(() => this._sesion()?.rol === 'Practicante');
+  /** Quien gestiona voluntarios y practicantes: administradores y Recursos Humanos. */
+  readonly esGestion = computed(() => this.esAdmin() || this.esRRHH());
 
-  /** Login de cualquier cuenta: administradores (por usuario) y usuarios o psicólogos (por correo). */
+  /** Login de cualquier cuenta: administradores (por usuario) y el resto por correo. */
   login(datos: LoginRequest): Observable<Sesion> {
     return this.http
       .post<Sesion>(`${API_URL}/admin/login`, datos)
       .pipe(tap((sesion) => this.guardarSesion(sesion)));
   }
 
-  /** Registro público de un usuario común; la respuesta ya trae la sesión, así que queda logueado. */
-  registrarUsuario(datos: RegistroUsuarioRequest): Observable<Sesion> {
+
+  /** Login con el token que entrega el botón de Google (la cuenta debe existir). */
+  loginGoogle(credential: string): Observable<Sesion> {
     return this.http
-      .post<Sesion>(`${API_URL}/usuario/registro`, datos)
+      .post<Sesion>(`${API_URL}/admin/google`, { credential })
       .pipe(tap((sesion) => this.guardarSesion(sesion)));
   }
 
@@ -53,8 +56,9 @@ export class AuthService {
   /** A dónde debe ir cada cuenta después de iniciar sesión. */
   rutaInicial(): string {
     if (this.esAdmin()) return '/admin';
-    if (this.esPsicologo()) return '/psicologo';
-    return '/mi-espacio';
+    if (this.esRRHH()) return '/admin/practicantes';
+    if (this.esPracticante()) return '/practicante';
+    return '/voluntario';
   }
 
   /** Cierra la sesión y lleva a `destino` (por defecto al login). */
@@ -68,6 +72,11 @@ export class AuthService {
   actualizarNombre(nombre: string): void {
     const actual = this._sesion();
     if (actual) this.guardarSesion({ ...actual, nombre });
+  }
+
+  /** Deja la sesión iniciada (lo usa el registro de practicantes, que ya devuelve el token). */
+  iniciarSesion(sesion: Sesion): void {
+    this.guardarSesion(sesion);
   }
 
   private guardarSesion(sesion: Sesion): void {

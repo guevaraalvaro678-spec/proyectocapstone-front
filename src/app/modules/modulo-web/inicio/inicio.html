@@ -3,10 +3,6 @@
   <a class="boton boton--claro" routerLink="/servicios">Ver servicios →</a>
   @if (!auth.autenticado()) {
     <a class="portada__enlace" routerLink="/contacto">Necesito orientación ›</a>
-  } @else if (auth.esUsuario()) {
-    <a class="portada__enlace" routerLink="/mi-espacio" [queryParams]="{ seccion: 'solicitud' }">
-      Pedir orientación ›
-    </a>
   }
 </ng-template>
 
@@ -131,53 +127,52 @@
 
 <section class="seccion">
   <div class="seccion__interior">
-    <h2>Nuestros servicios</h2>
-    <p class="seccion__subtitulo">Acompañamiento adaptado a cada etapa y necesidad.</p>
+    <h2 class="etiqueta-titulo">¿Quiénes somos?</h2>
 
-    <div class="tarjetas">
-      @for (servicio of serviciosDestacados; track servicio.titulo) {
-        <article class="tarjeta">
-          <span class="tarjeta__icono">{{ servicio.icono }}</span>
-          <h3>{{ servicio.titulo }}</h3>
-          <p>{{ servicio.texto }}</p>
-        </article>
-      }
+    <div class="quienes">
+      <article class="quienes__panel quienes__panel--lima">
+        <p>{{ ong.descripcion }}</p>
+        <h3>Propósito</h3>
+        <p>{{ ong.proposito }}</p>
+      </article>
+      <article class="quienes__panel quienes__panel--naranja">
+        <h3>Forma parte</h3>
+        <p>
+          Puedes sumarte como voluntario/a, con tareas sencillas de apoyo, o como practicante, realizando labores de tu
+          carrera en uno de nuestros departamentos.
+        </p>
+        <p>
+          Más información en
+          <a [href]="ong.web" target="_blank" rel="noopener">amaacperu.org</a> o en nuestro
+          <a [href]="ong.facebook" target="_blank" rel="noopener">Facebook</a>.
+        </p>
+      </article>
     </div>
-
-    <a class="seccion__mas" routerLink="/servicios">Conocer todos los servicios →</a>
   </div>
 </section>
 
 <section class="seccion seccion--crema">
   <div class="seccion__interior">
-    <h2>Cómo funciona</h2>
-    <p class="seccion__subtitulo">Empezar es más sencillo de lo que parece.</p>
+    <h2 class="etiqueta-titulo">Iniciativas</h2>
+    <p class="seccion__subtitulo">Explora nuestras iniciativas y sé parte de las acciones que forman agentes de cambio.</p>
 
-    <div class="pasos">
-      @for (paso of pasos; track paso.numero) {
-        <article class="paso">
-          <span class="paso__numero">{{ paso.numero }}</span>
-          <h3>{{ paso.titulo }}</h3>
-          <p>{{ paso.texto }}</p>
+    <div class="iniciativas">
+      @for (i of iniciativas(); track i.id) {
+        <article class="iniciativa iniciativa--{{ i.color }}">
+          @if (i.imagenUrl) {
+            <img class="iniciativa__imagen" [src]="i.imagenUrl" [alt]="i.titulo" />
+          } @else {
+            <span class="iniciativa__icono">{{ i.icono }}</span>
+          }
+          <div>
+            <h3>{{ i.titulo }}</h3>
+            <p>{{ i.texto }}</p>
+          </div>
         </article>
       }
     </div>
-  </div>
-</section>
 
-<section class="seccion">
-  <div class="seccion__interior">
-    <div class="valores">
-      @for (valor of valores; track valor.titulo) {
-        <div class="valor">
-          <span>{{ valor.icono }}</span>
-          <div>
-            <strong>{{ valor.titulo }}</strong>
-            <p>{{ valor.texto }}</p>
-          </div>
-        </div>
-      }
-    </div>
+    <a class="seccion__mas" routerLink="/iniciativas">Ver todas las iniciativas →</a>
   </div>
 </section>
 
@@ -185,26 +180,44 @@
   <section class="seccion">
     <div class="seccion__interior unete-inicio">
       <div>
-        <h2>Trabaja con nosotros</h2>
-        <p>
-          ¿Eres psicólogo/a? Únete como colaborador. También puedes crear tu cuenta de usuario para pedir orientación.
-        </p>
+        <h2>Únete a AMAAC</h2>
+        <p>Sé voluntario/a o practicante y ayúdanos a formar agentes de cambio en la comunidad.</p>
       </div>
       <a class="boton" routerLink="/unete">Únete</a>
     </div>
   </section>
 }
 
+<section class="seccion seccion--crema">
+  <div class="seccion__interior">
+    <h2 class="etiqueta-titulo">Canales de atención</h2>
+    <p class="seccion__subtitulo">¿Tienes dudas? Conoce nuestros canales y comunícate con nosotros. ¡Estamos aquí para apoyarte!</p>
+
+    <div class="canales">
+      <a class="canal" [href]="ong.facebook" target="_blank" rel="noopener">
+        <span class="canal__icono">f</span>
+        Facebook
+      </a>
+      <a class="canal" [href]="'mailto:' + ong.correo">
+        <span class="canal__icono">✉</span>
+        Correo
+        <small>{{ ong.correo }}</small>
+      </a>
+      <a class="canal" [href]="ong.web" target="_blank" rel="noopener">
+        <span class="canal__icono">🌐</span>
+        Sitio web
+        <small>amaacperu.org</small>
+      </a>
+    </div>
+  </div>
+</section>
+
 <section class="llamado">
   <div class="llamado__interior">
-    <h2>¿Listo para dar el primer paso?</h2>
-    <p>Escríbenos y te ayudamos a encontrar el apoyo que necesitas.</p>
+    <h2>¿Quieres ser parte del cambio?</h2>
+    <p>Escríbenos o únete como voluntario/a o practicante.</p>
     @if (!auth.autenticado()) {
       <a class="boton boton--claro" routerLink="/contacto">Contactar ahora</a>
-    } @else if (auth.esUsuario()) {
-      <a class="boton boton--claro" routerLink="/mi-espacio" [queryParams]="{ seccion: 'solicitud' }">
-        Pedir orientación
-      </a>
     }
   </div>
 </section>

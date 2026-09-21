@@ -1,0 +1,18 @@
+<section class="ini">
+  <h1>Iniciativas</h1>
+  <p class="ini__intro">Explora nuestras iniciativas y sé parte de las acciones que promueven el talento, el liderazgo y la participación juvenil.</p>
+
+  <div class="ini__grid">
+    @for (i of iniciativas(); track i.id) {
+      <article class="tarjeta tarjeta--{{ i.color }}">
+        @if (i.imagenUrl) {
+          <img class="tarjeta__imagen" [src]="i.imagenUrl" [alt]="i.titulo" />
+        } @else {
+          <span class="tarjeta__icono">{{ i.icono }}</span>
+        }
+        <h2>{{ i.titulo }}</h2>
+        <p>{{ i.texto }}</p>
+      </article>
+    }
+  </div>
+</section>

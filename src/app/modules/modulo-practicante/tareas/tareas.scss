@@ -1,0 +1,36 @@
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.8rem 1rem;
+    border-left: 4px solid var(--acento);
+    border-radius: 0.5rem;
+    background: #f9fafb;
+
+    &.urgente {
+      border-left-color: #dc2626;
+    }
+
+    &.hecha {
+      opacity: 0.6;
+    }
+  }
+
+  p {
+    margin: 0.25rem 0;
+    color: #4b5563;
+  }
+
+  button {
+    align-self: center;
+    white-space: nowrap;
+  }
+}

@@ -1,9 +1,10 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, signal } from '@angular/core';
+import { Component, ElementRef, effect, inject, signal, viewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { AuthService } from '../../../core/services/auth.service';
+import { GoogleService } from '../../../core/services/google.service';
 
 @Component({
   selector: 'app-login',
@@ -15,6 +16,8 @@ export class Login {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  protected readonly google = inject(GoogleService);
+  private readonly botonGoogle = viewChild<ElementRef<HTMLElement>>('botonGoogle');
 
   protected readonly cargando = signal(false);
   protected readonly error = signal('');
@@ -23,6 +26,35 @@ export class Login {
     usuario: ['', Validators.required],
     password: ['', Validators.required],
   });
+
+  constructor() {
+    void this.google.preparar();
+
+    // Dibuja el botón de Google cuando ya está disponible y el contenedor existe en pantalla.
+    effect(() => {
+      const contenedor = this.botonGoogle()?.nativeElement;
+      if (contenedor && this.google.disponible()) {
+        this.google.dibujarBoton(contenedor, (credential) => this.ingresarConGoogle(credential));
+      }
+    });
+  }
+
+  private ingresarConGoogle(credential: string): void {
+    this.cargando.set(true);
+    this.error.set('');
+
+    this.auth.loginGoogle(credential).subscribe({
+      next: () => this.router.navigate([this.auth.rutaInicial()]),
+      error: (err: HttpErrorResponse) => {
+        this.cargando.set(false);
+        this.error.set(
+          err.status === 404
+            ? 'No hay una cuenta con ese correo. Regístrate primero en "Únete".'
+            : (err.error?.mensaje ?? 'No se pudo iniciar sesión con Google'),
+        );
+      },
+    });
+  }
 
   protected ingresar(): void {
     if (this.form.invalid) {

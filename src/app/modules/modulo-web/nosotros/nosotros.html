@@ -1,7 +1,7 @@
 <section class="cabecera">
   <div class="cabecera__interior">
     <h1>Nosotros</h1>
-    <p>Un equipo comprometido con tu bienestar emocional.</p>
+    <p>{{ ong.nombre }}: jóvenes voluntarios y estudiantes que forman agentes de cambio.</p>
   </div>
 </section>
 
@@ -10,21 +10,15 @@
     <div class="dos">
       <article class="panel">
         <h2>Nuestra misión</h2>
-        <p>
-          Brindar atención psicológica accesible, cercana y de calidad, ayudando a las personas a
-          comprender sus emociones, fortalecer sus relaciones y mejorar su calidad de vida.
-        </p>
+        <p>{{ ong.descripcion }}</p>
       </article>
       <article class="panel">
-        <h2>Nuestra visión</h2>
-        <p>
-          Ser un referente en salud mental, reconocido por el trato humano, la ética profesional y
-          el uso de la tecnología para acompañar mejor a cada persona.
-        </p>
+        <h2>Nuestro propósito</h2>
+        <p>{{ ong.proposito }}</p>
       </article>
     </div>
 
-    <h2 class="bloque__titulo">Nuestros valores</h2>
+    <h2 class="bloque__titulo">Lo que nos mueve</h2>
     <div class="valores">
       @for (valor of valores; track valor.titulo) {
         <article class="valor">

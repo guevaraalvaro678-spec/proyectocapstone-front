@@ -2,6 +2,10 @@ export interface UsuarioPerfil {
   id: number;
   nombre: string;
   correo: string | null;
+  dni: string | null;
+  universidad: string | null;
+  carrera: string | null;
+  ciclo: string | null;
   ubicacion: string | null;
   intereses: string | null;
   recordatoriosCorreo: boolean;

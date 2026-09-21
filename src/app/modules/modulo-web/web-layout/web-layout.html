@@ -1,14 +1,26 @@
 <div class="web">
-  <header class="web__barra">
-    <div class="web__barra-interior">
+  <header class="web__cabecera">
+    <div class="web__cabecera-interior">
+      <!-- Logo: por ahora es un texto; se cambia por <img> cuando se tenga el archivo del logo de AMAAC. -->
       <a class="web__marca" routerLink="/" (click)="cerrarMenu()">
-        <span class="web__logo">🧠</span>
-        <span>
-          <strong>Capstone<span class="web__marca-acento">Psicología</span></strong>
-          <small>Bienestar emocional</small>
-        </span>
+        @if (logoUrl(); as logo) {
+          <img class="web__logo-img" [src]="logo" alt="AMAAC PERÚ" />
+        } @else {
+          <span class="web__marca-nombre">AMAAC</span>
+          <span class="web__marca-pais">PERÚ</span>
+          <small>Agentes de cambio</small>
+        }
       </a>
 
+      <div class="web__contacto">
+        <a [href]="'mailto:' + ong.correo">✉ {{ ong.correo }}</a>
+        <a [href]="ong.web" target="_blank" rel="noopener">🌐 amaacperu.org</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="web__barra">
+    <div class="web__barra-interior">
       <button
         type="button"
         class="web__hamburguesa"
@@ -16,7 +28,7 @@
         [attr.aria-expanded]="menuAbierto()"
         (click)="alternarMenu()"
       >
-        ☰
+        ☰ Menú
       </button>
 
       <nav class="web__nav" [class.abierto]="menuAbierto()">
@@ -31,18 +43,17 @@
           </a>
         }
         @if (auth.autenticado()) {
-          <span class="web__sesion">👤 {{ primerNombre() }}</span>
           <a class="web__ingresar" [routerLink]="auth.rutaInicial()" (click)="cerrarMenu()">
-            {{ etiquetaMiZona() }}
+            👤 {{ etiquetaMiZona() }}
           </a>
           <button type="button" class="web__salir" (click)="salir()">Salir</button>
         } @else {
-          <a routerLink="/registro" (click)="cerrarMenu()">Crear cuenta</a>
+          <a routerLink="/unete" routerLinkActive="activo" (click)="cerrarMenu()">Únete</a>
           <a class="web__ingresar" routerLink="/login" (click)="cerrarMenu()">Ingresar</a>
         }
       </nav>
     </div>
-  </header>
+  </div>
 
   <main class="web__contenido">
     <router-outlet />
@@ -51,15 +62,21 @@
   <footer class="web__pie">
     <div class="web__pie-interior">
       <div>
-        <strong>Capstone Psicología</strong>
-        <p>Acompañamiento profesional para tu bienestar emocional.</p>
+        <strong>Síguenos</strong>
+        <div class="web__redes">
+          <a [href]="ong.facebook" target="_blank" rel="noopener" aria-label="Facebook">f</a>
+          <a [href]="'mailto:' + ong.correo" aria-label="Correo">✉</a>
+          <a [href]="ong.web" target="_blank" rel="noopener" aria-label="Sitio web">🌐</a>
+        </div>
+        <p>{{ ong.correo }}</p>
       </div>
       <div>
         <strong>Enlaces</strong>
         <a routerLink="/nosotros">Nosotros</a>
-        <a routerLink="/servicios">Servicios</a>
+        <a routerLink="/iniciativas">Iniciativas</a>
         @if (!auth.autenticado()) {
           <a routerLink="/contacto">Contacto</a>
+          <a routerLink="/unete">Únete</a>
         }
       </div>
       <div>
@@ -71,6 +88,6 @@
         }
       </div>
     </div>
-    <p class="web__derechos">© {{ anio }} Capstone Psicología. Proyecto académico.</p>
+    <p class="web__derechos">© {{ anio }} {{ ong.nombre }}. Todos los derechos reservados.</p>
   </footer>
 </div>

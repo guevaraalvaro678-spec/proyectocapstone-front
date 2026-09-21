@@ -23,11 +23,6 @@
         <p>¿No sabes cuál elegir? Te ayudamos a decidir.</p>
         <a routerLink="/contacto">Solicitar orientación →</a>
       </div>
-    } @else if (auth.esUsuario()) {
-      <div class="lista__contacto">
-        <p>¿No sabes cuál elegir? Te ayudamos a decidir.</p>
-        <a routerLink="/mi-espacio" [queryParams]="{ seccion: 'solicitud' }">Pedir orientación →</a>
-      </div>
     }
   </div>
 </section>

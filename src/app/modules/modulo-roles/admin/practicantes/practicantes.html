@@ -1,0 +1,120 @@
+<section>
+  <header class="ui-cabecera">
+    <div>
+      <h2>Practicantes</h2>
+      <p>Revisa el horario de la universidad que envía cada practicante y asígnale su horario de prácticas.</p>
+    </div>
+    <div class="ui-acciones">
+      @if (pendientes() > 0) {
+        <span class="ui-etiqueta ui-etiqueta--amarilla">{{ pendientes() }} pendientes</span>
+      }
+      <select [value]="filtro()" (change)="filtrar($any($event.target).value)">
+        <option value="">Todos</option>
+        <option value="Pendiente">Pendientes</option>
+        <option value="EnRevision">En revisión</option>
+        <option value="Aceptado">Aceptados</option>
+        <option value="SinEnviar">Sin enviar</option>
+      </select>
+    </div>
+  </header>
+
+  @if (error()) {
+    <p class="ui-mensaje ui-mensaje--error">{{ error() }}</p>
+  }
+  @if (aviso()) {
+    <p class="ui-mensaje ui-mensaje--exito">{{ aviso() }}</p>
+  }
+
+  @if (cargando()) {
+    <p class="ui-vacio">Cargando practicantes...</p>
+  } @else if (practicantes().length === 0) {
+    <p class="ui-vacio">No hay practicantes registrados.</p>
+  } @else {
+    <div class="lista">
+      @for (p of practicantes(); track p.usuarioId) {
+        <article class="ui-tarjeta prac">
+          <header class="prac__cabecera">
+            <div>
+              <strong>{{ p.nombre }} {{ p.apellidos }}</strong>
+              <br /><small>DNI {{ p.dni }} · {{ p.correo }} · {{ p.telefono }}</small>
+            </div>
+            <span
+              class="ui-etiqueta"
+              [class.ui-etiqueta--amarilla]="p.estadoHorario === 'Pendiente'"
+              [class.ui-etiqueta--azul]="p.estadoHorario === 'EnRevision'"
+              [class.ui-etiqueta--verde]="p.estadoHorario === 'Aceptado'"
+            >
+              {{ etiquetas[p.estadoHorario] }}
+            </span>
+          </header>
+
+          <p class="prac__datos">
+            <span>🎓 {{ p.universidad }} · {{ p.carrera }} · {{ p.ciclo }}</span>
+            <span>Depto. principal: {{ p.departamentoPrincipal }}</span>
+            <span>Depto. secundario: {{ p.departamentoSecundario }}</span>
+          </p>
+
+          @if (p.horarioUniversidad.length) {
+            <div>
+              <strong>Horario de la universidad</strong>
+              <ul class="prac__bloques">
+                @for (b of p.horarioUniversidad; track $index) {
+                  <li>{{ dias[b.diaSemana - 1] }}: {{ b.horaInicio }} – {{ b.horaFin }}</li>
+                }
+              </ul>
+            </div>
+          }
+          @if (p.horarioPracticas.length) {
+            <div>
+              <strong>Horario de prácticas asignado</strong>
+              <ul class="prac__bloques">
+                @for (b of p.horarioPracticas; track $index) {
+                  <li>{{ dias[b.diaSemana - 1] }}: {{ b.horaInicio }} – {{ b.horaFin }}</li>
+                }
+              </ul>
+            </div>
+          }
+
+          @if (p.estadoHorario !== 'SinEnviar') {
+            @if (asignando() === p.usuarioId) {
+              <div class="prac__editor">
+                <strong>Horario de prácticas (entrada y salida)</strong>
+                @for (b of bloques(); track $index) {
+                  <div class="fila-bloque">
+                    <select (change)="editarBloque($index, 'diaSemana', $any($event.target).value)">
+                      @for (d of dias; track $index) {
+                        <option [value]="$index + 1" [selected]="b.diaSemana === $index + 1">{{ d }}</option>
+                      }
+                    </select>
+                    <input type="time" [value]="b.horaInicio" (change)="editarBloque($index, 'horaInicio', $any($event.target).value)" />
+                    <input type="time" [value]="b.horaFin" (change)="editarBloque($index, 'horaFin', $any($event.target).value)" />
+                    <button type="button" class="ui-btn ui-btn--claro ui-btn--chico" (click)="quitarBloque($index)">Quitar</button>
+                  </div>
+                }
+                <button type="button" class="ui-btn ui-btn--claro ui-btn--chico" (click)="agregarBloque()">+ Agregar día</button>
+                <textarea rows="2" placeholder="Nota para el practicante (opcional)" [value]="nota()" (input)="nota.set($any($event.target).value)"></textarea>
+                <div class="ui-acciones">
+                  <button type="button" class="ui-btn" [disabled]="trabajandoEn() === p.usuarioId || bloques().length === 0" (click)="aceptar(p)">
+                    Confirmar horario
+                  </button>
+                  <button type="button" class="ui-btn ui-btn--claro" (click)="asignando.set(null)">Cancelar</button>
+                </div>
+              </div>
+            } @else {
+              <div class="ui-acciones">
+                @if (p.estadoHorario === 'Pendiente') {
+                  <button type="button" class="ui-btn ui-btn--claro" [disabled]="trabajandoEn() === p.usuarioId" (click)="ponerEnRevision(p)">
+                    Poner en revisión
+                  </button>
+                }
+                <button type="button" class="ui-btn" (click)="abrirAsignacion(p)">
+                  {{ p.estadoHorario === 'Aceptado' ? 'Cambiar horario de prácticas' : 'Aceptar y asignar horario' }}
+                </button>
+              </div>
+            }
+          }
+        </article>
+      }
+    </div>
+  }
+</section>

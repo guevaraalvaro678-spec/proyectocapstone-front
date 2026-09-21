@@ -1,8 +1,10 @@
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 
+import { ONG } from '../../../core/config/ong.config';
 import { Evento, ModalidadEvento } from '../../../core/models/evento.model';
 import { AuthService } from '../../../core/services/auth.service';
 import { EventoService } from '../../../core/services/evento.service';
+import { SitioService } from '../../../core/services/sitio.service';
 
 const SEGUNDOS_POR_EVENTO = 7;
 
@@ -107,22 +109,7 @@ export class Inicio {
     (evento.target as HTMLElement).style.display = 'none';
   }
 
-  protected readonly serviciosDestacados = [
-    { icono: '🧍', titulo: 'Terapia individual', texto: 'Un espacio seguro para trabajar lo que te preocupa, a tu ritmo.' },
-    { icono: '💞', titulo: 'Terapia de pareja', texto: 'Mejora la comunicación y resuelve conflictos con acompañamiento profesional.' },
-    { icono: '👨‍👩‍👧', titulo: 'Terapia familiar', texto: 'Fortalece los vínculos y la convivencia dentro de tu familia.' },
-    { icono: '🧒', titulo: 'Niños y adolescentes', texto: 'Apoyo especializado para las etapas de crecimiento y aprendizaje.' },
-  ];
-
-  protected readonly pasos = [
-    { numero: 1, titulo: 'Cuéntanos qué necesitas', texto: 'Escríbenos por el formulario de contacto con una breve descripción.' },
-    { numero: 2, titulo: 'Te orientamos', texto: 'Te ayudamos a elegir el servicio y el profesional más adecuado.' },
-    { numero: 3, titulo: 'Agenda tu cita', texto: 'Reserva tu sesión, presencial o virtual, en el horario que prefieras.' },
-  ];
-
-  protected readonly valores = [
-    { icono: '🔒', titulo: 'Confidencialidad', texto: 'Todo lo que compartes es privado.' },
-    { icono: '🎓', titulo: 'Profesionales', texto: 'Atención a cargo de psicólogos titulados.' },
-    { icono: '💻', titulo: 'Presencial o virtual', texto: 'Elige la modalidad que te resulte más cómoda.' },
-  ];
+  protected readonly ong = ONG;
+  private readonly sitioService = inject(SitioService);
+  protected readonly iniciativas = computed(() => this.sitioService.sitio().iniciativas);
 }

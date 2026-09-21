@@ -1,0 +1,31 @@
+<h1 class="pp-titulo">Tareas</h1>
+
+<section class="pp-tarjeta">
+  @if (cargando()) {
+    <p>Cargando tareas...</p>
+  } @else if (tareas().length === 0) {
+    <p>Todavía no tienes tareas asignadas.</p>
+  } @else {
+    <ul class="lista">
+      @for (t of tareas(); track t.id) {
+        <li [class.urgente]="t.urgente" [class.hecha]="t.estado === 'Completada'">
+          <div>
+            <strong>{{ t.titulo }}</strong>
+            @if (t.urgente) {
+              <span class="pp-chip pp-chip--pendiente">Urgente</span>
+            }
+            @if (t.descripcion) {
+              <p>{{ t.descripcion }}</p>
+            }
+            @if (t.fechaLimite) {
+              <small>Para el {{ t.fechaLimite | date: 'dd/MM/yyyy' : '-0500' }}</small>
+            }
+          </div>
+          <button type="button" class="pp-btn pp-btn--claro" (click)="alternar(t)">
+            {{ t.estado === 'Pendiente' ? 'Marcar como hecha' : 'Reabrir' }}
+          </button>
+        </li>
+      }
+    </ul>
+  }
+</section>

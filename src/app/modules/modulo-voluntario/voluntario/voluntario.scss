@@ -1,0 +1,161 @@
+:host {
+  /* Voluntario: verde oscuro. El practicante usa naranja. */
+  --acento: #0b3b34;
+  display: block;
+}
+
+.vol {
+  min-height: 100dvh;
+  background: #f3f6f5;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  &__barra {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.8rem 1.5rem;
+    background: var(--acento);
+    color: #fff;
+  }
+
+  &__marca {
+    color: #fff;
+    text-decoration: none;
+  }
+
+  &__sesion {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    button {
+      padding: 0.35rem 0.8rem;
+      border: 1px solid rgb(255 255 255 / 0.5);
+      border-radius: 999px;
+      background: transparent;
+      color: #fff;
+      cursor: pointer;
+    }
+  }
+
+  &__rol {
+    padding: 0.1rem 0.6rem;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.18);
+    font-size: 0.75rem;
+  }
+
+  &__contenido {
+    max-width: 52rem;
+    margin: 0 auto;
+    padding: 1.5rem 1rem 3rem;
+
+    h1 {
+      margin: 0 0 1rem;
+      color: var(--acento);
+    }
+  }
+
+  &__tarjeta {
+    margin-bottom: 1.25rem;
+    padding: 1.25rem;
+    border-radius: 0.9rem;
+    background: #fff;
+    box-shadow: 0 1px 6px rgb(0 0 0 / 0.08);
+
+    h2 {
+      margin: 0 0 0.8rem;
+      font-size: 1.1rem;
+      color: var(--acento);
+    }
+
+    h3 {
+      margin: 1rem 0 0.5rem;
+      font-size: 0.95rem;
+      color: #6b7280;
+    }
+
+    dl {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+      gap: 0.75rem;
+      margin: 0;
+    }
+
+    dt {
+      font-size: 0.75rem;
+      color: #6b7280;
+    }
+
+    dd {
+      margin: 0;
+      font-weight: 600;
+    }
+  }
+
+  &__vacio {
+    margin: 0;
+    color: #6b7280;
+  }
+
+  &__error {
+    padding: 0.7rem 1rem;
+    border-radius: 0.5rem;
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  &__tareas {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.8rem 1rem;
+      border-left: 4px solid var(--acento);
+      border-radius: 0.5rem;
+      background: #f9fafb;
+
+      &.urgente {
+        border-left-color: #dc2626;
+      }
+    }
+
+    p {
+      margin: 0.25rem 0;
+      color: #4b5563;
+    }
+
+    button {
+      align-self: center;
+      padding: 0.4rem 0.9rem;
+      border: 0;
+      border-radius: 999px;
+      background: var(--acento);
+      color: #fff;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    &--hechas li {
+      opacity: 0.65;
+    }
+  }
+
+  &__urgente {
+    margin-left: 0.5rem;
+    padding: 0.05rem 0.5rem;
+    border-radius: 999px;
+    background: #fee2e2;
+    color: #991b1b;
+    font-size: 0.72rem;
+  }
+}

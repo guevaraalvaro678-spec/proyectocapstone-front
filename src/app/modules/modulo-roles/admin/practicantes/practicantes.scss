@@ -1,0 +1,55 @@
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.prac {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+
+  &__cabecera {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  &__datos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 1.2rem;
+    margin: 0;
+    font-size: 0.85rem;
+    color: #4b5563;
+  }
+
+  &__bloques {
+    margin: 0;
+    padding-left: 1.1rem;
+    font-size: 0.85rem;
+  }
+
+  &__editor {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.8rem;
+    border-radius: 0.6rem;
+    background: #f9fafb;
+  }
+}
+
+.fila-bloque {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+
+  select,
+  input {
+    padding: 0.4rem 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.4rem;
+    font: inherit;
+  }
+}

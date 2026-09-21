@@ -1,0 +1,44 @@
+<h1 class="pp-titulo">Mis datos</h1>
+
+@if (error()) {
+  <p class="pp-mensaje">{{ error() }}</p>
+}
+
+@if (perfil(); as p) {
+  <section class="pp-tarjeta">
+    <h2>Datos personales</h2>
+    <dl>
+      <div><dt>DNI</dt><dd>{{ p.dni }}</dd></div>
+      <div><dt>Nombres</dt><dd>{{ p.nombre }}</dd></div>
+      <div><dt>Apellidos</dt><dd>{{ p.apellidos }}</dd></div>
+      <div><dt>Correo</dt><dd>{{ p.correo }}</dd></div>
+      <div><dt>Teléfono</dt><dd>{{ p.telefono }}</dd></div>
+    </dl>
+  </section>
+
+  <section class="pp-tarjeta">
+    <h2>Datos académicos y de prácticas</h2>
+    <dl>
+      <div><dt>Universidad</dt><dd>{{ p.universidad }}</dd></div>
+      <div><dt>Carrera</dt><dd>{{ p.carrera }}</dd></div>
+      <div><dt>Ciclo</dt><dd>{{ p.ciclo }}</dd></div>
+      <div><dt>Departamento principal</dt><dd>{{ p.departamentoPrincipal }}</dd></div>
+      <div><dt>Departamento secundario</dt><dd>{{ p.departamentoSecundario }}</dd></div>
+      <div>
+        <dt>Horario</dt>
+        <dd>
+          <span
+            class="pp-chip"
+            [class.pp-chip--pendiente]="p.estadoHorario === 'Pendiente'"
+            [class.pp-chip--revision]="p.estadoHorario === 'EnRevision'"
+            [class.pp-chip--ok]="p.estadoHorario === 'Aceptado'"
+          >
+            {{ etiquetas[p.estadoHorario] }}
+          </span>
+        </dd>
+      </div>
+    </dl>
+  </section>
+} @else if (!error()) {
+  <p>Cargando...</p>
+}

@@ -30,7 +30,7 @@
   <div class="admin__contenido">
     <header class="admin__cabecera">
       <div>
-        <h1>Administrador</h1>
+        <h1>{{ auth.esRRHH() ? 'Recursos Humanos' : 'Administrador' }}</h1>
         <p>Panel de gestión del sistema</p>
       </div>
       <span class="admin__fecha">{{ fecha }}</span>

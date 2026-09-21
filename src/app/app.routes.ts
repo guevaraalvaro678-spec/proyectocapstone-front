@@ -1,25 +1,25 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  // Sitio público e informativo: inicio, nosotros, servicios y contacto.
+  // Sitio público e informativo: inicio, nosotros, servicios, contacto y únete.
   {
     path: '',
     loadChildren: () =>
       import('./modules/modulo-web/modulo-web-module').then((m) => m.ModuloWebModule),
   },
-  // Registro y "Mi espacio" del usuario común (reservar citas, sus solicitudes y preferencias).
+  // Espacio del voluntario: sus datos y sus futuras tareas.
   {
     path: '',
     loadChildren: () =>
-      import('./modules/modulo-usuario/modulo-usuario-module').then((m) => m.ModuloUsuarioModule),
+      import('./modules/modulo-voluntario/modulo-voluntario-module').then((m) => m.ModuloVoluntarioModule),
   },
-  // Panel del psicólogo: su agenda, sus horarios y las solicitudes que le asignaron.
+  // Espacio del practicante: sus datos, horario, asistencia y tareas.
   {
     path: '',
     loadChildren: () =>
-      import('./modules/modulo-psicologo/modulo-psicologo-module').then((m) => m.ModuloPsicologoModule),
+      import('./modules/modulo-practicante/modulo-practicante-module').then((m) => m.ModuloPracticanteModule),
   },
-  // Login, recuperar contraseña y panel de administrador.
+  // Login, recuperar contraseña y panel de administrador / Recursos Humanos.
   {
     path: '',
     loadChildren: () =>

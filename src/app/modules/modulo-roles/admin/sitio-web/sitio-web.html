@@ -1,0 +1,123 @@
+<section>
+  <header class="ui-cabecera">
+    <div>
+      <h2>Sitio web</h2>
+      <p>Edita el logo y las iniciativas que ven los visitantes. Las imágenes se suben desde tu equipo (PNG, JPG, WEBP o GIF, hasta 2 MB).</p>
+    </div>
+  </header>
+
+  @if (error()) {
+    <p class="ui-mensaje ui-mensaje--error">{{ error() }}</p>
+  }
+  @if (aviso()) {
+    <p class="ui-mensaje ui-mensaje--exito">{{ aviso() }}</p>
+  }
+
+  <div class="ui-tarjeta bloque">
+    <h3>Logo</h3>
+    <div class="logo">
+      <div class="logo__vista">
+        @if (sitio().logoUrl; as logo) {
+          <img [src]="logo" alt="Logo actual" />
+        } @else {
+          <span>Sin logo: el sitio muestra el texto "AMAAC PERÚ".</span>
+        }
+      </div>
+      <div class="ui-acciones">
+        <label class="ui-btn subir">
+          {{ subiendo() ? 'Subiendo...' : 'Subir logo' }}
+          <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" (change)="elegirLogo($event)" [disabled]="subiendo()" hidden />
+        </label>
+        @if (sitio().logoUrl) {
+          <button type="button" class="ui-btn ui-btn--peligro" (click)="quitarLogo()">Quitar logo</button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <form class="ui-tarjeta ui-form bloque" [formGroup]="form" (ngSubmit)="guardar()">
+    <h3>{{ editandoId() === null ? 'Nueva iniciativa' : 'Editar iniciativa' }}</h3>
+
+    <label>
+      Título
+      <input type="text" formControlName="titulo" />
+    </label>
+    <label>
+      Descripción
+      <textarea rows="3" formControlName="texto"></textarea>
+    </label>
+
+    <div class="fila">
+      <label>
+        Ícono (emoji, si no hay imagen)
+        <input type="text" formControlName="icono" />
+      </label>
+      <label>
+        Color del borde
+        <select formControlName="color">
+          @for (c of colores; track c) {
+            <option [value]="c">{{ c }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        Orden
+        <input type="number" formControlName="orden" />
+      </label>
+    </div>
+
+    <div class="imagen">
+      @if (imagenUrl(); as url) {
+        <img [src]="url" alt="Imagen de la iniciativa" />
+      }
+      <label class="ui-btn ui-btn--claro subir">
+        {{ subiendo() ? 'Subiendo...' : imagenUrl() ? 'Cambiar imagen' : 'Subir imagen' }}
+        <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" (change)="elegirImagen($event)" [disabled]="subiendo()" hidden />
+      </label>
+      @if (imagenUrl()) {
+        <button type="button" class="ui-btn ui-btn--claro" (click)="quitarImagen()">Quitar imagen</button>
+      }
+    </div>
+
+    <label class="check">
+      <input type="checkbox" formControlName="activa" /> Visible en el sitio
+    </label>
+
+    <div class="ui-acciones">
+      <button type="submit" class="ui-btn" [disabled]="subiendo()">{{ editandoId() === null ? 'Crear iniciativa' : 'Guardar cambios' }}</button>
+      @if (editandoId() !== null) {
+        <button type="button" class="ui-btn ui-btn--claro" (click)="nueva()">Cancelar edición</button>
+      }
+    </div>
+  </form>
+
+  <h3 class="titulo-lista">Iniciativas</h3>
+  @if (cargando()) {
+    <p class="ui-vacio">Cargando...</p>
+  } @else if (iniciativas().length === 0) {
+    <p class="ui-vacio">Todavía no hay iniciativas.</p>
+  } @else {
+    <div class="lista">
+      @for (i of iniciativas(); track i.id) {
+        <article class="ui-tarjeta item" [class.item--oculta]="!i.activa">
+          @if (i.imagenUrl) {
+            <img class="item__imagen" [src]="i.imagenUrl" [alt]="i.titulo" />
+          } @else {
+            <span class="item__icono">{{ i.icono }}</span>
+          }
+          <div class="item__texto">
+            <strong>{{ i.titulo }}</strong>
+            @if (!i.activa) {
+              <span class="ui-etiqueta">Oculta</span>
+            }
+            <p>{{ i.texto }}</p>
+          </div>
+          <div class="ui-acciones">
+            <button type="button" class="ui-btn ui-btn--claro ui-btn--chico" (click)="editar(i)">Editar</button>
+            <button type="button" class="ui-btn ui-btn--peligro ui-btn--chico" (click)="eliminar(i)">Eliminar</button>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</section>

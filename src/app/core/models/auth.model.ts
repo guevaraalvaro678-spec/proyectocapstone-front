@@ -1,4 +1,4 @@
-export type Rol = 'SuperAdmin' | 'Admin' | 'Psicologo' | 'Usuario';
+export type Rol = 'SuperAdmin' | 'Admin' | 'RRHH' | 'Voluntario' | 'Practicante';
 
 export type RolAdmin = 'SuperAdmin' | 'Admin';
 
@@ -12,13 +12,6 @@ export interface RegistroRequest {
   usuario: string;
   password: string;
   rol: RolAdmin;
-}
-
-/** Datos con los que una persona se registra como usuario común. */
-export interface RegistroUsuarioRequest {
-  nombre: string;
-  correo: string;
-  password: string;
 }
 
 export interface Sesion {

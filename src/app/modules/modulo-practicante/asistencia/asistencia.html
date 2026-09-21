@@ -1,0 +1,33 @@
+<h1 class="pp-titulo">Asistencia</h1>
+
+@if (error()) {
+  <p class="pp-mensaje">{{ error() }}</p>
+}
+
+<section class="pp-tarjeta">
+  @if (enCurso(); as m) {
+    <h2>Estás dentro</h2>
+    <p>Marcaste tu entrada a las <strong>{{ m.entrada | date: 'HH:mm' : '-0500' }}</strong>. Cuando termines, marca tu salida.</p>
+    <button type="button" class="pp-btn" [disabled]="trabajando()" (click)="marcarSalida()">Marcar salida</button>
+  } @else {
+    <h2>Aún no marcaste tu entrada</h2>
+    <p>Marca tu entrada al empezar tu turno de prácticas.</p>
+    <button type="button" class="pp-btn" [disabled]="trabajando()" (click)="marcarEntrada()">Marcar entrada</button>
+  }
+</section>
+
+<section class="pp-tarjeta">
+  <h2>Mis últimas marcaciones</h2>
+  @if (marcaciones().length === 0) {
+    <p>Todavía no tienes marcaciones.</p>
+  } @else {
+    <ul>
+      @for (m of marcaciones(); track m.id) {
+        <li>
+          {{ m.entrada | date: 'dd/MM/yyyy' : '-0500' }} — entrada {{ m.entrada | date: 'HH:mm' : '-0500' }},
+          {{ m.salida ? 'salida ' + (m.salida | date: 'HH:mm' : '-0500') : 'sin salida todavía' }}
+        </li>
+      }
+    </ul>
+  }
+</section>

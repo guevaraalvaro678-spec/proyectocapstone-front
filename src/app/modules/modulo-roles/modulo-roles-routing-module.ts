@@ -1,20 +1,21 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { adminGuard } from '../../core/guards/admin.guard';
+import { adminGuard, soloAdminGuard } from '../../core/guards/admin.guard';
 import { invitadoGuard } from '../../core/guards/invitado.guard';
 import { superAdminGuard } from '../../core/guards/super-admin.guard';
 import { Admin } from './admin/admin';
-import { Citas } from './admin/citas/citas';
-import { Colaboradores } from './admin/colaboradores/colaboradores';
 import { Correos } from './admin/correos/correos';
 import { CrearUsuario } from './admin/crear-usuario/crear-usuario';
 import { Dashboard } from './admin/dashboard/dashboard';
 import { Eventos } from './admin/eventos/eventos';
+import { SitioWeb } from './admin/sitio-web/sitio-web';
+import { Asistencia } from './admin/asistencia/asistencia';
+import { Practicantes } from './admin/practicantes/practicantes';
+import { Tareas } from './admin/tareas/tareas';
+import { Voluntarios } from './admin/voluntarios/voluntarios';
 import { Mensajes } from './admin/mensajes/mensajes';
-import { Psicologos } from './admin/psicologos/psicologos';
 import { SeccionMock, SeccionMockData } from './admin/seccion-mock/seccion-mock';
-import { Solicitudes } from './admin/solicitudes/solicitudes';
 import { Usuarios } from './admin/usuarios/usuarios';
 import { Login } from './login/login';
 import { OlvidePassword } from './olvide-password/olvide-password';
@@ -53,18 +54,19 @@ const routes: Routes = [
     canActivate: [adminGuard],
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
-      { path: 'dashboard', component: Dashboard },
-      { path: 'usuarios', component: Usuarios },
-      { path: 'psicologos', component: Psicologos },
-      { path: 'colaboradores', component: Colaboradores },
-      { path: 'citas', component: Citas },
-      { path: 'solicitudes', component: Solicitudes },
-      { path: 'mensajes', component: Mensajes },
-      { path: 'correos', component: Correos },
-      { path: 'eventos', component: Eventos },
+      { path: 'dashboard', component: Dashboard, canActivate: [soloAdminGuard] },
+      { path: 'usuarios', component: Usuarios, canActivate: [soloAdminGuard] },
+      { path: 'practicantes', component: Practicantes },
+      { path: 'voluntarios', component: Voluntarios },
+      { path: 'tareas', component: Tareas },
+      { path: 'asistencia', component: Asistencia },
+      { path: 'mensajes', component: Mensajes, canActivate: [soloAdminGuard] },
+      { path: 'correos', component: Correos, canActivate: [soloAdminGuard] },
+      { path: 'eventos', component: Eventos, canActivate: [soloAdminGuard] },
+      { path: 'sitio', component: SitioWeb, canActivate: [soloAdminGuard] },
       { path: 'administradores', component: CrearUsuario, canActivate: [superAdminGuard] },
-      { path: 'reportes', component: SeccionMock, data: reportes },
-      { path: 'configuracion', component: SeccionMock, data: configuracion },
+      { path: 'reportes', component: SeccionMock, data: reportes, canActivate: [soloAdminGuard] },
+      { path: 'configuracion', component: SeccionMock, data: configuracion, canActivate: [soloAdminGuard] },
     ],
   },
 ];

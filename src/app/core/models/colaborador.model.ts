@@ -1,6 +1,7 @@
 export type EstadoColaborador = 'Pendiente' | 'Aprobado' | 'Rechazado';
 
 export interface Colaborador {
+  dni: string | null;
   id: number;
   nombre: string;
   correo: string;
@@ -16,6 +17,7 @@ export interface Colaborador {
 }
 
 export interface ColaboradorPostulacion {
+  dni: string;
   nombre: string;
   correo: string;
   password: string;

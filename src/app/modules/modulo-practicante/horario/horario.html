@@ -1,0 +1,83 @@
+<h1 class="pp-titulo">Mi horario</h1>
+
+@if (error()) {
+  <p class="pp-mensaje">{{ error() }}</p>
+}
+@if (aviso()) {
+  <p class="pp-mensaje pp-mensaje--ok">{{ aviso() }}</p>
+}
+
+@if (perfil(); as p) {
+  <section class="pp-tarjeta">
+    <h2>
+      Estado:
+      <span
+        class="pp-chip"
+        [class.pp-chip--pendiente]="p.estadoHorario === 'Pendiente'"
+        [class.pp-chip--revision]="p.estadoHorario === 'EnRevision'"
+        [class.pp-chip--ok]="p.estadoHorario === 'Aceptado'"
+      >
+        {{ etiquetas[p.estadoHorario] }}
+      </span>
+    </h2>
+
+    @switch (p.estadoHorario) {
+      @case ('SinEnviar') {
+        <p>Envía el horario de tus clases en la universidad. Con eso Recursos Humanos te asignará tu horario de prácticas.</p>
+      }
+      @case ('Pendiente') {
+        <p>Enviaste tu horario el {{ p.fechaEnvioHorario | date: 'dd/MM/yyyy HH:mm' : '-0500' }}. Está esperando a que Recursos Humanos lo revise.</p>
+      }
+      @case ('EnRevision') {
+        <p>Recursos Humanos está revisando tu horario.</p>
+      }
+      @case ('Aceptado') {
+        <p>¡Tu horario fue aceptado! Este es tu horario de prácticas confirmado.</p>
+      }
+    }
+
+    @if (p.notaHorario) {
+      <p><strong>Nota de Recursos Humanos:</strong> {{ p.notaHorario }}</p>
+    }
+  </section>
+
+  @if (p.estadoHorario === 'Aceptado' && p.horarioPracticas.length) {
+    <section class="pp-tarjeta">
+      <h2>Horario de prácticas confirmado</h2>
+      <ul>
+        @for (b of p.horarioPracticas; track $index) {
+          <li><strong>{{ dias[b.diaSemana - 1] }}</strong>: entrada {{ b.horaInicio }} · salida {{ b.horaFin }}</li>
+        }
+      </ul>
+    </section>
+  }
+
+  <section class="pp-tarjeta">
+    <h2>Horario de mi universidad</h2>
+    @if (p.estadoHorario === 'Aceptado') {
+      <p>Si tu horario de clases cambia, actualízalo y vuelve a enviarlo: pasará otra vez a revisión.</p>
+    }
+
+    @for (b of bloques(); track $index) {
+      <div class="fila">
+        <select (change)="editar($index, 'diaSemana', $any($event.target).value)">
+          @for (d of dias; track $index) {
+            <option [value]="$index + 1" [selected]="b.diaSemana === $index + 1">{{ d }}</option>
+          }
+        </select>
+        <input type="time" [value]="b.horaInicio" (change)="editar($index, 'horaInicio', $any($event.target).value)" />
+        <input type="time" [value]="b.horaFin" (change)="editar($index, 'horaFin', $any($event.target).value)" />
+        <button type="button" class="pp-btn pp-btn--claro" (click)="quitar($index)">Quitar</button>
+      </div>
+    }
+
+    <div class="acciones">
+      <button type="button" class="pp-btn pp-btn--claro" (click)="agregar()">+ Agregar clase</button>
+      <button type="button" class="pp-btn" [disabled]="enviando() || p.estadoHorario === 'EnRevision'" (click)="enviar()">
+        {{ enviando() ? 'Enviando...' : 'Enviar horario' }}
+      </button>
+    </div>
+  </section>
+} @else if (!error()) {
+  <p>Cargando...</p>
+}

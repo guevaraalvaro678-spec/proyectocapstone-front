@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 
+import { ONG } from '../../../core/config/ong.config';
+
 @Component({
   selector: 'app-nosotros',
   standalone: false,
@@ -7,10 +9,12 @@ import { Component } from '@angular/core';
   styleUrl: './nosotros.scss',
 })
 export class Nosotros {
+  protected readonly ong = ONG;
+
   protected readonly valores = [
-    { icono: '🤝', titulo: 'Empatía', texto: 'Escuchamos sin juzgar y nos ponemos en tu lugar.' },
-    { icono: '🔒', titulo: 'Confidencialidad', texto: 'Tu información y tus sesiones son privadas.' },
-    { icono: '📚', titulo: 'Rigor profesional', texto: 'Trabajamos con métodos respaldados por la evidencia.' },
-    { icono: '🌱', titulo: 'Crecimiento', texto: 'Acompañamos procesos de cambio a tu propio ritmo.' },
+    { icono: '🤝', titulo: 'Voluntariado', texto: 'Jóvenes que dedican su tiempo a mejorar su comunidad.' },
+    { icono: '📚', titulo: 'Educación', texto: 'Talleres y actividades que forman y transforman.' },
+    { icono: '🌱', titulo: 'Cuidado del entorno', texto: 'Respeto por el ambiente y por los animales.' },
+    { icono: '💚', titulo: 'Valores y principios', texto: 'Buenas costumbres y salud mental como base.' },
   ];
 }
