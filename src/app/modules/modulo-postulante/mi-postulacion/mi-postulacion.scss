@@ -1,0 +1,144 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.estado {
+  display: inline-block;
+  margin-bottom: 0.75rem;
+  padding: 0.25rem 0.8rem;
+  border-radius: 999px;
+  background: var(--am-naranja);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.datos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 1rem;
+
+  small {
+    display: block;
+    margin-bottom: 0.3rem;
+    color: var(--am-gris);
+    font-size: 0.78rem;
+  }
+}
+
+.cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+
+  h3 {
+    margin: 0;
+  }
+
+  p {
+    margin: 0.2rem 0 0;
+    color: var(--am-gris);
+    font-size: 0.88rem;
+  }
+}
+
+.am-paso small {
+  font-weight: 500;
+}
+
+.sesion {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.1rem 1.25rem;
+  border: 2px solid var(--am-verde);
+  border-radius: 1rem;
+  background: #f1f6f3;
+
+  &__icono {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.75rem;
+    background: var(--am-verde);
+    color: #fff;
+  }
+
+  strong {
+    display: block;
+    color: var(--am-verde);
+    font-size: 1.15rem;
+  }
+
+  small {
+    color: var(--am-texto-suave);
+  }
+}
+
+.consejos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+
+  div {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.85rem;
+    border: 1px solid var(--am-borde-suave);
+    border-radius: 0.75rem;
+    font-size: 0.88rem;
+  }
+}
+
+.siguientes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 1rem;
+
+  div {
+    padding: 1.1rem;
+    border-radius: 0.85rem;
+    background: #f1f6f3;
+  }
+
+  span {
+    display: inline-grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    margin-bottom: 0.6rem;
+    border-radius: 0.5rem;
+    background: var(--am-verde);
+    color: #fff;
+    font-weight: 700;
+  }
+
+  strong {
+    display: block;
+  }
+
+  p {
+    margin: 0.3rem 0 0;
+    color: var(--am-texto-suave);
+    font-size: 0.85rem;
+  }
+}
+
+.resultado {
+  border-left: 5px solid var(--am-gris);
+
+  &--ok {
+    border-left-color: var(--am-verde);
+  }
+
+  h3 {
+    margin: 0 0 0.5rem;
+  }
+}

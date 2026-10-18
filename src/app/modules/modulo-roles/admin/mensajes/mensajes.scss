@@ -40,8 +40,8 @@
   &__contador {
     padding: 0.2rem 0.7rem;
     border-radius: 999px;
-    background: #e0e7ff;
-    color: #3730a3;
+    background: var(--am-verde-suave);
+    color: var(--am-verde);
     font-size: 0.75rem;
     white-space: nowrap;
   }
@@ -79,7 +79,7 @@
   box-shadow: 0 1px 4px rgb(0 0 0 / 0.08);
 
   &--nuevo {
-    border-left-color: #4f46e5;
+    border-left-color: var(--am-verde);
   }
 
   &__cabecera {
@@ -95,7 +95,7 @@
     }
 
     a {
-      color: #4f46e5;
+      color: var(--am-verde);
       font-size: 0.85rem;
       text-decoration: none;
 
@@ -121,8 +121,8 @@
     font-size: 0.7rem;
 
     &--nuevo {
-      background: #e0e7ff;
-      color: #3730a3;
+      background: var(--am-verde-suave);
+      color: var(--am-verde);
     }
   }
 
@@ -137,7 +137,7 @@
     padding: 0.4rem 0.9rem;
     border: 0;
     border-radius: 0.5rem;
-    background: #4f46e5;
+    background: var(--am-verde);
     color: #fff;
     font-size: 0.85rem;
     cursor: pointer;

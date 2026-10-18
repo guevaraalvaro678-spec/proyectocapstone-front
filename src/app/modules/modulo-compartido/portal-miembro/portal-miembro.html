@@ -1,0 +1,29 @@
+<div class="portal">
+  <aside class="portal__menu">
+    <div class="portal__marca">
+      <app-marca [claro]="true" [subtitulo]="'Portal del ' + tipo().toLowerCase()" />
+    </div>
+
+    <nav>
+      <a routerLink="/" class="portal__externo"><span class="ico">public</span> Inicio público <span class="ico chico">open_in_new</span></a>
+      @for (item of menu(); track item.ruta) {
+        <a [routerLink]="item.ruta" routerLinkActive="activo" [routerLinkActiveOptions]="{ exact: !!item.exacto }">
+          <span class="ico">{{ item.icono }}</span> {{ item.etiqueta }}
+        </a>
+      }
+    </nav>
+
+    <div class="portal__usuario">
+      <span class="portal__avatar" [class.portal__avatar--naranja]="tipo() === 'Practicante'">{{ iniciales() }}</span>
+      <span>
+        <strong>{{ auth.sesion()?.nombre }}</strong>
+        <small>{{ tipo() }}</small>
+      </span>
+    </div>
+    <button type="button" class="portal__salir" (click)="auth.logout('/')"><span class="ico">logout</span> Cerrar sesión</button>
+  </aside>
+
+  <main class="portal__pagina">
+    <router-outlet />
+  </main>
+</div>

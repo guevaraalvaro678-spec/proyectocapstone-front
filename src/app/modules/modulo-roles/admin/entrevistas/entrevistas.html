@@ -1,0 +1,202 @@
+<header class="am-encabezado">
+  <div>
+    <p class="am-encabezado__migas">Panel administrativo / <strong>Entrevistas</strong></p>
+    <h2>Entrevistas</h2>
+    <p>Organiza las sesiones de entrevista y consulta los postulantes asignados.</p>
+  </div>
+  <button type="button" class="ui-btn ui-btn--acento" (click)="nueva()"><span class="ico">add</span> Nueva sesión</button>
+</header>
+
+@if (error()) {
+  <p class="ui-mensaje ui-mensaje--error">{{ error() }}</p>
+}
+@if (aviso()) {
+  <p class="ui-mensaje ui-mensaje--exito">{{ aviso() }}</p>
+}
+
+<div class="ui-indicadores">
+  <div class="ui-indicador">
+    <span>Próximas sesiones</span>
+    <strong>{{ indicadores().proximas }}</strong>
+    <small>Programadas activas</small>
+  </div>
+  <div class="ui-indicador">
+    <span>Con cupos disponibles</span>
+    <strong>{{ indicadores().conCupo }}</strong>
+    <small>Aforo con vacantes</small>
+  </div>
+  <div class="ui-indicador">
+    <span>Sesiones realizadas</span>
+    <strong>{{ indicadores().realizadas }}</strong>
+    <small>Concluidas</small>
+  </div>
+</div>
+
+<div class="ui-filtros">
+  <label>
+    Estado
+    <select [value]="filtro()" (change)="filtro.set($any($event.target).value)">
+      <option value="">Todos los estados</option>
+      <option value="Programada">Programadas</option>
+      <option value="Realizada">Realizadas</option>
+      <option value="Cancelada">Canceladas</option>
+    </select>
+  </label>
+</div>
+
+@if (cargando()) {
+  <p class="ui-vacio">Cargando sesiones...</p>
+} @else if (filtradas().length === 0) {
+  <p class="ui-vacio">No hay sesiones registradas. Usa "Nueva sesión" para programar la primera.</p>
+} @else {
+  <div class="ui-tabla">
+    <table>
+      <thead>
+        <tr><th>Sesión</th><th>Fecha y hora</th><th>Ocupación</th><th>Estado</th><th></th></tr>
+      </thead>
+      <tbody>
+        @for (s of filtradas(); track s.id) {
+          <tr>
+            <td>
+              <span class="am-codigo">{{ s.codigo }}</span>
+              <strong class="nombre">{{ s.nombre }}</strong>
+            </td>
+            <td>
+              <span class="dato"><span class="ico">calendar_today</span> {{ s.inicio | date: 'd MMM y' : '-0500' }}</span>
+              <span class="dato dato--suave"><span class="ico">schedule</span> {{ s.inicio | date: 'HH:mm' : '-0500' }} – {{ s.fin | date: 'HH:mm' : '-0500' }}</span>
+            </td>
+            <td class="ocupacion">
+              <span class="ocupacion__texto"><strong>{{ s.inscritos }} de {{ s.cupo }}</strong> postulantes <small>{{ porcentaje(s) }}%</small></span>
+              <span class="ocupacion__barra"><span [class.lleno]="s.inscritos >= s.cupo" [style.width.%]="porcentaje(s)"></span></span>
+              @if (s.inscritos >= s.cupo) {
+                <span class="ui-etiqueta ui-etiqueta--naranja ui-etiqueta--sin-punto">Cupo completo</span>
+              } @else {
+                <span class="ui-etiqueta ui-etiqueta--verde ui-etiqueta--sin-punto">{{ s.cupo - s.inscritos }} cupos disponibles</span>
+              }
+            </td>
+            <td>
+              <span
+                class="ui-etiqueta"
+                [class.ui-etiqueta--verde]="s.estado === 'Programada'"
+                [class.ui-etiqueta--gris]="s.estado !== 'Programada'"
+              >
+                {{ s.estado }}
+              </span>
+            </td>
+            <td class="ui-tabla__acciones">
+              <button type="button" class="ui-btn ui-btn--claro ui-btn--chico" (click)="verDetalle(s)">Ver detalle <span class="ico">arrow_forward</span></button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+@if (editando() !== null) {
+  <div class="am-velo" (click)="cerrar()"></div>
+  <aside class="am-cajon" role="dialog" aria-label="Sesión de entrevista">
+    <div class="am-cajon__cabecera">
+      <div>
+        <small>Sesión de entrevista grupal</small>
+        <h3>{{ editando() ? 'Editar sesión' : 'Nueva sesión' }}</h3>
+      </div>
+      <button type="button" aria-label="Cerrar" (click)="cerrar()"><span class="ico">close</span></button>
+    </div>
+    <form class="am-cajon__cuerpo ui-form" [formGroup]="form" (ngSubmit)="guardar()" id="formSesion">
+      <label>
+        Nombre de la sesión
+        <input type="text" formControlName="nombre" placeholder="Ej. Entrevista general – Grupo matutino A" />
+      </label>
+      <label>
+        Fecha
+        <input type="date" formControlName="fecha" />
+      </label>
+      <div class="ui-form__fila">
+        <label>
+          Hora de inicio
+          <input type="time" formControlName="horaInicio" />
+        </label>
+        <label>
+          Hora de fin
+          <input type="time" formControlName="horaFin" />
+        </label>
+      </div>
+      <div class="ui-form__fila">
+        <label>
+          Modalidad
+          <select formControlName="modalidad">
+            <option value="Virtual">Virtual</option>
+            <option value="Presencial">Presencial</option>
+          </select>
+        </label>
+        <label>
+          Cupo
+          <input type="number" min="1" max="100" formControlName="cupo" />
+        </label>
+      </div>
+      <label>
+        {{ form.controls.modalidad.value === 'Virtual' ? 'Enlace de la reunión' : 'Dirección' }}
+        <input type="text" formControlName="lugarOEnlace" [placeholder]="form.controls.modalidad.value === 'Virtual' ? 'https://meet.google.com/...' : 'Sede central AMAAC'" />
+      </label>
+      <small class="nota">La hora es de Lima (UTC-5).</small>
+      @if (errorCajon()) {
+        <p class="ui-mensaje ui-mensaje--error">{{ errorCajon() }}</p>
+      }
+    </form>
+    <div class="am-cajon__pie">
+      <button type="button" class="ui-btn ui-btn--claro" (click)="cerrar()">Cancelar</button>
+      <button type="submit" form="formSesion" class="ui-btn" [disabled]="trabajando()">{{ trabajando() ? 'Guardando...' : 'Guardar sesión' }}</button>
+    </div>
+  </aside>
+}
+
+@if (detalle(); as d) {
+  <div class="am-velo" (click)="cerrar()"></div>
+  <aside class="am-cajon" role="dialog" aria-label="Detalle de la sesión">
+    <div class="am-cajon__cabecera">
+      <div>
+        <small>{{ d.codigo }} · {{ d.estado }}</small>
+        <h3>{{ d.nombre }}</h3>
+      </div>
+      <button type="button" aria-label="Cerrar" (click)="cerrar()"><span class="ico">close</span></button>
+    </div>
+    <div class="am-cajon__cuerpo">
+      <dl class="ui-detalle__datos">
+        <div><dt>Fecha</dt><dd>{{ d.inicio | date: "EEEE d 'de' MMMM" : '-0500' }}</dd></div>
+        <div><dt>Horario</dt><dd>{{ d.inicio | date: 'HH:mm' : '-0500' }} – {{ d.fin | date: 'HH:mm' : '-0500' }}</dd></div>
+        <div><dt>Modalidad</dt><dd>{{ d.modalidad }}</dd></div>
+        <div><dt>Ocupación</dt><dd>{{ d.inscritos }} de {{ d.cupo }}</dd></div>
+        <div class="ancho"><dt>{{ d.modalidad === 'Virtual' ? 'Enlace' : 'Lugar' }}</dt><dd>{{ d.lugarOEnlace }}</dd></div>
+      </dl>
+
+      <h4 class="subtitulo">Postulantes asignados</h4>
+      @if (d.postulantes.length === 0) {
+        <p class="ui-vacio">Todavía no hay postulantes. Asígnalos desde <a routerLink="../postulaciones">Postulaciones</a>.</p>
+      } @else {
+        <ul class="postulantes">
+          @for (p of d.postulantes; track p.id) {
+            <li>
+              <span>
+                <strong>{{ p.nombres }} {{ p.apellidos }}</strong>
+                <small>{{ p.codigo }} · {{ p.tipo }} · {{ p.departamento }}</small>
+              </span>
+              <span class="ui-etiqueta ui-etiqueta--gris ui-etiqueta--sin-punto">{{ etiquetas[p.estado] }}</span>
+            </li>
+          }
+        </ul>
+      }
+
+      @if (errorCajon()) {
+        <p class="ui-mensaje ui-mensaje--error">{{ errorCajon() }}</p>
+      }
+    </div>
+    @if (d.estado === 'Programada') {
+      <div class="am-cajon__pie">
+        <button type="button" class="ui-btn ui-btn--peligro" [disabled]="trabajando()" (click)="cambiarEstado(d, 'Cancelada')">Cancelar sesión</button>
+        <button type="button" class="ui-btn ui-btn--claro" (click)="editar(d)"><span class="ico">edit</span> Editar</button>
+        <button type="button" class="ui-btn" [disabled]="trabajando()" (click)="cambiarEstado(d, 'Realizada')"><span class="ico">task_alt</span> Marcar realizada</button>
+      </div>
+    }
+  </aside>
+}

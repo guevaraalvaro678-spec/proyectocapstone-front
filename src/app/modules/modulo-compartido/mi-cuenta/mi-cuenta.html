@@ -1,0 +1,122 @@
+@if (conPortada()) {
+  <header class="pp-portada">
+    <h1>Mi cuenta y seguridad</h1>
+    <p>Administra la información de tu perfil y la seguridad de tu cuenta.</p>
+  </header>
+} @else {
+  <header class="am-encabezado">
+    <div>
+      <p class="am-encabezado__migas">Panel administrativo / <strong>Mi cuenta y seguridad</strong></p>
+      <h2>Mi cuenta y seguridad</h2>
+      <p>Administra la información de tu perfil y la seguridad de tu cuenta.</p>
+    </div>
+  </header>
+}
+
+<div class="cuenta">
+  <div class="cuenta__pestanas" role="tablist">
+    <button type="button" role="tab" [class.activa]="pestana() === 'perfil'" (click)="cambiarPestana('perfil')">
+      <span class="ico">person</span> Mi perfil
+    </button>
+    <button type="button" role="tab" [class.activa]="pestana() === 'seguridad'" (click)="cambiarPestana('seguridad')">
+      <span class="ico">lock</span> Seguridad
+    </button>
+  </div>
+
+  @if (error()) {
+    <p class="ui-mensaje ui-mensaje--error">{{ error() }}</p>
+  }
+  @if (aviso()) {
+    <p class="ui-mensaje ui-mensaje--exito">{{ aviso() }}</p>
+  }
+
+  @if (cuenta(); as c) {
+    <section class="ui-tarjeta cuenta__tarjeta">
+      @if (pestana() === 'perfil') {
+        <div class="cuenta__cabecera">
+          <span class="cuenta__avatar">{{ iniciales() }}</span>
+          <div>
+            <h2>
+              {{ c.nombre }}
+              <span class="ui-etiqueta ui-etiqueta--gris ui-etiqueta--sin-punto">{{ rol() }}</span>
+              <span class="ui-etiqueta" [class.ui-etiqueta--verde]="c.activo" [class.ui-etiqueta--gris]="!c.activo">
+                {{ c.activo ? 'Activa' : 'Inactiva' }}
+              </span>
+            </h2>
+            <p class="am-codigo">{{ c.correo ?? c.usuario }}</p>
+          </div>
+        </div>
+
+        <form class="ui-form" [formGroup]="formPerfil" (ngSubmit)="guardarPerfil()">
+          <div class="ui-form__fila">
+            <label>
+              Nombre completo
+              <input type="text" formControlName="nombre" autocomplete="name" />
+              @if (formPerfil.controls.nombre.touched && formPerfil.controls.nombre.invalid) {
+                <small class="ui-form__aviso">Escribe tu nombre</small>
+              }
+            </label>
+            <label>
+              Teléfono de contacto
+              <input type="tel" formControlName="telefono" autocomplete="tel" placeholder="+51 900 000 000" />
+            </label>
+          </div>
+          <div class="ui-form__fila">
+            <label>
+              <span class="cuenta__etiqueta">Correo electrónico <small>Solo lectura</small></span>
+              <input type="text" [value]="c.correo ?? c.usuario" readonly />
+            </label>
+            <label>
+              <span class="cuenta__etiqueta">Documento de identidad <small>Solo lectura</small></span>
+              <input type="text" [value]="dniOculto()" readonly />
+            </label>
+          </div>
+
+          <p class="cuenta__nota">
+            <span class="ico">info</span> El rol y el estado de la cuenta los administra el equipo de AMAAC.
+          </p>
+
+          <div class="cuenta__botones">
+            <button type="submit" class="ui-btn" [disabled]="guardando() || formPerfil.pristine">
+              {{ guardando() ? 'Guardando...' : 'Guardar cambios' }}
+            </button>
+          </div>
+        </form>
+      } @else {
+        <h2 class="cuenta__subtitulo">Cambiar contraseña</h2>
+        <form class="ui-form" [formGroup]="formClave" (ngSubmit)="cambiarClave()">
+          <label>
+            Contraseña actual
+            <input type="password" formControlName="actual" autocomplete="current-password" />
+          </label>
+          <div class="ui-form__fila">
+            <label>
+              Nueva contraseña
+              <input type="password" formControlName="nueva" autocomplete="new-password" />
+              @if (formClave.controls.nueva.touched && formClave.controls.nueva.invalid) {
+                <small class="ui-form__aviso">Mínimo 8 caracteres</small>
+              }
+            </label>
+            <label>
+              Confirmar nueva contraseña
+              <input type="password" formControlName="confirmar" autocomplete="new-password" />
+              @if (formClave.controls.confirmar.touched && formClave.hasError('noCoinciden')) {
+                <small class="ui-form__aviso">Las contraseñas no coinciden</small>
+              }
+            </label>
+          </div>
+          <p class="cuenta__nota">
+            <span class="ico">info</span> Si entras con Google y nunca creaste una contraseña, usa "¿Olvidaste tu contraseña?" en el login.
+          </p>
+          <div class="cuenta__botones">
+            <button type="submit" class="ui-btn" [disabled]="guardando()">
+              {{ guardando() ? 'Guardando...' : 'Actualizar contraseña' }}
+            </button>
+          </div>
+        </form>
+      }
+    </section>
+  } @else if (!error()) {
+    <p class="ui-vacio">Cargando tu cuenta...</p>
+  }
+</div>

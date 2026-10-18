@@ -1,8 +1,9 @@
 <section>
-  <header class="ui-cabecera">
+  <header class="am-encabezado">
     <div>
-      <h2>Practicantes</h2>
-      <p>Revisa el horario de la universidad que envía cada practicante y asígnale su horario de prácticas.</p>
+      <p class="am-encabezado__migas">Panel administrativo / <strong>Horarios de prácticas</strong></p>
+      <h2>Horarios de prácticas</h2>
+      <p>Revisa el horario de clases que registra cada practicante y asígnale sus turnos de prácticas.</p>
     </div>
     <div class="ui-acciones">
       @if (pendientes() > 0) {
@@ -46,6 +47,11 @@
             >
               {{ etiquetas[p.estadoHorario] }}
             </span>
+            @if (p.estadoHorario === 'Aceptado') {
+              <span class="ui-etiqueta ui-etiqueta--sin-punto" [class.ui-etiqueta--verde]="p.horarioConfirmado" [class.ui-etiqueta--naranja]="!p.horarioConfirmado">
+                {{ p.horarioConfirmado ? 'Confirmado por el practicante' : 'Pendiente de confirmación' }}
+              </span>
+            }
           </header>
 
           <p class="prac__datos">
@@ -79,16 +85,26 @@
             @if (asignando() === p.usuarioId) {
               <div class="prac__editor">
                 <strong>Horario de prácticas (entrada y salida)</strong>
+                <small class="reglas">
+                  Lunes a sábado · máximo 5 h por día · máximo 30 h por semana. Asignadas:
+                  <strong [class.excedido]="totalHoras() > 30">{{ totalHoras() }} h</strong>
+                </small>
                 @for (b of bloques(); track $index) {
                   <div class="fila-bloque">
                     <select (change)="editarBloque($index, 'diaSemana', $any($event.target).value)">
-                      @for (d of dias; track $index) {
+                      @for (d of dias.slice(0, 6); track $index) {
                         <option [value]="$index + 1" [selected]="b.diaSemana === $index + 1">{{ d }}</option>
                       }
                     </select>
                     <input type="time" [value]="b.horaInicio" (change)="editarBloque($index, 'horaInicio', $any($event.target).value)" />
                     <input type="time" [value]="b.horaFin" (change)="editarBloque($index, 'horaFin', $any($event.target).value)" />
-                    <button type="button" class="ui-btn ui-btn--claro ui-btn--chico" (click)="quitarBloque($index)">Quitar</button>
+                    <select (change)="editarBloque($index, 'modalidad', $any($event.target).value)">
+                      <option value="Presencial" [selected]="b.modalidad !== 'Virtual'">Presencial</option>
+                      <option value="Virtual" [selected]="b.modalidad === 'Virtual'">Virtual</option>
+                    </select>
+                    <input type="text" class="lugar" placeholder="Sede o plataforma" [value]="b.lugar ?? ''" (change)="editarBloque($index, 'lugar', $any($event.target).value)" />
+                    <span class="horas" [class.excedido]="horas(b) > 5">{{ horas(b) }} h</span>
+                    <button type="button" class="ui-btn ui-btn--claro ui-btn--chico" aria-label="Quitar" (click)="quitarBloque($index)"><span class="ico">delete</span></button>
                   </div>
                 }
                 <button type="button" class="ui-btn ui-btn--claro ui-btn--chico" (click)="agregarBloque()">+ Agregar día</button>

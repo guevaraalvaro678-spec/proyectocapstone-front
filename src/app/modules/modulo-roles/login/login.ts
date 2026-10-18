@@ -4,8 +4,10 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { AuthService } from '../../../core/services/auth.service';
+import { CuentaService } from '../../../core/services/cuenta.service';
 import { GoogleService } from '../../../core/services/google.service';
 
+/** "Inicia sesión": cualquier cuenta entra aquí y va a su espacio según el rol. */
 @Component({
   selector: 'app-login',
   standalone: false,
@@ -15,11 +17,13 @@ import { GoogleService } from '../../../core/services/google.service';
 export class Login {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
+  private readonly cuentaService = inject(CuentaService);
   private readonly router = inject(Router);
   protected readonly google = inject(GoogleService);
   private readonly botonGoogle = viewChild<ElementRef<HTMLElement>>('botonGoogle');
 
   protected readonly cargando = signal(false);
+  protected readonly verClave = signal(false);
   protected readonly error = signal('');
 
   protected readonly form = this.fb.nonNullable.group({
@@ -39,27 +43,6 @@ export class Login {
     });
   }
 
-  private ingresarConGoogle(credential: string): void {
-    this.cargando.set(true);
-    this.error.set('');
-
-    this.auth.loginGoogle(credential).subscribe({
-      next: () => this.router.navigate([this.auth.rutaInicial()]),
-      error: (err: HttpErrorResponse) => {
-        this.cargando.set(false);
-
-        // Cuenta de Google sin registro: se pasa a "Únete" para que elija voluntario o practicante.
-        if (err.status === 404) {
-          this.google.credencialPendiente.set(credential);
-          void this.router.navigate(['/unete']);
-          return;
-        }
-
-        this.error.set(err.error?.mensaje ?? 'No se pudo iniciar sesión con Google');
-      },
-    });
-  }
-
   protected ingresar(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -70,17 +53,30 @@ export class Login {
     this.error.set('');
 
     this.auth.login(this.form.getRawValue()).subscribe({
-      // Cada cuenta va a su lugar: administradores al panel, psicólogos a su agenda y usuarios a su espacio.
       next: () => this.router.navigate([this.auth.rutaInicial()]),
       error: (err: HttpErrorResponse) => {
         this.cargando.set(false);
         this.error.set(
           err.status === 401
-            ? 'Usuario o contraseña incorrectos'
+            ? 'Correo o contraseña incorrectos'
             : err.status === 403
               ? (err.error?.mensaje ?? 'Tu cuenta está desactivada')
               : 'No se pudo conectar con el servidor',
         );
+      },
+    });
+  }
+
+  /** Con cuenta entra directo; sin cuenta va al formulario de postulación con sus datos de Google. */
+  private ingresarConGoogle(credential: string): void {
+    this.cargando.set(true);
+    this.error.set('');
+
+    this.cuentaService.continuarConGoogle(credential).subscribe({
+      next: (r) => this.router.navigate([r === 'nuevo' ? '/postular' : this.auth.rutaInicial()]),
+      error: (err: HttpErrorResponse) => {
+        this.cargando.set(false);
+        this.error.set(err.error?.mensaje ?? 'No se pudo iniciar sesión con Google');
       },
     });
   }

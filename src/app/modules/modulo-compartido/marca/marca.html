@@ -1,0 +1,13 @@
+<span class="marca" [class.marca--claro]="claro()">
+  @if (logoUrl(); as logo) {
+    <img class="marca__logo" [src]="logo" alt="AMAAC Perú" />
+  } @else {
+    <span class="marca__icono"><span class="ico ico--lleno">diversity_3</span></span>
+  }
+  <span class="marca__texto">
+    <strong>AMAAC Perú</strong>
+    @if (subtitulo()) {
+      <small>{{ subtitulo() }}</small>
+    }
+  </span>
+</span>

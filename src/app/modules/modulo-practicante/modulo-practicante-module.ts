@@ -5,12 +5,12 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { Asistencia } from './asistencia/asistencia';
 import { Datos } from './datos/datos';
 import { Horario } from './horario/horario';
+import { ModuloCompartidoModule } from '../modulo-compartido/modulo-compartido-module';
 import { ModuloPracticanteRoutingModule } from './modulo-practicante-routing-module';
-import { Practicante } from './practicante/practicante';
 import { Tareas } from './tareas/tareas';
 
 @NgModule({
-  declarations: [Practicante, Datos, Horario, Asistencia, Tareas],
-  imports: [CommonModule, ReactiveFormsModule, ModuloPracticanteRoutingModule],
+  declarations: [Datos, Horario, Asistencia, Tareas],
+  imports: [CommonModule, ReactiveFormsModule, ModuloCompartidoModule, ModuloPracticanteRoutingModule],
 })
 export class ModuloPracticanteModule {}

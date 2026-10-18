@@ -1,4 +1,7 @@
-<h1 class="pp-titulo">Mi horario</h1>
+<header class="pp-portada">
+  <h1>Mi horario</h1>
+  <p>Registra tus clases y consulta el horario asignado por coordinación.</p>
+</header>
 
 @if (error()) {
   <p class="pp-mensaje">{{ error() }}</p>
@@ -43,12 +46,34 @@
 
   @if (p.estadoHorario === 'Aceptado' && p.horarioPracticas.length) {
     <section class="pp-tarjeta">
-      <h2>Horario de prácticas confirmado</h2>
-      <ul>
-        @for (b of p.horarioPracticas; track $index) {
-          <li><strong>{{ dias[b.diaSemana - 1] }}</strong>: entrada {{ b.horaInicio }} · salida {{ b.horaFin }}</li>
+      <div class="turnos__cabecera">
+        <div>
+          <span class="pp-chip" [class.pp-chip--ok]="p.horarioConfirmado" [class.pp-chip--pendiente]="!p.horarioConfirmado">
+            {{ p.horarioConfirmado ? 'Confirmado' : 'Pendiente de confirmación' }}
+          </span>
+          <h2>Turnos asignados ({{ horasPracticas(p) }} h semanales)</h2>
+        </div>
+        @if (!p.horarioConfirmado) {
+          <button type="button" class="pp-btn" [disabled]="enviando()" (click)="confirmar()"><span class="ico">check_circle</span> Confirmar horario</button>
         }
-      </ul>
+      </div>
+      <div class="ui-tabla">
+        <table>
+          <thead>
+            <tr><th>Día</th><th>Horario</th><th>Modalidad</th><th>Lugar o enlace</th></tr>
+          </thead>
+          <tbody>
+            @for (b of p.horarioPracticas; track $index) {
+              <tr>
+                <td><strong>{{ dias[b.diaSemana - 1] }}</strong></td>
+                <td>{{ b.horaInicio }} a {{ b.horaFin }}</td>
+                <td><span class="pp-chip" [class.pp-chip--revision]="b.modalidad === 'Virtual'" [class.pp-chip--pendiente]="b.modalidad !== 'Virtual'">{{ b.modalidad ?? 'Presencial' }}</span></td>
+                <td>{{ b.lugar ?? 'Sede central AMAAC' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
     </section>
   }
 

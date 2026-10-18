@@ -1,0 +1,161 @@
+:host {
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+
+.cab {
+  border-bottom: 1px solid var(--am-borde-suave);
+  background: rgb(255 255 255 / 0.96);
+  backdrop-filter: blur(8px);
+
+  &__interior {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 0.85rem 1.5rem;
+  }
+
+  &__marca {
+    flex-shrink: 0;
+    text-decoration: none;
+  }
+
+  &__menu {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  &__nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+
+    a {
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.5rem;
+      color: var(--am-texto-suave);
+      font-size: 0.95rem;
+      font-weight: 500;
+      text-decoration: none;
+
+      &:hover {
+        background: var(--am-superficie-baja);
+        color: var(--am-verde);
+      }
+
+      &.activo {
+        color: var(--am-verde);
+        font-weight: 700;
+      }
+    }
+  }
+
+  &__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1.05rem;
+    border: 1px solid transparent;
+    border-radius: 0.75rem;
+    font-size: 0.92rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s ease;
+
+    .ico {
+      font-size: 1.15rem;
+    }
+
+    &--suave {
+      background: #eef4f0;
+      color: var(--am-verde);
+
+      &:hover {
+        background: var(--am-verde-suave);
+      }
+    }
+
+    &--naranja {
+      background: var(--am-naranja);
+      color: #fff;
+      box-shadow: 0 4px 12px rgb(234 88 12 / 0.25);
+
+      &:hover {
+        background: var(--am-naranja-oscuro);
+      }
+    }
+
+    &--borde {
+      border-color: var(--am-borde);
+      background: #fff;
+      color: var(--am-verde);
+
+      &:hover {
+        background: var(--am-superficie-baja);
+      }
+    }
+  }
+
+  &__hamburguesa {
+    display: none;
+    margin-left: auto;
+    padding: 0.4rem;
+    border: 0;
+    border-radius: 0.5rem;
+    background: transparent;
+    color: var(--am-verde);
+    cursor: pointer;
+
+    .ico {
+      font-size: 1.8rem;
+    }
+  }
+}
+
+@media (max-width: 64rem) {
+  .cab {
+    &__interior {
+      flex-wrap: wrap;
+    }
+
+    &__hamburguesa {
+      display: block;
+    }
+
+    &__menu {
+      display: none;
+      flex-basis: 100%;
+      flex-direction: column;
+      align-items: stretch;
+
+      &.abierto {
+        display: flex;
+      }
+    }
+
+    &__nav {
+      flex-direction: column;
+    }
+
+    &__acciones {
+      flex-direction: column;
+      align-items: stretch;
+      padding-bottom: 0.5rem;
+    }
+  }
+}

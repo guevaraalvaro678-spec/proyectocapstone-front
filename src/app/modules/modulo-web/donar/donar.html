@@ -1,0 +1,133 @@
+<section class="cabecera">
+  <div class="interior">
+    <a class="cabecera__volver" routerLink="/"><span class="ico">arrow_back</span> Volver al inicio</a>
+    <h1>Registra tu donación</h1>
+    <p>Agrega los artículos que deseas entregar a AMAAC.</p>
+    <span class="cabecera__aviso"><span class="ico">info</span> La entrega es presencial. Esta plataforma no recibe pagos.</span>
+  </div>
+</section>
+
+<div class="interior cuerpo">
+  @if (registrada(); as d) {
+    <section class="tarjeta exito">
+      <span class="exito__icono"><span class="ico ico--lleno">check_circle</span></span>
+      <h2>¡Gracias, {{ d.donanteNombre }}!</h2>
+      <p>Registramos tu intención de donación con el código <strong class="am-codigo">{{ d.codigo }}</strong>.</p>
+      <p>Tienes 7 días calendario para entregarla en la sede de acopio. Te contactaremos al {{ d.telefono }} si hace falta.</p>
+      <ul class="exito__lista">
+        @for (a of d.articulos; track $index) {
+          <li><strong>{{ a.cantidad }}</strong> {{ a.nombre }} <small>({{ etiqueta(a.categoria) }})</small></li>
+        }
+      </ul>
+      <div class="exito__acciones">
+        <button type="button" class="boton boton--claro" (click)="otra()">Registrar otra donación</button>
+        <a class="boton" routerLink="/">Volver al inicio</a>
+      </div>
+    </section>
+  } @else {
+    <div class="rejilla">
+      <section class="tarjeta">
+        <h2 class="paso"><span class="paso__numero">01</span> ¿Qué deseas donar?</h2>
+        <p class="ayuda">Selecciona una categoría para cada artículo.</p>
+
+        <div class="categorias">
+          @for (c of categorias; track c.valor) {
+            <button
+              type="button"
+              class="categoria"
+              [class.activa]="categoria() === c.valor"
+              [attr.aria-pressed]="categoria() === c.valor"
+              (click)="categoria.set(c.valor)"
+            >
+              <span class="ico">{{ c.icono }}</span>
+              {{ c.etiqueta }}
+              @if (categoria() === c.valor) {
+                <span class="ico categoria__check">check_circle</span>
+              }
+            </button>
+          }
+        </div>
+
+        <form class="agregar" [formGroup]="formArticulo" (ngSubmit)="agregar()">
+          <label class="agregar__nombre">
+            Nombre del artículo
+            <input type="text" formControlName="nombre" placeholder="Ej. Cuadernos rayados o casacas" />
+          </label>
+          <label class="agregar__cantidad">
+            Cantidad
+            <input type="number" min="1" formControlName="cantidad" />
+          </label>
+          <button type="submit" class="boton"><span class="ico">add</span> Agregar artículo</button>
+        </form>
+
+        <div class="agregados">
+          <div class="agregados__cabecera">
+            <h3>Artículos agregados</h3>
+            <span class="chip">{{ articulos().length }} {{ articulos().length === 1 ? 'artículo' : 'artículos' }} en lista</span>
+          </div>
+          @if (articulos().length === 0) {
+            <div class="agregados__vacio">
+              <span class="ico">inventory_2</span>
+              <strong>Aún no agregaste artículos.</strong>
+              <small>Completa el nombre y la cantidad para comenzar tu registro.</small>
+            </div>
+          } @else {
+            <ul class="agregados__lista">
+              @for (a of articulos(); track $index) {
+                <li>
+                  <span><strong>{{ a.cantidad }}</strong> {{ a.nombre }} <small>{{ etiqueta(a.categoria) }}</small></span>
+                  <button type="button" aria-label="Quitar" (click)="quitar($index)"><span class="ico">delete</span></button>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+
+        <hr />
+
+        <h2 class="paso"><span class="paso__numero">02</span> Tus datos</h2>
+        <p class="ayuda">Completa tu nombre y teléfono.</p>
+        <form class="datos" [formGroup]="formDatos">
+          <label>
+            Nombre completo <span class="req">*</span>
+            <input type="text" formControlName="donanteNombre" placeholder="Ej. Carlos Mendoza Vega" autocomplete="name" />
+          </label>
+          <label>
+            Teléfono <span class="req">*</span>
+            <input type="tel" formControlName="telefono" placeholder="Ej. 984 312 098" autocomplete="tel" />
+          </label>
+        </form>
+        <p class="privacidad"><span class="ico">lock</span> Tus datos solo se usan para coordinar la entrega.</p>
+      </section>
+
+      <aside class="lateral">
+        <section class="entrega">
+          <h2>Entrega de tu donación</h2>
+          <div class="entrega__item">
+            <span class="ico">schedule</span>
+            <div><small>Plazo de entrega</small><strong>7 días calendario</strong><p>después de registrar tu intención de donación.</p></div>
+          </div>
+          <div class="entrega__item">
+            <span class="ico">location_on</span>
+            <div><small>Lugar</small><strong>Sede de acopio AMAAC</strong><p>Lima, Perú. Te confirmaremos el punto de entrega.</p></div>
+          </div>
+          <div class="entrega__item">
+            <span class="ico">calendar_month</span>
+            <div><small>Horario de atención</small><strong>Lunes a sábado</strong><p>De 9:00 a. m. a 5:00 p. m.</p></div>
+          </div>
+        </section>
+
+        @if (error()) {
+          <p class="ui-mensaje ui-mensaje--error">{{ error() }}</p>
+        }
+
+        <button type="button" class="boton boton--grande" [disabled]="enviando()" (click)="registrar()">
+          <span class="ico">check_circle</span> {{ enviando() ? 'Registrando...' : 'Registrar donación' }}
+        </button>
+        @if (articulos().length) {
+          <p class="lateral__resumen">{{ totalArticulos() }} unidades en {{ articulos().length }} artículos.</p>
+        }
+      </aside>
+    </div>
+  }
+</div>

@@ -33,7 +33,7 @@ export class Restablecer {
 
   protected readonly form = this.fb.nonNullable.group(
     {
-      password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(100)]],
+      password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(100)]],
       confirmar: ['', Validators.required],
     },
     { validators: passwordsIguales },

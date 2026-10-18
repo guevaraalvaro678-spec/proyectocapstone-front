@@ -1,34 +1,61 @@
-<main class="login">
-  <form class="login__card" [formGroup]="form" (ngSubmit)="ingresar()">
-    <h1>Iniciar sesión</h1>
+<div class="acceso">
+  <app-cabecera-publica />
 
-    <label>
-      Usuario o correo
-      <input type="text" formControlName="usuario" autocomplete="username" />
-    </label>
+  <main class="acceso__fondo">
+    <div class="acceso__interior">
+      <div class="acceso__texto">
+        <h1>Bienvenido a <span>AMAAC Perú</span></h1>
+        <p>Un espacio para participar y colaborar.</p>
+        <span class="acceso__linea">Portal institucional de usuarios</span>
+      </div>
 
-    <label>
-      Contraseña
-      <input type="password" formControlName="password" autocomplete="current-password" />
-    </label>
+      <section class="acceso__tarjeta">
+        <h2>Inicia sesión</h2>
+        <p>Accede a tu cuenta de AMAAC.</p>
 
-    @if (error()) {
-      <p class="login__error">{{ error() }}</p>
-    }
+        <form [formGroup]="form" (ngSubmit)="ingresar()">
+          <label class="acceso__campo">
+            Correo electrónico
+            <span class="acceso__entrada">
+              <span class="ico">mail</span>
+              <input type="text" formControlName="usuario" autocomplete="username" placeholder="correo@ejemplo.com" />
+            </span>
+          </label>
 
-    <button type="submit" [disabled]="cargando()">
-      {{ cargando() ? 'Ingresando...' : 'Ingresar' }}
-    </button>
+          <label class="acceso__campo">
+            Contraseña
+            <span class="acceso__entrada">
+              <span class="ico">lock</span>
+              <input
+                [type]="verClave() ? 'text' : 'password'"
+                formControlName="password"
+                autocomplete="current-password"
+                placeholder="Ingresa tu contraseña"
+              />
+              <button type="button" [attr.aria-label]="verClave() ? 'Ocultar contraseña' : 'Ver contraseña'" (click)="verClave.set(!verClave())">
+                <span class="ico">{{ verClave() ? 'visibility_off' : 'visibility' }}</span>
+              </button>
+            </span>
+          </label>
 
-    @if (google.disponible()) {
-      <div class="login__o"><span>o</span></div>
-      <div #botonGoogle class="login__google"></div>
-    }
+          <a class="acceso__olvido" routerLink="/olvide-password">¿Olvidaste tu contraseña?</a>
 
-    <a class="login__volver" routerLink="/olvide-password">¿Olvidaste tu contraseña?</a>
+          @if (error()) {
+            <p class="acceso__error">{{ error() }}</p>
+          }
 
-    <p class="login__enlace">¿Quieres formar parte? <a routerLink="/unete">Únete como voluntario/a o practicante</a></p>
+          <button type="submit" class="acceso__boton" [disabled]="cargando()">
+            {{ cargando() ? 'Ingresando...' : 'Iniciar sesión' }}
+          </button>
 
-    <a class="login__volver" routerLink="/">← Volver al inicio</a>
-  </form>
-</main>
+          @if (google.disponible()) {
+            <span class="acceso__o">o</span>
+            <div #botonGoogle class="acceso__google"></div>
+          }
+        </form>
+
+        <p class="acceso__pie">¿No tienes una cuenta? <a routerLink="/registro">Crear cuenta</a></p>
+      </section>
+    </div>
+  </main>
+</div>

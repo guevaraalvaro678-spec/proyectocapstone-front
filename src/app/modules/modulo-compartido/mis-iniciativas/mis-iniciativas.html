@@ -1,0 +1,71 @@
+<header class="pp-portada portada-acciones">
+  <div>
+    <h1>Mis iniciativas</h1>
+    <p>Crea y sigue tus propuestas comunitarias.</p>
+  </div>
+  <button type="button" class="pp-btn pp-btn--acento" (click)="formAbierto.set(!formAbierto())">
+    <span class="ico">{{ formAbierto() ? 'close' : 'add' }}</span> {{ formAbierto() ? 'Cancelar' : 'Nueva iniciativa' }}
+  </button>
+</header>
+
+@if (error()) {
+  <p class="ui-mensaje ui-mensaje--error">{{ error() }}</p>
+}
+@if (aviso()) {
+  <p class="ui-mensaje ui-mensaje--exito">{{ aviso() }}</p>
+}
+
+@if (formAbierto()) {
+  <form class="ui-tarjeta ui-form nueva" [formGroup]="form" (ngSubmit)="enviar()">
+    <h3>Nueva iniciativa</h3>
+    <label>
+      Nombre de la iniciativa
+      <input type="text" formControlName="titulo" placeholder="Ej. Biohuerto educativo comunitario" />
+      @if (form.controls.titulo.touched && form.controls.titulo.invalid) {
+        <small class="ui-form__aviso">Escribe un nombre (mínimo 3 caracteres)</small>
+      }
+    </label>
+    <label>
+      Descripción
+      <textarea rows="4" formControlName="texto" placeholder="¿Qué propones, para quién y cómo se haría?"></textarea>
+      @if (form.controls.texto.touched && form.controls.texto.invalid) {
+        <small class="ui-form__aviso">Describe tu iniciativa (mínimo 10 caracteres)</small>
+      }
+    </label>
+    <div class="ui-acciones">
+      <button type="submit" class="ui-btn" [disabled]="enviando()">{{ enviando() ? 'Enviando...' : 'Enviar a revisión' }}</button>
+    </div>
+  </form>
+}
+
+@if (cargando()) {
+  <p class="ui-vacio">Cargando...</p>
+} @else if (iniciativas().length === 0) {
+  <p class="ui-vacio">Todavía no propusiste iniciativas. Usa "Nueva iniciativa" para enviar la primera.</p>
+} @else {
+  <div class="lista">
+    @for (i of iniciativas(); track i.id) {
+      <article class="ui-tarjeta ini">
+        <div class="ini__cabecera">
+          <span
+            class="ui-etiqueta"
+            [class.ui-etiqueta--verde]="i.estado === 'Aprobada'"
+            [class.ui-etiqueta--naranja]="i.estado === 'Pendiente'"
+            [class.ui-etiqueta--gris]="i.estado === 'Rechazada'"
+          >
+            {{ etiquetas[i.estado] }}
+          </span>
+          <span class="ini__fecha"><span class="ico">calendar_today</span> {{ i.fechaCreacion | date: "d 'de' MMMM 'de' y" }}</span>
+        </div>
+        <h2>{{ i.titulo }}</h2>
+        <p>{{ i.texto }}</p>
+        @if (i.estado === 'Rechazada' && i.motivoRechazo) {
+          <p class="ini__motivo"><strong>Motivo:</strong> {{ i.motivoRechazo }}</p>
+        }
+        @if (i.estado === 'Aprobada') {
+          <a class="ini__enlace" routerLink="/iniciativas">Ver en el sitio <span class="ico">arrow_forward</span></a>
+        }
+      </article>
+    }
+  </div>
+}

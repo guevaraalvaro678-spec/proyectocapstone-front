@@ -1,0 +1,137 @@
+:host {
+  display: block;
+}
+
+.portal {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--am-fondo);
+
+  &__interior {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    max-width: 68rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  &__barra {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    border-bottom: 1px solid var(--am-borde-suave);
+    background: rgb(255 255 255 / 0.96);
+
+    .portal__interior {
+      min-height: 4.5rem;
+    }
+  }
+
+  &__marca {
+    text-decoration: none;
+  }
+
+  &__nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+
+    a {
+      padding: 1.5rem 0 1.35rem;
+      border-bottom: 2px solid transparent;
+      color: var(--am-texto-suave);
+      font-size: 0.95rem;
+      font-weight: 500;
+      text-decoration: none;
+
+      &.activo {
+        border-bottom-color: var(--am-verde);
+        color: var(--am-verde);
+        font-weight: 700;
+      }
+    }
+  }
+
+  &__usuario {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      border: 0;
+      background: transparent;
+      color: var(--am-texto-suave);
+      font-size: 0.9rem;
+      cursor: pointer;
+
+      &:hover {
+        color: var(--am-verde);
+      }
+    }
+  }
+
+  &__avatar {
+    display: grid;
+    place-items: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 50%;
+    background: var(--am-verde);
+    color: #fff;
+    font-weight: 700;
+  }
+
+  &__nombre {
+    font-weight: 600;
+  }
+
+  &__contenido {
+    flex: 1;
+    width: 100%;
+    max-width: 68rem;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 3rem;
+  }
+
+  &__pie {
+    padding: 1.25rem 0;
+    border-top: 1px solid var(--am-borde);
+    background: var(--am-superficie-baja);
+
+    nav {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    a {
+      color: var(--am-texto-suave);
+      font-size: 0.9rem;
+      text-decoration: none;
+    }
+  }
+}
+
+@media (max-width: 48rem) {
+  .portal__nav a {
+    padding: 0.75rem 0;
+  }
+
+  .portal__nombre {
+    display: none;
+  }
+}
+
+.portal__cancelar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--am-texto-suave);
+  text-decoration: none;
+}

@@ -1,4 +1,4 @@
-export type Rol = 'SuperAdmin' | 'Admin' | 'RRHH' | 'Voluntario' | 'Practicante';
+export type Rol = 'SuperAdmin' | 'Admin' | 'RRHH' | 'Voluntario' | 'Practicante' | 'Postulante';
 
 export type RolAdmin = 'SuperAdmin' | 'Admin';
 

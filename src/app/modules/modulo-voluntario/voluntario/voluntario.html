@@ -1,15 +1,9 @@
-<div class="vol">
-  <header class="vol__barra">
-    <a class="vol__marca" routerLink="/">🧠 <strong>Capstone</strong></a>
-    <div class="vol__sesion">
-      <span>{{ auth.sesion()?.nombre }}</span>
-      <span class="vol__rol">Voluntario</span>
-      <button type="button" (click)="auth.logout('/')">Salir</button>
-    </div>
-  </header>
+<header class="pp-portada">
+  <h1>Hola, {{ auth.sesion()?.nombre }}</h1>
+  <p>Tus datos y tus actividades en AMAAC Perú.</p>
+</header>
 
-  <main class="vol__contenido">
-    <h1>Hola, {{ auth.sesion()?.nombre }}</h1>
+<div class="vol vol__contenido">
 
     @if (error()) {
       <p class="vol__error">{{ error() }}</p>
@@ -70,5 +64,4 @@
         }
       }
     </section>
-  </main>
-</div>
+  </div>

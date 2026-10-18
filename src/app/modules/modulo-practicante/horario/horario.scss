@@ -19,3 +19,16 @@
   gap: 0.6rem;
   margin-top: 0.8rem;
 }
+
+.turnos__cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+
+  h2 {
+    margin: 0.5rem 0 0;
+  }
+}

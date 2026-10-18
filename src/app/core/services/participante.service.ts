@@ -53,6 +53,11 @@ export class ParticipanteService {
     return this.http.get<Practicante>(`${API_URL}/practicante/yo`);
   }
 
+  /** El practicante confirma el horario de prácticas que le asignaron. */
+  confirmarHorario(): Observable<Practicante> {
+    return this.http.put<Practicante>(`${API_URL}/practicante/yo/horario/confirmar`, {});
+  }
+
   enviarHorario(bloques: BloqueHorario[]): Observable<Practicante> {
     return this.http.put<Practicante>(`${API_URL}/practicante/yo/horario`, { bloques });
   }

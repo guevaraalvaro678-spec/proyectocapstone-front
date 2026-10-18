@@ -24,6 +24,9 @@ export class GoogleService {
   /** Cuenta de Google que intentó entrar sin tener cuenta: Únete la usa para continuar el registro. */
   readonly credencialPendiente = signal<string | null>(null);
 
+  /** Datos de esa cuenta de Google (nombres, apellidos, correo) para precargar el formulario. */
+  readonly perfilPendiente = signal<GooglePerfil | null>(null);
+
   private readonly _clientId = signal<string | null>(null);
   private preparado: Promise<void> | null = null;
 

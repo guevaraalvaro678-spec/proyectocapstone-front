@@ -1,43 +1,62 @@
-<main class="tarjeta-pagina">
-  <div class="tarjeta">
-    <h1>Nueva contraseña</h1>
+<div class="acceso">
+  <app-cabecera-publica />
 
-    @if (!enlaceValido) {
-      <p class="tarjeta__error">El enlace está incompleto. Vuelve a pedir uno desde "¿Olvidaste tu contraseña?".</p>
-      <a class="tarjeta__enlace" routerLink="/olvide-password">Pedir un enlace nuevo</a>
-    } @else if (listo()) {
-      <p class="tarjeta__exito">¡Listo! Tu contraseña se cambió correctamente.</p>
-      <a class="tarjeta__boton" routerLink="/login">Iniciar sesión</a>
-    } @else {
-      <form [formGroup]="form" (ngSubmit)="cambiar()">
-        <label>
-          Contraseña nueva
-          <input type="password" formControlName="password" autocomplete="new-password" />
-          @if (form.controls.password.touched && form.controls.password.invalid) {
-            <small class="tarjeta__aviso">Mínimo 6 caracteres</small>
+  <main class="acceso__fondo">
+    <div class="acceso__interior">
+      <div class="acceso__texto">
+        <h1>Crea una nueva contraseña</h1>
+        <p>Elige una contraseña segura para tu cuenta de AMAAC.</p>
+        <span class="acceso__linea">Recuperación de acceso</span>
+      </div>
+
+      <section class="acceso__tarjeta">
+        <h2>Nueva contraseña</h2>
+
+        @if (!enlaceValido) {
+          <p class="acceso__error">El enlace está incompleto. Vuelve a pedir uno desde "¿Olvidaste tu contraseña?".</p>
+          <a class="acceso__volver" routerLink="/olvide-password">Pedir un enlace nuevo</a>
+        } @else if (listo()) {
+          <p class="acceso__exito">¡Listo! Tu contraseña se cambió correctamente.</p>
+          <a class="acceso__boton" routerLink="/login">Iniciar sesión</a>
+        } @else {
+          <p>Debe tener al menos 8 caracteres.</p>
+          <form [formGroup]="form" (ngSubmit)="cambiar()">
+            <label class="acceso__campo">
+              Contraseña nueva
+              <span class="acceso__entrada">
+                <span class="ico">lock</span>
+                <input type="password" formControlName="password" autocomplete="new-password" placeholder="Crea una contraseña" />
+              </span>
+              @if (form.controls.password.touched && form.controls.password.invalid) {
+                <small class="acceso__aviso">Mínimo 8 caracteres</small>
+              }
+            </label>
+
+            <label class="acceso__campo">
+              Confirmar contraseña
+              <span class="acceso__entrada">
+                <span class="ico">lock</span>
+                <input type="password" formControlName="confirmar" autocomplete="new-password" placeholder="Repite tu contraseña" />
+              </span>
+              @if (form.controls.confirmar.touched && form.hasError('noCoinciden')) {
+                <small class="acceso__aviso">Las contraseñas no coinciden</small>
+              }
+            </label>
+
+            @if (error()) {
+              <p class="acceso__error">{{ error() }}</p>
+            }
+
+            <button type="submit" class="acceso__boton" [disabled]="cargando()">
+              {{ cargando() ? 'Guardando...' : 'Cambiar contraseña' }}
+            </button>
+          </form>
+
+          @if (error()) {
+            <a class="acceso__volver" routerLink="/olvide-password">Pedir un enlace nuevo</a>
           }
-        </label>
-
-        <label>
-          Confirmar contraseña
-          <input type="password" formControlName="confirmar" autocomplete="new-password" />
-          @if (form.controls.confirmar.touched && form.hasError('noCoinciden')) {
-            <small class="tarjeta__aviso">Las contraseñas no coinciden</small>
-          }
-        </label>
-
-        @if (error()) {
-          <p class="tarjeta__error">{{ error() }}</p>
         }
-
-        <button type="submit" [disabled]="cargando()">
-          {{ cargando() ? 'Guardando...' : 'Cambiar contraseña' }}
-        </button>
-      </form>
-
-      @if (error()) {
-        <a class="tarjeta__enlace" routerLink="/olvide-password">Pedir un enlace nuevo</a>
-      }
-    }
-  </div>
-</main>
+      </section>
+    </div>
+  </main>
+</div>

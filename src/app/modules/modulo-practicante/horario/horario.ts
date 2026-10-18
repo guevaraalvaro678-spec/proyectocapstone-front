@@ -53,6 +53,30 @@ export class Horario {
     );
   }
 
+  protected horasPracticas(p: Practicante): number {
+    return p.horarioPracticas.reduce((s, b) => {
+      const [hi, mi] = b.horaInicio.split(':').map(Number);
+      const [hf, mf] = b.horaFin.split(':').map(Number);
+      return s + (hf * 60 + mf - hi * 60 - mi) / 60;
+    }, 0);
+  }
+
+  /** El practicante acepta el horario de prácticas que le asignaron. */
+  protected confirmar(): void {
+    this.enviando.set(true);
+    this.participantes.confirmarHorario().subscribe({
+      next: (p) => {
+        this.aplicar(p);
+        this.enviando.set(false);
+        this.aviso.set('Confirmaste tu horario de prácticas.');
+      },
+      error: (err: HttpErrorResponse) => {
+        this.enviando.set(false);
+        this.error.set(err.error?.mensaje ?? 'No se pudo confirmar el horario');
+      },
+    });
+  }
+
   protected enviar(): void {
     if (this.bloques().length === 0) {
       this.error.set('Agrega al menos un bloque de tu horario');

@@ -1,0 +1,37 @@
+<header class="am-encabezado">
+  <div>
+    <p class="am-encabezado__migas">Panel administrativo / <strong>Configuración</strong></p>
+    <h2>Configuración</h2>
+    <p>Ajustes generales del sitio de AMAAC Perú.</p>
+  </div>
+</header>
+
+@if (error()) {
+  <p class="ui-mensaje ui-mensaje--error">{{ error() }}</p>
+}
+@if (aviso()) {
+  <p class="ui-mensaje ui-mensaje--exito">{{ aviso() }}</p>
+}
+
+<section class="ui-tarjeta logo">
+  <div>
+    <h3>Logo</h3>
+    <p>Se muestra en la cabecera del sitio, el pie y los paneles. PNG, JPG, WEBP o GIF de hasta 2 MB.</p>
+  </div>
+  <div class="logo__vista">
+    @if (sitio().logoUrl; as logo) {
+      <img [src]="logo" alt="Logo actual" />
+    } @else {
+      <app-marca />
+    }
+  </div>
+  <div class="ui-acciones">
+    <label class="ui-btn subir">
+      <span class="ico">upload</span> {{ subiendo() ? 'Subiendo...' : 'Subir logo' }}
+      <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" (change)="elegirLogo($event)" [disabled]="subiendo()" hidden />
+    </label>
+    @if (sitio().logoUrl) {
+      <button type="button" class="ui-btn ui-btn--peligro" (click)="quitarLogo()">Quitar logo</button>
+    }
+  </div>
+</section>

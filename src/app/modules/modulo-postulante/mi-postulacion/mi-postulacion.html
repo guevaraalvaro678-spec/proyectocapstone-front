@@ -1,0 +1,91 @@
+@if (cargando()) {
+  <p class="ui-vacio">Cargando...</p>
+} @else if (!postulacion()) {
+  <section class="pp-portada">
+    <h1>Aún no postulas</h1>
+    <p>Completa el formulario para empezar tu proceso en AMAAC Perú.</p>
+  </section>
+  <a class="ui-btn ui-btn--acento" routerLink="/postular">Completar mi postulación <span class="ico">arrow_forward</span></a>
+} @else {
+  @let p = postulacion()!;
+  <section class="pp-portada">
+    <span class="estado">{{ etiquetas[p.estado] }}</span>
+    <h1>Seguimiento de tu postulación</h1>
+    <p>Consulta tu avance y las próximas acciones para sumarte al equipo.</p>
+  </section>
+
+  <section class="ui-tarjeta datos">
+    <div><small>Código de postulación</small><strong class="am-codigo">{{ p.codigo }}</strong></div>
+    <div><small>Tipo de postulación</small><strong>{{ p.tipo === 'Practicante' ? 'Practicante preprofesional' : 'Voluntario' }}</strong></div>
+    <div><small>Área</small><strong>{{ p.departamento }}</strong></div>
+    <div><small>Fecha de envío</small><strong>{{ p.fechaEnvio | date: "d 'de' MMMM 'de' y" }}</strong></div>
+    <div><small>Estado del proceso</small><span class="ui-etiqueta ui-etiqueta--verde">{{ etiquetas[p.estado] }}</span></div>
+  </section>
+
+  <section class="ui-tarjeta">
+    <div class="cabecera">
+      <div><h3>Estado del proceso</h3><p>Avance oficial en 5 etapas.</p></div>
+      <span class="ui-etiqueta ui-etiqueta--gris ui-etiqueta--sin-punto">Paso {{ paso() }} de 5</span>
+    </div>
+    <div class="am-pasos">
+      @for (nombre of pasos; track nombre; let i = $index) {
+        <div
+          class="am-paso"
+          [class.am-paso--hecho]="i + 1 < paso() || (i === 4 && p.estado === 'Aceptada')"
+          [class.am-paso--actual]="i + 1 === paso() && !(i === 4 && p.estado === 'Aceptada') && p.estado !== 'NoAdmitida'"
+          [class.am-paso--fallido]="i === 4 && p.estado === 'NoAdmitida'"
+        >
+          <span class="am-paso__icono"><span class="ico">{{ i + 1 < paso() || (i === 4 && p.estado === 'Aceptada') ? 'check' : i + 1 }}</span></span>
+          {{ i + 1 }}. {{ nombre }}
+          <small>{{ i + 1 < paso() ? 'Completado' : i + 1 === paso() ? 'Actual' : 'Pendiente' }}</small>
+        </div>
+      }
+    </div>
+  </section>
+
+  @if (p.sesion && (p.estado === 'EntrevistaAgendada' || p.estado === 'EntrevistaRealizada')) {
+    <section class="ui-tarjeta">
+      <div class="cabecera">
+        <div><h3>Tu sesión de entrevista grupal</h3><p>Agendada con la coordinación de AMAAC Perú.</p></div>
+        <span class="ui-etiqueta ui-etiqueta--verde">{{ p.estado === 'EntrevistaRealizada' ? 'Realizada' : 'Sesión confirmada' }}</span>
+      </div>
+      <div class="sesion">
+        <span class="sesion__icono"><span class="ico">{{ p.sesion.modalidad === 'Virtual' ? 'videocam' : 'location_on' }}</span></span>
+        <div>
+          <strong>{{ p.sesion.inicio | date: "EEEE d 'de' MMMM 'de' y — h:mm a" : '-0500' }}</strong>
+          <small>{{ p.sesion.modalidad }} · {{ p.sesion.lugarOEnlace }} · Cupo reservado ({{ p.sesion.inscritos }} de {{ p.sesion.cupo }})</small>
+        </div>
+      </div>
+      <div class="consejos">
+        <div><span class="ico">timer</span><strong>Conéctate 5 minutos antes</strong></div>
+        <div><span class="ico">badge</span><strong>Ten tu DNI a la mano</strong></div>
+        <div><span class="ico">videocam</span><strong>Verifica tu cámara y conexión</strong></div>
+      </div>
+    </section>
+  }
+
+  @if (p.estado === 'Aceptada') {
+    <section class="ui-tarjeta resultado resultado--ok">
+      <h3>¡Bienvenido/a a AMAAC Perú!</h3>
+      <p>Tu postulación fue aceptada. Ya formas parte del equipo como {{ p.tipo.toLowerCase() }}.</p>
+      @if (p.notaEvaluacion) { <p><strong>Comentario:</strong> {{ p.notaEvaluacion }}</p> }
+      <button type="button" class="ui-btn ui-btn--acento" (click)="irAMiPortal()">Ir a mi portal <span class="ico">arrow_forward</span></button>
+    </section>
+  } @else if (p.estado === 'NoAdmitida') {
+    <section class="ui-tarjeta resultado">
+      <h3>Resultado de tu postulación</h3>
+      <p>En esta oportunidad tu postulación no fue admitida. Gracias por tu interés.</p>
+      @if (p.notaEvaluacion) { <p><strong>Comentario:</strong> {{ p.notaEvaluacion }}</p> }
+      <a class="ui-btn" routerLink="/postular">Volver a postular</a>
+    </section>
+  } @else {
+    <section class="ui-tarjeta">
+      <h3>¿Qué sigue en tu proceso?</h3>
+      <div class="siguientes">
+        <div><span>1</span><strong>Asistir a la entrevista</strong><p>Participa en la dinámica grupal en la fecha programada.</p></div>
+        <div><span>2</span><strong>Evaluación colegiada</strong><p>El comité revisará tu participación y perfil.</p></div>
+        <div><span>3</span><strong>Resultado e inducción</strong><p>Recibirás el resultado en este portal y por correo.</p></div>
+      </div>
+    </section>
+  }
+}

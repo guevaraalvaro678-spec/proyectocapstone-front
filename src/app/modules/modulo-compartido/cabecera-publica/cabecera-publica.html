@@ -1,0 +1,54 @@
+<header class="cab">
+  <div class="cab__interior">
+    <a class="cab__marca" routerLink="/" (click)="cerrarMenu()" aria-label="AMAAC Perú, inicio">
+      <app-marca />
+    </a>
+
+    <button
+      type="button"
+      class="cab__hamburguesa"
+      aria-label="Abrir menú"
+      [attr.aria-expanded]="menuAbierto()"
+      (click)="alternarMenu()"
+    >
+      <span class="ico">{{ menuAbierto() ? 'close' : 'menu' }}</span>
+    </button>
+
+    <div class="cab__menu" [class.abierto]="menuAbierto()">
+      <nav class="cab__nav" aria-label="Menú principal">
+        @for (enlace of enlaces; track enlace.etiqueta) {
+          <a
+            [routerLink]="enlace.ruta"
+            [fragment]="enlace.seccion"
+            [class.activo]="esActivo(enlace)"
+            (click)="cerrarMenu()"
+          >
+            {{ enlace.etiqueta }}
+          </a>
+        }
+      </nav>
+
+      <div class="cab__acciones">
+        <a class="cab__btn cab__btn--suave" routerLink="/donar" (click)="cerrarMenu()">
+          <span class="ico">volunteer_activism</span> Donar
+        </a>
+
+        @if (auth.autenticado()) {
+          <a class="cab__btn cab__btn--naranja" [routerLink]="auth.rutaInicial()" (click)="cerrarMenu()">
+            <span class="ico">account_circle</span> {{ etiquetaMiZona() }}
+          </a>
+          <button type="button" class="cab__btn cab__btn--borde" (click)="salir()">
+            <span class="ico">logout</span> Salir
+          </button>
+        } @else {
+          <a class="cab__btn cab__btn--naranja" routerLink="/participar" (click)="cerrarMenu()">
+            <span class="ico">handshake</span> Participar
+          </a>
+          <a class="cab__btn cab__btn--borde" routerLink="/login" (click)="cerrarMenu()">
+            <span class="ico">account_circle</span> Ingresar
+          </a>
+        }
+      </div>
+    </div>
+  </div>
+</header>

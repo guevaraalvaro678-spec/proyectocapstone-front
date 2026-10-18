@@ -1,18 +1,34 @@
-<section class="ini">
-  <h1>Iniciativas</h1>
-  <p class="ini__intro">Explora nuestras iniciativas y sé parte de las acciones que promueven el talento, el liderazgo y la participación juvenil.</p>
+<section class="cabecera">
+  <div class="interior">
+    <h1>Iniciativas</h1>
+    <p>Proyectos continuos impulsados por AMAAC y por los miembros de nuestra comunidad.</p>
+  </div>
+</section>
 
-  <div class="ini__grid">
-    @for (i of iniciativas(); track i.id) {
-      <article class="tarjeta tarjeta--{{ i.color }}">
-        @if (i.imagenUrl) {
-          <img class="tarjeta__imagen" [src]="i.imagenUrl" [alt]="i.titulo" />
-        } @else {
-          <span class="tarjeta__icono">{{ i.icono }}</span>
-        }
-        <h2>{{ i.titulo }}</h2>
-        <p>{{ i.texto }}</p>
-      </article>
-    }
+<section class="ini interior">
+  @if (iniciativas().length === 0) {
+    <p class="vacio">Pronto publicaremos nuestras iniciativas.</p>
+  } @else {
+    <div class="ini__grid">
+      @for (i of iniciativas(); track i.id) {
+        <article class="tarjeta">
+          @if (i.imagenUrl) {
+            <img class="tarjeta__imagen" [src]="i.imagenUrl" [alt]="i.titulo" />
+          } @else {
+            <span class="tarjeta__icono">{{ i.icono }}</span>
+          }
+          <span class="chip" [class.chip--naranja]="i.creadaPorNombre">
+            {{ i.creadaPorNombre ? 'Propuesta por ' + i.creadaPorNombre : 'AMAAC' }}
+          </span>
+          <h2>{{ i.titulo }}</h2>
+          <p>{{ i.texto }}</p>
+        </article>
+      }
+    </div>
+  }
+
+  <div class="llamado">
+    <p>¿Eres voluntario o practicante? Propón tu propia iniciativa desde tu portal.</p>
+    <a routerLink="/participar">Participar en AMAAC <span class="ico">arrow_forward</span></a>
   </div>
 </section>

@@ -1,0 +1,134 @@
+<header class="am-encabezado">
+  <div>
+    <p class="am-encabezado__migas">Panel administrativo / <strong>Donaciones</strong></p>
+    <h2>Donaciones</h2>
+    <p>Consulta las donaciones de artículos registradas y administra su recepción.</p>
+  </div>
+</header>
+
+@if (error()) {
+  <p class="ui-mensaje ui-mensaje--error">{{ error() }}</p>
+}
+@if (aviso()) {
+  <p class="ui-mensaje ui-mensaje--exito">{{ aviso() }}</p>
+}
+
+<div class="ui-indicadores">
+  <div class="ui-indicador ui-indicador--alerta">
+    <span>Pendientes de recepción</span>
+    <strong>{{ indicadores().pendientes }}</strong>
+    <small>por recibir</small>
+  </div>
+  <div class="ui-indicador">
+    <span>Recibidas</span>
+    <strong>{{ indicadores().recibidas }}</strong>
+    <small>confirmadas</small>
+  </div>
+  <div class="ui-indicador">
+    <span>Desestimadas</span>
+    <strong>{{ indicadores().desestimadas }}</strong>
+    <small>no aceptadas</small>
+  </div>
+  <div class="ui-indicador">
+    <span>Total de donaciones</span>
+    <strong>{{ indicadores().total }}</strong>
+    <small>en el sistema</small>
+  </div>
+</div>
+
+<div class="ui-filtros">
+  <label class="crece">
+    Buscar
+    <input type="search" [formControl]="buscar" placeholder="Código, donante o artículo..." />
+  </label>
+  <label>
+    Estado
+    <select [value]="estado()" (change)="filtrar($any($event.target).value)">
+      <option value="">Todos los estados</option>
+      <option value="PendienteRecepcion">Pendiente de recepción</option>
+      <option value="Recibida">Recibida</option>
+      <option value="Desestimada">Desestimada</option>
+    </select>
+  </label>
+</div>
+
+@if (cargando()) {
+  <p class="ui-vacio">Cargando donaciones...</p>
+} @else if (donaciones().length === 0) {
+  <p class="ui-vacio">Todavía no hay donaciones registradas.</p>
+} @else {
+  <div class="ui-tabla">
+    <table>
+      <thead>
+        <tr><th>Donante</th><th>Artículos registrados</th><th>Fecha de registro</th><th>Estado</th><th></th></tr>
+      </thead>
+      <tbody>
+        @for (d of donaciones(); track d.id) {
+          <tr>
+            <td><strong>{{ d.donanteNombre }}</strong><small>{{ d.telefono }}</small></td>
+            <td class="articulos">{{ resumen(d) }}<small class="am-codigo">{{ d.codigo }}</small></td>
+            <td>{{ d.fechaRegistro | date: 'dd/MM/yyyy' }}</td>
+            <td>
+              <span
+                class="ui-etiqueta"
+                [class.ui-etiqueta--naranja]="d.estado === 'PendienteRecepcion'"
+                [class.ui-etiqueta--verde]="d.estado === 'Recibida'"
+                [class.ui-etiqueta--gris]="d.estado === 'Desestimada'"
+              >
+                {{ etiquetas[d.estado] }}
+              </span>
+            </td>
+            <td class="ui-tabla__acciones">
+              <button type="button" class="ui-btn ui-btn--claro ui-btn--chico" (click)="abrir(d)">Ver detalle <span class="ico">arrow_forward</span></button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+@if (detalle(); as d) {
+  <div class="am-velo" (click)="detalle.set(null)"></div>
+  <aside class="am-cajon" role="dialog" aria-label="Detalle de la donación">
+    <div class="am-cajon__cabecera">
+      <div>
+        <small>Detalle de la donación</small>
+        <h3>#{{ d.codigo }}</h3>
+      </div>
+      <button type="button" aria-label="Cerrar" (click)="detalle.set(null)"><span class="ico">close</span></button>
+    </div>
+    <div class="am-cajon__cuerpo">
+      <h4 class="subtitulo">Información general</h4>
+      <dl class="lista-datos">
+        <div><dt>Donante</dt><dd>{{ d.donanteNombre }}</dd></div>
+        <div><dt>Teléfono de contacto</dt><dd>{{ d.telefono }}</dd></div>
+        <div><dt>Fecha de registro</dt><dd>{{ d.fechaRegistro | date: 'dd/MM/yyyy HH:mm' }}</dd></div>
+        <div><dt>Estado</dt><dd>{{ etiquetas[d.estado] }}</dd></div>
+      </dl>
+
+      <h4 class="subtitulo">Artículos registrados</h4>
+      <ul class="items">
+        @for (a of d.articulos; track $index) {
+          <li><span><strong>{{ a.cantidad }}</strong> {{ a.nombre }}</span><small>{{ categoria(a.categoria) }}</small></li>
+        }
+      </ul>
+
+      <h4 class="subtitulo">Observaciones</h4>
+      <textarea class="obs" rows="3" [value]="observaciones()" (input)="observaciones.set($any($event.target).value)" placeholder="Ej. Se recibió completo en la sede."></textarea>
+    </div>
+    <div class="am-cajon__pie">
+      @if (d.estado !== 'PendienteRecepcion') {
+        <button type="button" class="ui-btn ui-btn--claro" [disabled]="trabajando()" (click)="cambiar('PendienteRecepcion')">Volver a pendiente</button>
+      }
+      @if (d.estado !== 'Desestimada') {
+        <button type="button" class="ui-btn ui-btn--peligro" [disabled]="trabajando()" (click)="cambiar('Desestimada')">Desestimar</button>
+      }
+      @if (d.estado !== 'Recibida') {
+        <button type="button" class="ui-btn" [disabled]="trabajando()" (click)="cambiar('Recibida')"><span class="ico">check_circle</span> Marcar como recibida</button>
+      } @else {
+        <button type="button" class="ui-btn" [disabled]="trabajando()" (click)="cambiar('Recibida')">Guardar observaciones</button>
+      }
+    </div>
+  </aside>
+}

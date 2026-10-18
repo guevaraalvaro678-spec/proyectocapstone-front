@@ -1,0 +1,137 @@
+:host {
+  display: block;
+}
+
+.portal {
+  display: grid;
+  grid-template-columns: 17rem minmax(0, 1fr);
+  min-height: 100dvh;
+  background: var(--am-fondo);
+
+  &__menu {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    height: 100dvh;
+    padding: 1.25rem 1rem;
+    background: var(--am-verde-oscuro);
+    color: #fff;
+
+    nav {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      gap: 0.2rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgb(255 255 255 / 0.1);
+    }
+
+    nav a {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.7rem 0.85rem;
+      border-left: 3px solid transparent;
+      border-radius: 0.65rem;
+      color: rgb(255 255 255 / 0.85);
+      font-weight: 500;
+      text-decoration: none;
+
+      &:hover {
+        background: rgb(255 255 255 / 0.06);
+      }
+
+      &.activo {
+        border-left-color: var(--am-naranja);
+        background: #2a5a46;
+        color: #fff;
+        font-weight: 600;
+      }
+    }
+
+    .chico {
+      margin-left: auto;
+      font-size: 1rem;
+      opacity: 0.6;
+    }
+  }
+
+  &__usuario {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border: 1px solid rgb(255 255 255 / 0.1);
+    border-radius: 0.85rem;
+    background: rgb(255 255 255 / 0.05);
+
+    strong,
+    small {
+      display: block;
+    }
+
+    small {
+      color: rgb(255 255 255 / 0.6);
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+  }
+
+  &__avatar {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 2.7rem;
+    height: 2.7rem;
+    border-radius: 50%;
+    background: var(--am-verde-medio);
+    font-weight: 700;
+
+    &--naranja {
+      background: var(--am-naranja);
+    }
+  }
+
+  &__salir {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.7rem;
+    border: 1px solid rgb(255 181 153 / 0.4);
+    border-radius: 0.75rem;
+    background: transparent;
+    color: #ffb599;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover {
+      background: rgb(255 255 255 / 0.05);
+    }
+  }
+
+  &__pagina {
+    min-width: 0;
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 56rem) {
+  .portal {
+    grid-template-columns: 1fr;
+
+    &__menu {
+      position: static;
+      height: auto;
+
+      nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+    }
+  }
+}

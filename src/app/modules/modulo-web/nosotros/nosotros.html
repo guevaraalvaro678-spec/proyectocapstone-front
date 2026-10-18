@@ -1,18 +1,20 @@
 <section class="cabecera">
-  <div class="cabecera__interior">
+  <div class="interior">
     <h1>Nosotros</h1>
     <p>{{ ong.nombre }}: jóvenes voluntarios y estudiantes que forman agentes de cambio.</p>
   </div>
 </section>
 
 <section class="bloque">
-  <div class="bloque__interior">
+  <div class="interior">
     <div class="dos">
-      <article class="panel">
+      <article class="panel panel--verde">
+        <span class="ico">flag</span>
         <h2>Nuestra misión</h2>
         <p>{{ ong.descripcion }}</p>
       </article>
-      <article class="panel">
+      <article class="panel panel--naranja">
+        <span class="ico">target</span>
         <h2>Nuestro propósito</h2>
         <p>{{ ong.proposito }}</p>
       </article>
@@ -22,11 +24,19 @@
     <div class="valores">
       @for (valor of valores; track valor.titulo) {
         <article class="valor">
-          <span>{{ valor.icono }}</span>
+          <span class="valor__icono"><span class="ico">{{ valor.icono }}</span></span>
           <h3>{{ valor.titulo }}</h3>
           <p>{{ valor.texto }}</p>
         </article>
       }
+    </div>
+
+    <div class="llamado">
+      <div>
+        <h2>¿Quieres sumarte?</h2>
+        <p>Postula como voluntario o practicante y participa en nuestras actividades.</p>
+      </div>
+      <a class="llamado__boton" routerLink="/participar">Participar</a>
     </div>
   </div>
 </section>

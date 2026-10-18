@@ -37,7 +37,7 @@
       font-size: 1rem;
 
       &:focus {
-        outline: 2px solid #6366f1;
+        outline: 2px solid var(--am-verde-medio);
         border-color: transparent;
       }
     }
@@ -46,7 +46,7 @@
       padding: 0.7rem;
       border: 0;
       border-radius: 0.5rem;
-      background: #4f46e5;
+      background: var(--am-verde);
       color: #fff;
       font-size: 1rem;
       cursor: pointer;

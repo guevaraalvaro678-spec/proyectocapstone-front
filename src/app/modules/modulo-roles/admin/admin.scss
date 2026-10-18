@@ -1,2 +1,295 @@
-// El marco del panel (menú lateral, cabecera y contenido) es el mismo para el administrador y el psicólogo.
-@use '../../../core/estilos/panel';
+:host {
+  display: block;
+}
+
+.panel {
+  display: grid;
+  grid-template-columns: 17.5rem minmax(0, 1fr);
+  min-height: 100dvh;
+  background: var(--am-fondo);
+
+  &__lateral {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    background: var(--am-verde-oscuro);
+    color: rgb(255 255 255 / 0.85);
+  }
+
+  &__marca {
+    padding: 1.4rem 1.25rem 1.2rem;
+    border-bottom: 1px solid rgb(255 255 255 / 0.08);
+  }
+
+  &__nav {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.5rem 0.85rem 1rem;
+
+    a {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 0.15rem;
+      padding: 0.65rem 0.85rem;
+      border-left: 3px solid transparent;
+      border-radius: 0.6rem;
+      color: rgb(255 255 255 / 0.85);
+      font-size: 0.95rem;
+      font-weight: 500;
+      text-decoration: none;
+
+      &:hover {
+        background: rgb(255 255 255 / 0.06);
+        color: #fff;
+      }
+
+      &.activo {
+        border-left-color: var(--am-naranja);
+        background: #2a5a46;
+        color: #fff;
+        font-weight: 600;
+      }
+    }
+  }
+
+  &__grupo {
+    margin: 1.2rem 0.85rem 0.45rem;
+    color: rgb(255 255 255 / 0.5);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  &__pie {
+    padding: 0.85rem;
+    border-top: 1px solid rgb(255 255 255 / 0.08);
+  }
+
+  &__cuenta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem;
+    border-radius: 0.75rem;
+    background: rgb(255 255 255 / 0.05);
+    color: #fff;
+    text-decoration: none;
+
+    &.activo,
+    &:hover {
+      background: #2a5a46;
+    }
+
+    strong,
+    small {
+      display: block;
+    }
+
+    strong {
+      font-size: 0.9rem;
+    }
+
+    small {
+      color: rgb(255 255 255 / 0.6);
+      font-size: 0.7rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+  }
+
+  &__avatar {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 50%;
+    background: var(--am-verde-medio);
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 700;
+
+    &--chico {
+      width: 2.3rem;
+      height: 2.3rem;
+      background: var(--am-verde);
+    }
+  }
+
+  &__salir {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.6rem 0.85rem;
+    border: 0;
+    border-radius: 0.6rem;
+    background: transparent;
+    color: #ffb599;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover {
+      background: rgb(255 255 255 / 0.06);
+    }
+  }
+
+  &__principal {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__barra {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.85rem 1.5rem;
+    border-bottom: 1px solid var(--am-borde-suave);
+    background: rgb(255 255 255 / 0.96);
+    backdrop-filter: blur(8px);
+  }
+
+  &__migas {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.3rem;
+    margin: 0;
+    color: var(--am-gris);
+    font-size: 0.9rem;
+
+    .ico {
+      font-size: 1rem;
+    }
+
+    strong {
+      color: var(--am-verde);
+    }
+  }
+
+  &__barra-acciones {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  &__icono-btn {
+    display: grid;
+    place-items: center;
+    width: 2.3rem;
+    height: 2.3rem;
+    border-radius: 50%;
+    color: var(--am-texto-suave);
+
+    &:hover {
+      background: var(--am-superficie-baja);
+    }
+  }
+
+  &__usuario {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding-left: 0.75rem;
+    border-left: 1px solid var(--am-borde);
+    color: var(--am-texto);
+    text-decoration: none;
+
+    strong,
+    small {
+      display: block;
+      line-height: 1.2;
+    }
+
+    strong {
+      font-size: 0.88rem;
+    }
+
+    small {
+      color: var(--am-gris);
+      font-size: 0.75rem;
+    }
+  }
+
+  &__hamburguesa {
+    display: none;
+    border: 0;
+    background: transparent;
+    color: var(--am-verde);
+    cursor: pointer;
+
+    .ico {
+      font-size: 1.7rem;
+    }
+  }
+
+  &__pagina {
+    flex: 1;
+    padding: 1.5rem;
+  }
+
+  &__creditos {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--am-borde-suave);
+    color: var(--am-gris);
+    font-size: 0.8rem;
+  }
+
+  &__velo {
+    display: none;
+  }
+}
+
+@media (max-width: 64rem) {
+  .panel {
+    grid-template-columns: 1fr;
+
+    &__lateral {
+      position: fixed;
+      left: 0;
+      z-index: 50;
+      width: 17.5rem;
+      transform: translateX(-100%);
+      transition: transform 0.25s ease;
+    }
+
+    &--menu-abierto &__lateral {
+      transform: none;
+    }
+
+    &--menu-abierto &__velo {
+      position: fixed;
+      inset: 0;
+      z-index: 45;
+      display: block;
+      background: rgb(1 45 29 / 0.4);
+    }
+
+    &__hamburguesa {
+      display: block;
+    }
+
+    &__usuario span:last-child {
+      display: none;
+    }
+
+    &__pagina {
+      padding: 1rem;
+    }
+  }
+}

@@ -1,0 +1,38 @@
+.logo {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 1.5rem;
+
+  p {
+    margin: 0;
+    color: var(--am-gris);
+    font-size: 0.9rem;
+  }
+
+  &__vista {
+    display: grid;
+    place-items: center;
+    min-width: 14rem;
+    min-height: 5rem;
+    padding: 0.75rem 1rem;
+    border: 2px dashed var(--am-borde);
+    border-radius: 0.75rem;
+
+    img {
+      max-height: 4.5rem;
+      max-width: 16rem;
+      object-fit: contain;
+    }
+  }
+}
+
+.subir {
+  cursor: pointer;
+}
+
+@media (max-width: 56rem) {
+  .logo {
+    grid-template-columns: 1fr;
+  }
+}

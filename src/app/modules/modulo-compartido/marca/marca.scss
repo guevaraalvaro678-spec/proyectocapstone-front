@@ -1,0 +1,57 @@
+.marca {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--am-verde);
+
+  &__icono {
+    display: grid;
+    place-items: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    flex-shrink: 0;
+    border-radius: 0.7rem;
+    background: var(--am-verde);
+    color: #fff;
+
+    .ico {
+      font-size: 1.5rem;
+    }
+  }
+
+  &__logo {
+    max-width: 3rem;
+    max-height: 3rem;
+    border-radius: 0.6rem;
+    object-fit: contain;
+  }
+
+  &__texto {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+
+    strong {
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    small {
+      margin-top: 0.15rem;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.75;
+    }
+  }
+
+  &--claro {
+    color: #fff;
+
+    .marca__icono {
+      background: rgb(255 255 255 / 0.12);
+    }
+  }
+}

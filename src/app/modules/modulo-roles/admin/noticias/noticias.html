@@ -1,0 +1,139 @@
+<header class="am-encabezado">
+  <div>
+    <p class="am-encabezado__migas">Panel administrativo / <strong>Noticias</strong></p>
+    <h2>Noticias</h2>
+    <p>Administra el contenido informativo que se muestra en el portal público.</p>
+  </div>
+  <button type="button" class="ui-btn ui-btn--acento" (click)="nueva()"><span class="ico">add</span> Nueva noticia</button>
+</header>
+
+@if (error()) {
+  <p class="ui-mensaje ui-mensaje--error">{{ error() }}</p>
+}
+@if (aviso()) {
+  <p class="ui-mensaje ui-mensaje--exito">{{ aviso() }}</p>
+}
+
+<div class="ui-indicadores">
+  <div class="ui-indicador"><span>Borradores</span><strong>{{ indicadores().borradores }}</strong></div>
+  <div class="ui-indicador"><span>Publicadas</span><strong>{{ indicadores().publicadas }}</strong></div>
+  <div class="ui-indicador"><span>No publicadas</span><strong>{{ indicadores().noPublicadas }}</strong></div>
+  <div class="ui-indicador"><span>Total</span><strong>{{ indicadores().total }}</strong></div>
+</div>
+
+<div class="ui-filtros">
+  <label class="crece">
+    Buscar
+    <input type="search" [value]="buscar()" (input)="buscar.set($any($event.target).value)" placeholder="Buscar por título..." />
+  </label>
+  <label>
+    Estado
+    <select [value]="filtro()" (change)="filtro.set($any($event.target).value)">
+      <option value="">Todos</option>
+      <option value="Borrador">Borrador</option>
+      <option value="Publicada">Publicada</option>
+      <option value="NoPublicada">No publicada</option>
+    </select>
+  </label>
+</div>
+
+@if (cargando()) {
+  <p class="ui-vacio">Cargando noticias...</p>
+} @else if (filtradas().length === 0) {
+  <p class="ui-vacio">No hay noticias. Usa "Nueva noticia" para crear la primera.</p>
+} @else {
+  <div class="ui-tabla">
+    <table>
+      <thead>
+        <tr><th>Noticia</th><th>Fecha</th><th>Estado</th><th></th></tr>
+      </thead>
+      <tbody>
+        @for (n of filtradas(); track n.id) {
+          <tr>
+            <td class="noticia">
+              @if (n.imagenUrl) {
+                <img [src]="n.imagenUrl" alt="" />
+              }
+              <span><strong>{{ n.titulo }}</strong><small>{{ n.resumen }}</small></span>
+            </td>
+            <td>{{ n.fecha | date: 'd MMM, y' }}</td>
+            <td>
+              <span
+                class="ui-etiqueta"
+                [class.ui-etiqueta--verde]="n.estado === 'Publicada'"
+                [class.ui-etiqueta--naranja]="n.estado === 'Borrador'"
+                [class.ui-etiqueta--gris]="n.estado === 'NoPublicada'"
+              >
+                {{ etiquetas[n.estado] }}
+              </span>
+            </td>
+            <td class="ui-tabla__acciones">
+              <button type="button" class="ui-btn ui-btn--claro ui-btn--chico" (click)="editar(n)"><span class="ico">edit</span> Editar</button>
+              <button type="button" class="ui-btn ui-btn--peligro ui-btn--chico" (click)="eliminar(n)"><span class="ico">delete</span></button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+@if (editando() !== null) {
+  <div class="am-velo" (click)="editando.set(null)"></div>
+  <aside class="am-cajon" role="dialog" aria-label="Noticia">
+    <div class="am-cajon__cabecera">
+      <div>
+        <small>Catálogo de noticias</small>
+        <h3>{{ editando() ? 'Editar noticia' : 'Nueva noticia' }}</h3>
+      </div>
+      <button type="button" aria-label="Cerrar" (click)="editando.set(null)"><span class="ico">close</span></button>
+    </div>
+    <form class="am-cajon__cuerpo ui-form" [formGroup]="form" (ngSubmit)="guardar()" id="formNoticia">
+      <label>
+        Título
+        <input type="text" formControlName="titulo" />
+      </label>
+      <label>
+        Resumen (se ve en la tarjeta)
+        <textarea rows="2" formControlName="resumen"></textarea>
+      </label>
+      <label>
+        Contenido completo (opcional)
+        <textarea rows="6" formControlName="contenido"></textarea>
+      </label>
+      <div class="ui-form__fila">
+        <label>
+          Estado
+          <select formControlName="estado">
+            <option value="Borrador">Borrador</option>
+            <option value="Publicada">Publicada</option>
+            <option value="NoPublicada">No publicada</option>
+          </select>
+        </label>
+        <label>
+          Fecha
+          <input type="date" formControlName="fecha" />
+        </label>
+      </div>
+      <div class="imagen">
+        @if (imagenUrl(); as url) {
+          <img [src]="url" alt="Imagen de la noticia" />
+        }
+        <label class="ui-btn ui-btn--claro subir">
+          <span class="ico">image</span> {{ subiendo() ? 'Subiendo...' : imagenUrl() ? 'Cambiar imagen' : 'Subir imagen' }}
+          <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" (change)="elegirImagen($event)" hidden />
+        </label>
+        @if (imagenUrl()) {
+          <button type="button" class="ui-btn ui-btn--claro" (click)="imagenId.set(null); imagenUrl.set(null)">Quitar</button>
+        }
+      </div>
+      @if (errorCajon()) {
+        <p class="ui-mensaje ui-mensaje--error">{{ errorCajon() }}</p>
+      }
+    </form>
+    <div class="am-cajon__pie">
+      <button type="button" class="ui-btn ui-btn--claro" (click)="editando.set(null)">Cancelar</button>
+      <button type="submit" form="formNoticia" class="ui-btn" [disabled]="guardando() || subiendo()">{{ guardando() ? 'Guardando...' : 'Guardar' }}</button>
+    </div>
+  </aside>
+}

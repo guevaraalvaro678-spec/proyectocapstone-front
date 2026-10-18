@@ -1,136 +1,153 @@
-<section class="eventos">
-  <header class="eventos__cabecera">
-    <div>
-      <h2>Eventos</h2>
-      <p>Los eventos publicados aparecen en el banner de la portada del sitio web.</p>
-    </div>
-    <div class="eventos__acciones">
-      @if (eventos().length > 0) {
-        <span class="eventos__contador">{{ publicados() }} de {{ eventos().length }} publicados</span>
-      }
-      <button type="button" class="boton" (click)="nuevo()" [disabled]="formularioAbierto()">
-        + Nuevo evento
-      </button>
-    </div>
-  </header>
+<header class="am-encabezado">
+  <div>
+    <p class="am-encabezado__migas">Panel administrativo / <strong>Campañas y eventos</strong></p>
+    <h2>Campañas y eventos</h2>
+    <p>Las campañas aparecen en "Nuestras campañas" y los eventos en "Próximos eventos" del inicio. Los que tienen imagen también salen en la portada.</p>
+  </div>
+  <div class="ui-acciones">
+    <button type="button" class="ui-btn ui-btn--acento" (click)="nuevo('Campana')" [disabled]="formularioAbierto()"><span class="ico">add</span> Nueva campaña</button>
+    <button type="button" class="ui-btn ui-btn--claro" (click)="nuevo('Evento')" [disabled]="formularioAbierto()"><span class="ico">add</span> Nuevo evento</button>
+  </div>
+</header>
 
-  @if (error()) {
-    <p class="eventos__mensaje eventos__mensaje--error">{{ error() }}</p>
-  }
-  @if (aviso()) {
-    <p class="eventos__mensaje eventos__mensaje--exito">{{ aviso() }}</p>
-  }
+@if (error()) {
+  <p class="ui-mensaje ui-mensaje--error">{{ error() }}</p>
+}
+@if (aviso()) {
+  <p class="ui-mensaje ui-mensaje--exito">{{ aviso() }}</p>
+}
 
-  @if (formularioAbierto()) {
-    <form class="formulario" [formGroup]="form" (ngSubmit)="guardar()">
-      <h3>{{ editandoId() ? 'Editar evento' : 'Nuevo evento' }}</h3>
+@if (formularioAbierto()) {
+  <form class="ui-tarjeta ui-form formulario" [formGroup]="form" (ngSubmit)="guardar()">
+    <h3>{{ editandoId() ? 'Editar' : form.controls.tipo.value === 'Campana' ? 'Nueva campaña' : 'Nuevo evento' }}</h3>
 
+    <div class="ui-form__fila">
       <label>
-        Título
-        <input type="text" formControlName="titulo" maxlength="150" />
-        @if (form.controls.titulo.touched && form.controls.titulo.invalid) {
-          <small class="formulario__aviso">Escribe un título (mínimo 3 caracteres)</small>
-        }
+        Tipo
+        <select formControlName="tipo">
+          <option value="Campana">Campaña</option>
+          <option value="Evento">Evento</option>
+        </select>
       </label>
-
       <label>
-        Descripción
-        <textarea rows="3" formControlName="descripcion" maxlength="600"></textarea>
-        @if (form.controls.descripcion.touched && form.controls.descripcion.invalid) {
-          <small class="formulario__aviso">Describe el evento (mínimo 10 caracteres)</small>
-        }
-      </label>
-
-      <div class="formulario__fila">
-        <label>
-          Fecha y hora
-          <input type="datetime-local" formControlName="fechaInicio" />
-          @if (form.controls.fechaInicio.touched && form.controls.fechaInicio.invalid) {
-            <small class="formulario__aviso">Elige la fecha y la hora</small>
+        Modalidad
+        <select formControlName="modalidad">
+          @for (modalidad of modalidades; track modalidad) {
+            <option [value]="modalidad">{{ modalidad }}</option>
           }
-        </label>
+        </select>
+      </label>
+    </div>
 
-        <label>
-          Modalidad
-          <select formControlName="modalidad">
-            @for (modalidad of modalidades; track modalidad) {
-              <option [value]="modalidad">{{ modalidad }}</option>
-            }
-          </select>
-        </label>
-      </div>
+    <label>
+      Título
+      <input type="text" formControlName="titulo" maxlength="150" />
+      @if (form.controls.titulo.touched && form.controls.titulo.invalid) {
+        <small class="ui-form__aviso">Escribe un título (mínimo 3 caracteres)</small>
+      }
+    </label>
 
+    <label>
+      Descripción
+      <textarea rows="3" formControlName="descripcion" maxlength="600"></textarea>
+      @if (form.controls.descripcion.touched && form.controls.descripcion.invalid) {
+        <small class="ui-form__aviso">Describe la actividad (mínimo 10 caracteres)</small>
+      }
+    </label>
+
+    <div class="ui-form__fila">
+      <label>
+        Fecha y hora
+        <input type="datetime-local" formControlName="fechaInicio" />
+        @if (form.controls.fechaInicio.touched && form.controls.fechaInicio.invalid) {
+          <small class="ui-form__aviso">Elige la fecha y la hora</small>
+        }
+      </label>
       <label>
         Lugar o enlace
-        <input type="text" formControlName="lugar" maxlength="150" placeholder="Ej. Auditorio Central o Zoom" />
+        <input type="text" formControlName="lugar" maxlength="150" placeholder="Ej. San Juan de Lurigancho, Lima" />
         @if (form.controls.lugar.touched && form.controls.lugar.invalid) {
-          <small class="formulario__aviso">Indica dónde será</small>
+          <small class="ui-form__aviso">Indica dónde será</small>
         }
       </label>
+    </div>
 
-      <label>
-        Imagen (opcional)
-        <input type="url" formControlName="imagenUrl" placeholder="https://..." />
-        @if (form.controls.imagenUrl.touched && form.controls.imagenUrl.invalid) {
-          <small class="formulario__aviso">Debe ser una dirección que empiece con http o https</small>
-        }
+    <div class="imagen">
+      @if (url(form.controls.imagenUrl.value); as vista) {
+        <img [src]="vista" alt="Imagen" />
+      }
+      <label class="ui-btn ui-btn--claro subir">
+        <span class="ico">image</span> {{ subiendo() ? 'Subiendo...' : form.controls.imagenUrl.value ? 'Cambiar imagen' : 'Subir imagen' }}
+        <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" (change)="elegirImagen($event)" hidden />
       </label>
-
-      <label class="formulario__opcion">
-        <input type="checkbox" formControlName="publicado" />
-        <span>Publicado (visible en el sitio web)</span>
-      </label>
-
-      <div class="formulario__botones">
-        <button type="submit" class="boton" [disabled]="guardando()">
-          {{ guardando() ? 'Guardando...' : 'Guardar' }}
-        </button>
-        <button type="button" class="boton boton--claro" (click)="cancelar()">Cancelar</button>
-      </div>
-    </form>
-  }
-
-  @if (cargando()) {
-    <p class="eventos__vacio">Cargando eventos...</p>
-  } @else if (eventos().length === 0 && !error()) {
-    <p class="eventos__vacio">Todavía no hay eventos. Crea el primero con el botón "Nuevo evento".</p>
-  } @else {
-    <div class="eventos__lista">
-      @for (evento of eventos(); track evento.id) {
-        <article class="evento" [class.evento--oculto]="!evento.publicado">
-          <div class="evento__fecha">
-            <strong>{{ evento.fechaInicio | date: 'dd' }}</strong>
-            <small>{{ evento.fechaInicio | date: 'MMM' }}</small>
-          </div>
-
-          <div class="evento__datos">
-            <div class="evento__etiquetas">
-              <span class="etiqueta">{{ evento.modalidad }}</span>
-              @if (evento.publicado) {
-                <span class="etiqueta etiqueta--publicado">Publicado</span>
-              } @else {
-                <span class="etiqueta etiqueta--borrador">Borrador</span>
-              }
-              @if (yaPaso(evento)) {
-                <span class="etiqueta etiqueta--pasado">Ya pasó</span>
-              }
-            </div>
-            <h3>{{ evento.titulo }}</h3>
-            <p>{{ evento.descripcion }}</p>
-            <small>
-              🕒 {{ evento.fechaInicio | date: 'dd/MM/yyyy HH:mm' }} · 📍 {{ evento.lugar }}
-            </small>
-          </div>
-
-          <div class="evento__botones">
-            <button type="button" class="boton boton--claro" (click)="editar(evento)">Editar</button>
-            <button type="button" class="boton boton--claro" (click)="alternarPublicado(evento)">
-              {{ evento.publicado ? 'Ocultar' : 'Publicar' }}
-            </button>
-            <button type="button" class="boton boton--peligro" (click)="eliminar(evento)">Eliminar</button>
-          </div>
-        </article>
+      @if (form.controls.imagenUrl.value) {
+        <button type="button" class="ui-btn ui-btn--claro" (click)="form.patchValue({ imagenUrl: '' })">Quitar</button>
       }
     </div>
-  }
-</section>
+
+    <label class="ui-check">
+      <input type="checkbox" formControlName="publicado" /> Publicado (visible en el sitio)
+    </label>
+
+    <div class="ui-form__botones">
+      <button type="submit" class="ui-btn" [disabled]="guardando() || subiendo()">{{ guardando() ? 'Guardando...' : 'Guardar' }}</button>
+      <button type="button" class="ui-btn ui-btn--claro" (click)="cancelar()">Cancelar</button>
+    </div>
+  </form>
+}
+
+<div class="ui-filtros">
+  <label>
+    Mostrar
+    <select [value]="filtroTipo()" (change)="filtroTipo.set($any($event.target).value)">
+      <option value="">Campañas y eventos</option>
+      <option value="Campana">Solo campañas</option>
+      <option value="Evento">Solo eventos</option>
+    </select>
+  </label>
+  <span class="contador">{{ publicados() }} de {{ eventos().length }} publicados</span>
+</div>
+
+@if (cargando()) {
+  <p class="ui-vacio">Cargando...</p>
+} @else if (filtrados().length === 0 && !error()) {
+  <p class="ui-vacio">Todavía no hay campañas ni eventos. Crea el primero con los botones de arriba.</p>
+} @else {
+  <div class="lista">
+    @for (evento of filtrados(); track evento.id) {
+      <article class="ui-tarjeta item" [class.item--oculto]="!evento.publicado">
+        <div class="item__imagen">
+          @if (url(evento.imagenUrl); as img) {
+            <img [src]="img" [alt]="evento.titulo" />
+          } @else {
+            <span class="ico">{{ evento.tipo === 'Campana' ? 'campaign' : 'event' }}</span>
+          }
+        </div>
+        <div class="item__datos">
+          <div class="item__etiquetas">
+            <span class="ui-etiqueta ui-etiqueta--sin-punto" [class.ui-etiqueta--naranja]="evento.tipo === 'Campana'" [class.ui-etiqueta--verde]="evento.tipo === 'Evento'">
+              {{ evento.tipo === 'Campana' ? 'Campaña' : 'Evento' }}
+            </span>
+            <span class="ui-etiqueta ui-etiqueta--gris ui-etiqueta--sin-punto">{{ evento.modalidad }}</span>
+            <span class="ui-etiqueta" [class.ui-etiqueta--verde]="evento.publicado" [class.ui-etiqueta--gris]="!evento.publicado">
+              {{ evento.publicado ? 'Publicada' : 'Borrador' }}
+            </span>
+            @if (yaPaso(evento)) {
+              <span class="ui-etiqueta ui-etiqueta--gris ui-etiqueta--sin-punto">Ya pasó</span>
+            }
+          </div>
+          <h3>{{ evento.titulo }}</h3>
+          <p>{{ evento.descripcion }}</p>
+          <small><span class="ico">calendar_today</span> {{ evento.fechaInicio | date: 'dd/MM/yyyy HH:mm' }} · <span class="ico">location_on</span> {{ evento.lugar }}</small>
+        </div>
+        <div class="item__botones">
+          <button type="button" class="ui-btn ui-btn--claro ui-btn--chico" (click)="editar(evento)"><span class="ico">edit</span> Editar</button>
+          <button type="button" class="ui-btn ui-btn--claro ui-btn--chico" (click)="alternarPublicado(evento)">
+            <span class="ico">{{ evento.publicado ? 'visibility_off' : 'visibility' }}</span> {{ evento.publicado ? 'Despublicar' : 'Publicar' }}
+          </button>
+          <button type="button" class="ui-btn ui-btn--peligro ui-btn--chico" (click)="eliminar(evento)"><span class="ico">delete</span></button>
+        </div>
+      </article>
+    }
+  </div>
+}

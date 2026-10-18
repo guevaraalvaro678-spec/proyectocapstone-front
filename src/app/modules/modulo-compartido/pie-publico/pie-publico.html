@@ -1,0 +1,29 @@
+<footer class="pie">
+  <div class="pie__interior">
+    <div class="pie__marca">
+      <app-marca [claro]="true" />
+      <p>Asociación civil dedicada al desarrollo de actividades y jornadas sociales con jóvenes voluntarios y practicantes.</p>
+    </div>
+
+    <div class="pie__contacto">
+      <p><strong>Contacto:</strong> <a [href]="'mailto:' + ong.correo">{{ ong.correo }}</a></p>
+      <p><strong>Sede:</strong> Lima, Perú</p>
+    </div>
+
+    <div class="pie__redes" aria-label="Redes y contacto">
+      <a [href]="ong.web" target="_blank" rel="noopener" aria-label="Sitio web"><span class="ico">public</span></a>
+      <a [href]="ong.facebook" target="_blank" rel="noopener" aria-label="Facebook"><span class="ico">groups</span></a>
+      <a [href]="'mailto:' + ong.correo" aria-label="Correo"><span class="ico">mail</span></a>
+    </div>
+  </div>
+
+  <div class="pie__base">
+    <span>© {{ anio }} AMAAC Perú. Todos los derechos reservados.</span>
+    <nav aria-label="Enlaces del pie">
+      <a routerLink="/nosotros">Nosotros</a>
+      <a routerLink="/iniciativas">Iniciativas</a>
+      <a routerLink="/donar">Donar</a>
+      <a routerLink="/contacto">Contacto</a>
+    </nav>
+  </div>
+</footer>

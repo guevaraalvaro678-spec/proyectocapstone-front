@@ -1,57 +1,157 @@
-<section class="dash">
-  <header class="dash__cabecera">
-    <div>
-      <h2>Dashboard</h2>
-      <p>Resumen del sistema en tiempo real.</p>
+<header class="am-encabezado">
+  <div>
+    <p class="am-encabezado__migas"><span class="punto"></span> {{ auth.sesion()?.nombre || auth.sesion()?.usuario }} · Administración</p>
+    <h2>Dashboard</h2>
+    <p>Resumen general de la gestión de AMAAC Perú.</p>
+  </div>
+</header>
+
+@if (error()) {
+  <p class="ui-mensaje ui-mensaje--error">{{ error() }}</p>
+}
+
+@if (datos(); as d) {
+  <div class="resumen">
+    <section class="ui-tarjeta caja">
+      <h3><span class="caja__icono"><span class="ico">how_to_reg</span></span> Proceso de selección</h3>
+      <a class="fila" routerLink="../postulaciones">
+        <span><small>Postulaciones pendientes</small><strong>{{ pendientes() }}</strong></span>
+        <span class="fila__enlace fila__enlace--naranja">Ver postulaciones <span class="ico">arrow_forward</span></span>
+      </a>
+      <a class="fila" routerLink="../entrevistas">
+        <span><small>Próximas sesiones</small><strong>{{ d.proximasSesiones.length }}</strong></span>
+        <span class="fila__enlace">Ver sesiones <span class="ico">arrow_forward</span></span>
+      </a>
+      <a class="fila" routerLink="../postulaciones" [queryParams]="{ estado: 'EnCalificacion' }">
+        <span><small>Evaluaciones pendientes</small><strong class="naranja">{{ evaluaciones() }}</strong></span>
+        <span class="fila__enlace fila__enlace--naranja">Evaluar ahora <span class="ico">arrow_forward</span></span>
+      </a>
+    </section>
+
+    <section class="ui-tarjeta caja">
+      <h3><span class="caja__icono"><span class="ico">groups</span></span> Comunidad AMAAC</h3>
+      <small class="caja__etiqueta">Total de miembros activos</small>
+      <p class="caja__grande">{{ miembros() }} <small>miembros activos</small></p>
+      <div class="barra" role="img" [attr.aria-label]="pctVoluntarios() + '% voluntarios'">
+        <span class="barra__verde" [style.width.%]="pctVoluntarios()"></span>
+        <span class="barra__naranja" [style.width.%]="miembros() ? 100 - pctVoluntarios() : 0"></span>
+      </div>
+      <p class="leyenda">
+        <span><i class="punto"></i> Voluntarios: <strong>{{ d.voluntarios }}</strong></span>
+        <span><i class="punto punto--naranja"></i> Practicantes: <strong>{{ d.practicantes }}</strong></span>
+      </p>
+      <a class="fila fila--pie" routerLink="../miembros">
+        <small>Listado general</small>
+        <span class="fila__enlace">Ver miembros <span class="ico">arrow_forward</span></span>
+      </a>
+    </section>
+
+    <section class="ui-tarjeta caja">
+      <h3><span class="caja__icono caja__icono--naranja"><span class="ico">shield_person</span></span> Resumen administrativo</h3>
+      <a class="fila" routerLink="../usuarios">
+        <span><small>Personal administrativo</small><strong>{{ d.personalAdministrativo }} <small>integrantes</small></strong></span>
+        <span class="fila__enlace">Ver equipo <span class="ico">arrow_forward</span></span>
+      </a>
+      <a class="fila" routerLink="../donaciones">
+        <span><small>Donaciones pendientes</small><strong class="naranja">{{ donaciones().pendientes }} <small>por recibir</small></strong></span>
+        <span class="fila__enlace fila__enlace--naranja">Ver donaciones <span class="ico">arrow_forward</span></span>
+      </a>
+      <a class="fila" routerLink="../iniciativas">
+        <span><small>Iniciativas por revisar</small><strong>{{ d.iniciativasPendientes }}</strong></span>
+        <span class="fila__enlace">Revisar <span class="ico">arrow_forward</span></span>
+      </a>
+    </section>
+  </div>
+
+  <section class="ui-tarjeta bloque">
+    <div class="bloque__cabecera">
+      <div>
+        <h3>Proceso de postulaciones</h3>
+        <p>Flujo secuencial desde la postulación hasta la aceptación formal.</p>
+      </div>
+      <span class="ui-etiqueta ui-etiqueta--gris ui-etiqueta--sin-punto">Total procesadas: {{ d.totalPostulaciones }}</span>
     </div>
-  </header>
-
-  @if (error()) {
-    <p class="dash__error">{{ error() }}</p>
-  }
-
-  @if (cargando()) {
-    <p class="dash__vacio">Cargando resumen...</p>
-  } @else if (datos(); as d) {
-    <div class="dash__indicadores">
-      @for (item of indicadores(); track item.titulo) {
-        <a class="dash__tarjeta" [class.dash__tarjeta--atencion]="item.atencion" [routerLink]="'../' + item.ruta">
-          <span>{{ item.titulo }}</span>
-          <strong>{{ item.valor }}</strong>
-        </a>
-      }
-    </div>
-
-    <div class="dash__paneles">
-      <article class="dash__panel">
-        <h3>Citas de los próximos 7 días</h3>
-        <div class="dash__barras">
-          @for (dia of d.citasPorDia; track dia.fecha) {
-            <div class="dash__barra">
-              <span class="dash__valor">{{ dia.cantidad }}</span>
-              <div class="dash__columna" [style.height.%]="(dia.cantidad / maximoCitas()) * 100"></div>
-              <span>{{ etiquetaDia(dia.fecha) }}</span>
-            </div>
+    @for (paso of embudo(); track paso.etiqueta) {
+      <div class="embudo">
+        <div class="embudo__texto">
+          <span>{{ paso.etiqueta }}</span>
+          @if (paso.valor > 0) {
+            <span><strong>{{ paso.valor }}</strong> <small>({{ paso.porcentaje }}%)</small></span>
+          } @else {
+            <em>Sin datos disponibles</em>
           }
         </div>
-      </article>
+        <div class="embudo__barra">
+          <span [class.alerta]="paso.alerta" [style.width.%]="paso.porcentaje"></span>
+        </div>
+      </div>
+    }
+  </section>
 
-      <article class="dash__panel">
-        <h3>Próximas citas</h3>
-        @if (d.proximasCitas.length === 0) {
-          <p class="dash__vacio-panel">No hay citas próximas.</p>
-        } @else {
-          <ul class="dash__lista">
-            @for (cita of d.proximasCitas; track cita.id) {
-              <li>
-                <strong>{{ hora(cita.fechaInicio) }}</strong>
-                <span>{{ cita.pacienteNombre }}<small>{{ fecha(cita.fechaInicio) }}</small></span>
-                <small>{{ cita.psicologoNombre }}</small>
-              </li>
-            }
-          </ul>
-        }
-      </article>
+  <section class="ui-tarjeta bloque">
+    <div class="bloque__cabecera">
+      <div>
+        <h3>Estado de donaciones físicas</h3>
+        <p>Registro y recepción de las donaciones de artículos.</p>
+      </div>
+      <span class="ui-etiqueta ui-etiqueta--gris ui-etiqueta--sin-punto">Total registradas: {{ donaciones().total }}</span>
     </div>
-  }
-</section>
+    <div class="donaciones">
+      <div class="donacion donacion--pendiente">
+        <span>Pendientes de recepción <span class="ico">pending_actions</span></span>
+        <strong>{{ donaciones().pendientes }} <small>({{ donaciones().pPendientes }}%)</small></strong>
+        <small>Registradas, aún no entregadas</small>
+        <div class="embudo__barra"><span class="alerta" [style.width.%]="donaciones().pPendientes"></span></div>
+      </div>
+      <div class="donacion donacion--recibida">
+        <span>Recibidas <span class="ico">check_circle</span></span>
+        <strong>{{ donaciones().recibidas }} <small>({{ donaciones().pRecibidas }}%)</small></strong>
+        <small>Recepción registrada</small>
+        <div class="embudo__barra"><span [style.width.%]="donaciones().pRecibidas"></span></div>
+      </div>
+      <div class="donacion">
+        <span>Descartadas <span class="ico">block</span></span>
+        <strong>{{ donaciones().descartadas }} <small>({{ donaciones().pDescartadas }}%)</small></strong>
+        <small>No continuaron con el proceso</small>
+        <div class="embudo__barra"><span class="gris" [style.width.%]="donaciones().pDescartadas"></span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloque">
+    <div class="bloque__cabecera">
+      <div>
+        <h3>Próximas sesiones de entrevista</h3>
+        <p>Convocatorias para postulantes habilitados.</p>
+      </div>
+      <a class="ui-btn ui-btn--claro ui-btn--chico" routerLink="../entrevistas">Ver todas <span class="ico">arrow_forward</span></a>
+    </div>
+    @if (d.proximasSesiones.length === 0) {
+      <div class="ui-vacio">
+        <span class="ico vacio-icono">event_busy</span>
+        <p><strong>No hay próximas sesiones programadas</strong></p>
+        <small>Cuando se programe una nueva sesión, aparecerá en esta sección.</small>
+      </div>
+    } @else {
+      <div class="ui-tabla">
+        <table>
+          <thead>
+            <tr><th>Sesión</th><th>Fecha y hora</th><th>Inscritos</th><th>Estado</th></tr>
+          </thead>
+          <tbody>
+            @for (s of d.proximasSesiones; track s.id) {
+              <tr>
+                <td><span class="am-codigo">{{ s.codigo }}</span><br />{{ s.nombre }}</td>
+                <td>{{ s.inicio | date: "EEE d 'de' MMM" : '-0500' }}<small>{{ s.inicio | date: 'HH:mm' : '-0500' }} – {{ s.fin | date: 'HH:mm' : '-0500' }}</small></td>
+                <td>{{ s.inscritos }} de {{ s.cupo }}</td>
+                <td><span class="ui-etiqueta ui-etiqueta--verde">{{ s.estado }}</span></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+} @else if (!error()) {
+  <p class="ui-vacio">Cargando indicadores...</p>
+}

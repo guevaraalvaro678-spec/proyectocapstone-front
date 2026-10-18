@@ -1,0 +1,191 @@
+<header class="am-encabezado">
+  <div>
+    <p class="am-encabezado__migas">Panel administrativo / <strong>Iniciativas</strong></p>
+    <h2>Iniciativas</h2>
+    <p>Revisa las iniciativas que proponen los miembros y administra las que se publican.</p>
+  </div>
+  <button type="button" class="ui-btn ui-btn--acento" (click)="nueva()"><span class="ico">add</span> Nueva iniciativa</button>
+</header>
+
+@if (error()) {
+  <p class="ui-mensaje ui-mensaje--error">{{ error() }}</p>
+}
+@if (aviso()) {
+  <p class="ui-mensaje ui-mensaje--exito">{{ aviso() }}</p>
+}
+
+<div class="pestanas" role="tablist">
+  <button type="button" role="tab" [class.activa]="pestana() === 'todas'" (click)="pestana.set('todas')">
+    Iniciativas <span class="contador">{{ iniciativas().length }}</span>
+  </button>
+  <button type="button" role="tab" [class.activa]="pestana() === 'revision'" (click)="pestana.set('revision')">
+    Solicitudes de publicación <span class="contador contador--naranja">{{ indicadores().pendientes }}</span>
+  </button>
+</div>
+
+<div class="ui-tarjeta resumen">
+  <div><span class="resumen__icono resumen__icono--naranja"><span class="ico">pending_actions</span></span><span><small>Pendientes</small><strong>{{ indicadores().pendientes }}</strong></span></div>
+  <div><span class="resumen__icono"><span class="ico">check_circle</span></span><span><small>Aprobadas</small><strong>{{ indicadores().aprobadas }}</strong></span></div>
+  <div><span class="resumen__icono resumen__icono--gris"><span class="ico">cancel</span></span><span><small>Rechazadas</small><strong>{{ indicadores().rechazadas }}</strong></span></div>
+</div>
+
+<div class="ui-filtros">
+  <label class="crece">
+    Buscar
+    <input type="search" [value]="buscar()" (input)="buscar.set($any($event.target).value)" placeholder="Buscar por nombre de iniciativa o creador..." />
+  </label>
+  @if (pestana() === 'todas') {
+    <label>
+      Estado
+      <select [value]="filtroEstado()" (change)="filtroEstado.set($any($event.target).value)">
+        <option value="">Todos</option>
+        <option value="Pendiente">Pendientes</option>
+        <option value="Aprobada">Aprobadas</option>
+        <option value="Rechazada">Rechazadas</option>
+      </select>
+    </label>
+  }
+</div>
+
+@if (cargando()) {
+  <p class="ui-vacio">Cargando iniciativas...</p>
+} @else if (filtradas().length === 0) {
+  <p class="ui-vacio">{{ pestana() === 'revision' ? 'No hay iniciativas pendientes de revisión.' : 'No hay iniciativas.' }}</p>
+} @else {
+  <div class="ui-tabla">
+    <table>
+      <thead>
+        <tr><th>Iniciativa</th><th>Creada por</th><th>Fecha de creación</th><th>Estado</th><th></th></tr>
+      </thead>
+      <tbody>
+        @for (i of filtradas(); track i.id) {
+          <tr>
+            <td class="ini">
+              <strong>{{ i.titulo }}</strong>
+              <small>{{ i.texto }}</small>
+            </td>
+            <td>
+              @if (i.creadaPorNombre) {
+                {{ i.creadaPorNombre }}
+                <span class="ui-etiqueta ui-etiqueta--sin-punto" [class.ui-etiqueta--naranja]="i.creadaPorRol === 'Practicante'" [class.ui-etiqueta--verde]="i.creadaPorRol !== 'Practicante'">{{ i.creadaPorRol }}</span>
+              } @else {
+                <span class="suave">Administración</span>
+              }
+            </td>
+            <td>{{ i.fechaCreacion | date: 'dd/MM/yyyy' }}</td>
+            <td>
+              <span
+                class="ui-etiqueta"
+                [class.ui-etiqueta--naranja]="i.estado === 'Pendiente'"
+                [class.ui-etiqueta--verde]="i.estado === 'Aprobada'"
+                [class.ui-etiqueta--gris]="i.estado === 'Rechazada'"
+              >
+                {{ etiquetas[i.estado] }}
+              </span>
+              @if (!i.activa) {
+                <span class="ui-etiqueta ui-etiqueta--gris ui-etiqueta--sin-punto">Oculta</span>
+              }
+            </td>
+            <td class="ui-tabla__acciones">
+              <button type="button" class="ui-btn ui-btn--claro ui-btn--chico" (click)="abrir(i)">Ver detalle</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+@if (editando() !== null) {
+  <div class="am-velo" (click)="editando.set(null)"></div>
+  <aside class="am-cajon" role="dialog" aria-label="Iniciativa">
+    <div class="am-cajon__cabecera">
+      <div>
+        <small>{{ actual()?.creadaPorNombre ? 'Propuesta por ' + actual()?.creadaPorNombre : 'Iniciativa de AMAAC' }}</small>
+        <h3>{{ editando() ? actual()?.titulo : 'Nueva iniciativa' }}</h3>
+        @if (actual(); as a) {
+          <span class="ui-etiqueta" [class.ui-etiqueta--naranja]="a.estado === 'Pendiente'" [class.ui-etiqueta--verde]="a.estado === 'Aprobada'" [class.ui-etiqueta--gris]="a.estado === 'Rechazada'">
+            {{ etiquetas[a.estado] }}
+          </span>
+        }
+      </div>
+      <button type="button" aria-label="Cerrar" (click)="editando.set(null)"><span class="ico">close</span></button>
+    </div>
+
+    <div class="am-cajon__cuerpo">
+      @if (actual()?.estado === 'Pendiente') {
+        <div class="revision">
+          <h4>Revisión de la propuesta</h4>
+          <p>Al aprobarla aparece en el sitio público. Si la rechazas, quien la propuso verá el motivo.</p>
+          <label class="campo">
+            Motivo del rechazo (opcional)
+            <textarea rows="2" [value]="motivo()" (input)="motivo.set($any($event.target).value)"></textarea>
+          </label>
+          <div class="ui-acciones">
+            <button type="button" class="ui-btn ui-btn--peligro" [disabled]="trabajando()" (click)="revisar('Rechazada')">Rechazar</button>
+            <button type="button" class="ui-btn" [disabled]="trabajando()" (click)="revisar('Aprobada')"><span class="ico">check</span> Aprobar</button>
+          </div>
+        </div>
+      }
+      @if (actual()?.estado === 'Rechazada' && actual()?.motivoRechazo) {
+        <p class="ui-mensaje ui-mensaje--aviso"><strong>Motivo del rechazo:</strong> {{ actual()?.motivoRechazo }}</p>
+      }
+
+      <form class="ui-form" [formGroup]="form" (ngSubmit)="guardar()" id="formIniciativa">
+        <label>
+          Título
+          <input type="text" formControlName="titulo" />
+        </label>
+        <label>
+          Descripción
+          <textarea rows="4" formControlName="texto"></textarea>
+        </label>
+        <div class="ui-form__fila">
+          <label>
+            Ícono (si no hay imagen)
+            <input type="text" formControlName="icono" />
+          </label>
+          <label>
+            Color de la tarjeta
+            <select formControlName="color">
+              @for (c of colores; track c) {
+                <option [value]="c">{{ c }}</option>
+              }
+            </select>
+          </label>
+          <label>
+            Orden
+            <input type="number" formControlName="orden" />
+          </label>
+        </div>
+        <div class="imagen">
+          @if (imagenUrl(); as url) {
+            <img [src]="url" alt="Imagen de la iniciativa" />
+          }
+          <label class="ui-btn ui-btn--claro subir">
+            <span class="ico">image</span> {{ subiendo() ? 'Subiendo...' : imagenUrl() ? 'Cambiar imagen' : 'Subir imagen' }}
+            <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" (change)="elegirImagen($event)" hidden />
+          </label>
+          @if (imagenUrl()) {
+            <button type="button" class="ui-btn ui-btn--claro" (click)="imagenId.set(null); imagenUrl.set(null)">Quitar</button>
+          }
+        </div>
+        <label class="ui-check">
+          <input type="checkbox" formControlName="activa" /> Visible en el sitio (si está aprobada)
+        </label>
+      </form>
+
+      @if (errorCajon()) {
+        <p class="ui-mensaje ui-mensaje--error">{{ errorCajon() }}</p>
+      }
+    </div>
+
+    <div class="am-cajon__pie">
+      @if (editando()) {
+        <button type="button" class="ui-btn ui-btn--peligro" (click)="eliminar()"><span class="ico">delete</span> Eliminar</button>
+      }
+      <button type="button" class="ui-btn ui-btn--claro" (click)="editando.set(null)">Cerrar</button>
+      <button type="submit" form="formIniciativa" class="ui-btn" [disabled]="trabajando() || subiendo()">Guardar cambios</button>
+    </div>
+  </aside>
+}

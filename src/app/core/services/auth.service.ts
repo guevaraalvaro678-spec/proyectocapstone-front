@@ -30,6 +30,9 @@ export class AuthService {
   readonly esRRHH = computed(() => this._sesion()?.rol === 'RRHH');
   readonly esVoluntario = computed(() => this._sesion()?.rol === 'Voluntario');
   readonly esPracticante = computed(() => this._sesion()?.rol === 'Practicante');
+  readonly esPostulante = computed(() => this._sesion()?.rol === 'Postulante');
+  /** Voluntario o practicante: ya forma parte de AMAAC. */
+  readonly esMiembro = computed(() => this.esVoluntario() || this.esPracticante());
   /** Quien gestiona voluntarios y practicantes: administradores y Recursos Humanos. */
   readonly esGestion = computed(() => this.esAdmin() || this.esRRHH());
 
@@ -58,6 +61,7 @@ export class AuthService {
     if (this.esAdmin()) return '/admin';
     if (this.esRRHH()) return '/admin/practicantes';
     if (this.esPracticante()) return '/practicante';
+    if (this.esPostulante()) return '/mi-postulacion';
     return '/voluntario';
   }
 

@@ -1,0 +1,82 @@
+<div class="acceso">
+  <app-cabecera-publica />
+
+  <main class="acceso__fondo">
+    <div class="acceso__interior">
+      <div class="acceso__texto">
+        <h1>Súmate a AMAAC Perú</h1>
+        <p>Crea tu cuenta, completa tu postulación y sigue tu proceso desde aquí.</p>
+        <span class="acceso__linea">Voluntariado y prácticas</span>
+      </div>
+
+      <section class="acceso__tarjeta">
+        <h2>Crea tu cuenta</h2>
+        <p>Regístrate para iniciar tu postulación y consultar su estado.</p>
+
+        <form [formGroup]="form" (ngSubmit)="crear()">
+          <label class="acceso__campo">
+            <span>Correo electrónico <span class="req">*</span></span>
+            <span class="acceso__entrada">
+              <span class="ico">mail</span>
+              <input type="email" formControlName="correo" autocomplete="email" placeholder="correo@ejemplo.com" />
+            </span>
+            @if (form.controls.correo.touched && form.controls.correo.invalid) {
+              <small class="acceso__aviso">Escribe un correo válido</small>
+            }
+          </label>
+
+          <label class="acceso__campo">
+            <span>Contraseña <span class="req">*</span></span>
+            <span class="acceso__entrada">
+              <span class="ico">lock</span>
+              <input
+                [type]="verClave() ? 'text' : 'password'"
+                formControlName="password"
+                autocomplete="new-password"
+                placeholder="Crea una contraseña"
+              />
+              <button type="button" [attr.aria-label]="verClave() ? 'Ocultar contraseña' : 'Ver contraseña'" (click)="verClave.set(!verClave())">
+                <span class="ico">{{ verClave() ? 'visibility_off' : 'visibility' }}</span>
+              </button>
+            </span>
+            <small [class.acceso__aviso]="form.controls.password.touched && form.controls.password.invalid">Mínimo 8 caracteres</small>
+          </label>
+
+          <label class="acceso__campo">
+            <span>Confirmar contraseña <span class="req">*</span></span>
+            <span class="acceso__entrada">
+              <span class="ico">lock</span>
+              <input [type]="verClave() ? 'text' : 'password'" formControlName="confirmar" autocomplete="new-password" placeholder="Repite tu contraseña" />
+            </span>
+            @if (form.controls.confirmar.touched && form.hasError('noCoinciden')) {
+              <small class="acceso__aviso">Las contraseñas no coinciden</small>
+            }
+          </label>
+
+          <label class="acceso__check">
+            <input type="checkbox" formControlName="acepto" />
+            <span>Acepto los términos y condiciones y el tratamiento de mis datos personales.</span>
+          </label>
+          @if (form.controls.acepto.touched && form.controls.acepto.invalid) {
+            <small class="acceso__aviso">Debes aceptar para continuar</small>
+          }
+
+          @if (error()) {
+            <p class="acceso__error">{{ error() }}</p>
+          }
+
+          <button type="submit" class="acceso__boton" [disabled]="cargando()">
+            {{ cargando() ? 'Creando cuenta...' : 'Crear cuenta' }}
+          </button>
+
+          @if (google.disponible()) {
+            <span class="acceso__o">o</span>
+            <div #botonGoogle class="acceso__google"></div>
+          }
+        </form>
+
+        <p class="acceso__pie">¿Ya tienes una cuenta? <a routerLink="/login">Inicia sesión</a></p>
+      </section>
+    </div>
+  </main>
+</div>

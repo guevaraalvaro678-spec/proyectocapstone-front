@@ -1,0 +1,38 @@
+<div class="portal">
+  <header class="portal__barra">
+    <div class="portal__interior">
+      <a routerLink="/" class="portal__marca"><app-marca /></a>
+
+      @if (auth.autenticado()) {
+      <nav class="portal__nav" aria-label="Mi postulación">
+        <a routerLink="/mi-postulacion" routerLinkActive="activo">Mi postulación</a>
+        <a routerLink="/postular" routerLinkActive="activo">Formulario</a>
+        <a routerLink="/mi-cuenta-postulante" routerLinkActive="activo">Mi cuenta y seguridad</a>
+      </nav>
+
+      <div class="portal__usuario">
+        <span class="portal__avatar">{{ inicial() }}</span>
+        <span class="portal__nombre">{{ auth.sesion()?.nombre }}</span>
+        <button type="button" (click)="auth.logout('/')"><span class="ico">logout</span> Cerrar sesión</button>
+      </div>
+      } @else {
+        <a class="portal__cancelar" routerLink="/" (click)="cancelar()"><span class="ico">close</span> Cancelar</a>
+      }
+    </div>
+  </header>
+
+  <main class="portal__contenido">
+    <router-outlet />
+  </main>
+
+  <footer class="portal__pie">
+    <div class="portal__interior">
+      <app-marca />
+      <nav>
+        <a routerLink="/nosotros">Nosotros</a>
+        <a routerLink="/iniciativas">Iniciativas</a>
+        <a routerLink="/donar">Donar</a>
+      </nav>
+    </div>
+  </footer>
+</div>

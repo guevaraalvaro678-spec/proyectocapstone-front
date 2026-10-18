@@ -1,0 +1,91 @@
+<header class="am-encabezado">
+  <div>
+    <p class="am-encabezado__migas">Panel administrativo / <strong>Miembros</strong></p>
+    <h2>Miembros</h2>
+    <p>Consulta a los voluntarios y practicantes que forman parte de AMAAC.</p>
+  </div>
+</header>
+
+@if (error()) {
+  <p class="ui-mensaje ui-mensaje--error">{{ error() }}</p>
+}
+
+<div class="ui-indicadores">
+  <div class="ui-indicador">
+    <span>Total de miembros</span>
+    <strong>{{ indicadores().total }}</strong>
+    <small>Total de personas incorporadas</small>
+  </div>
+  <div class="ui-indicador">
+    <span>Miembros activos</span>
+    <strong>{{ indicadores().activos }}</strong>
+    <small>{{ indicadores().voluntarios }} voluntarios · {{ indicadores().practicantes }} practicantes</small>
+    <span class="barra"><span [style.width.%]="pctVoluntarios()"></span></span>
+  </div>
+  <div class="ui-indicador">
+    <span>Miembros inactivos</span>
+    <strong>{{ indicadores().inactivos }}</strong>
+    <small>Cuentas desactivadas</small>
+  </div>
+</div>
+
+<div class="ui-filtros">
+  <label class="crece">
+    Buscar
+    <input type="search" [value]="buscar()" (input)="buscar.set($any($event.target).value)" placeholder="Nombre, DNI o correo" />
+  </label>
+  <label>
+    Tipo
+    <select [value]="tipo()" (change)="tipo.set($any($event.target).value)">
+      <option value="">Todos</option>
+      <option value="Voluntario">Voluntarios</option>
+      <option value="Practicante">Practicantes</option>
+    </select>
+  </label>
+  <label>
+    Estado
+    <select [value]="estado()" (change)="estado.set($any($event.target).value)">
+      <option value="">Todos</option>
+      <option value="activo">Activos</option>
+      <option value="inactivo">Inactivos</option>
+    </select>
+  </label>
+  <button type="button" class="ui-btn ui-btn--claro" (click)="limpiar()"><span class="ico">filter_alt_off</span> Limpiar</button>
+</div>
+
+@if (cargando()) {
+  <p class="ui-vacio">Cargando miembros...</p>
+} @else if (filtrados().length === 0) {
+  <p class="ui-vacio">No hay miembros con esos filtros. Los miembros se incorporan al aceptar su postulación.</p>
+} @else {
+  <div class="ui-tabla">
+    <table>
+      <thead>
+        <tr><th>Miembro</th><th>Tipo</th><th>Departamento</th><th>Incorporación</th><th>Estado</th></tr>
+      </thead>
+      <tbody>
+        @for (m of filtrados(); track m.usuarioId) {
+          <tr>
+            <td>
+              <span class="am-codigo">DNI {{ m.dni || '—' }}</span>
+              <strong class="nombre">{{ m.nombre }}</strong>
+              <small>{{ m.correo }}{{ m.telefono ? ' · ' + m.telefono : '' }}</small>
+            </td>
+            <td>
+              <span class="ui-etiqueta ui-etiqueta--sin-punto" [class.ui-etiqueta--verde]="m.tipo === 'Voluntario'" [class.ui-etiqueta--naranja]="m.tipo === 'Practicante'">
+                {{ m.tipo }}
+              </span>
+            </td>
+            <td>{{ m.departamento }}<small>{{ m.detalle }}</small></td>
+            <td><span class="am-codigo">{{ m.fechaRegistro | date: 'dd/MM/yyyy' }}</span></td>
+            <td>
+              <span class="ui-etiqueta" [class.ui-etiqueta--verde]="m.activo" [class.ui-etiqueta--gris]="!m.activo">
+                {{ m.activo ? 'Activo' : 'Inactivo' }}
+              </span>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

@@ -1,107 +1,40 @@
-<!-- Botones de la portada: los mismos para el banner de eventos y para la portada de bienvenida. -->
-<ng-template #acciones>
-  <a class="boton boton--claro" routerLink="/servicios">Ver servicios →</a>
-  @if (!auth.autenticado()) {
-    <a class="portada__enlace" routerLink="/contacto">Necesito orientación ›</a>
-  }
-</ng-template>
-
-<!--
-  Carrusel de la portada. La bienvenida es siempre la primera diapositiva (fija) y los eventos
-  publicados desde el panel se suman después. Avanza solo, y también con flechas, puntos o deslizando.
--->
+<!-- Portada: carrusel con la bienvenida y las campañas o eventos con imagen. -->
 <section
-  class="carrusel"
+  class="portada"
   aria-roledescription="carrusel"
-  aria-label="Portada y próximos eventos"
+  aria-label="Portada"
   (mouseenter)="pausar()"
   (mouseleave)="reanudar()"
   (pointerdown)="empezarArrastre($event)"
   (pointerup)="terminarArrastre($event)"
   (pointercancel)="cancelarArrastre()"
 >
-  <div class="carrusel__pista" [style.transform]="'translateX(-' + indice() * 100 + '%)'">
-    <!-- Diapositiva fija: bienvenida -->
-    <div
-      class="carrusel__slide"
-      role="group"
-      aria-roledescription="diapositiva"
-      [attr.aria-hidden]="indice() !== 0"
-      [attr.inert]="indice() !== 0 ? '' : null"
-    >
-      <div class="portada">
-        <div class="portada__interior">
-          <div class="portada__texto">
-            <p class="portada__etiqueta">✨ Cuidamos tu bienestar emocional</p>
-            <h1>
-              Cuidar tu mente
-              <span>es el primer paso.</span>
-            </h1>
-            <p class="portada__descripcion">
-              Conoce nuestros servicios de psicología, recibe orientación profesional y agenda tu cita
-              con un equipo que te escucha, sin juicios y con total confidencialidad.
-            </p>
-            <div class="portada__acciones">
-              <ng-container [ngTemplateOutlet]="acciones" />
-            </div>
-          </div>
-
-          <div class="portada__ilustracion" aria-hidden="true">
-            <div class="portada__arco">
-              <span class="portada__emoji">🧘‍♀️</span>
-              <span class="portada__hoja">🌿</span>
-            </div>
-            <span class="portada__circulo"></span>
-            <div class="portada__tarjeta">
-              <span class="portada__corazon">♥</span>
-              <div>
-                <strong>Un espacio para ti</strong>
-                <small>Atención cercana y confidencial</small>
-              </div>
-            </div>
-          </div>
+  <div class="portada__pista" [style.transform]="'translateX(-' + indice() * 100 + '%)'">
+    <div class="portada__slide" [attr.aria-hidden]="indice() !== 0" [attr.inert]="indice() !== 0 ? '' : null">
+      <div class="portada__fondo" style="background-image: url('/img/comunidad.jpg')"></div>
+      <div class="portada__contenido">
+        <h1>Súmate a AMAAC PERÚ</h1>
+        <p>Participa como voluntario o practicante y forma parte de nuestras actividades.</p>
+        <div class="portada__acciones">
+          <a class="btn btn--naranja" routerLink="/participar">Participar</a>
+          <a class="btn btn--blanco" routerLink="/nosotros">Conocer AMAAC</a>
         </div>
       </div>
     </div>
 
-    <!-- Un evento por diapositiva: lo controla el administrador desde el módulo Eventos. -->
-    @for (evento of eventos(); track evento.id; let i = $index) {
-      <div
-        class="carrusel__slide"
-        role="group"
-        aria-roledescription="diapositiva"
-        [attr.aria-hidden]="indice() !== i + 1"
-        [attr.inert]="indice() !== i + 1 ? '' : null"
-      >
-        <div class="portada">
-          <div class="portada__interior">
-            <div class="portada__texto">
-              <p class="portada__etiqueta">🎉 Próximo evento</p>
-              <h2 class="portada__evento">{{ evento.titulo }}</h2>
-
-              <ul class="portada__datos">
-                <li>📅 {{ fecha(evento.fechaInicio) }}</li>
-                <li>🕒 {{ hora(evento.fechaInicio) }}</li>
-                <li>📍 {{ evento.lugar }}</li>
-                <li class="portada__modalidad">{{ evento.modalidad }}</li>
-              </ul>
-
-              <p class="portada__descripcion">{{ evento.descripcion }}</p>
-
-              <div class="portada__acciones">
-                <ng-container [ngTemplateOutlet]="acciones" />
-              </div>
-            </div>
-
-            <div class="portada__ilustracion" aria-hidden="true">
-              <div class="portada__arco">
-                <span class="portada__emoji">{{ icono(evento) }}</span>
-                @if (evento.imagenUrl) {
-                  <img class="portada__imagen" [src]="evento.imagenUrl" alt="" (error)="ocultarImagen($event)" />
-                }
-              </div>
-              <span class="portada__circulo"></span>
-            </div>
+    @for (e of destacados(); track e.id; let i = $index) {
+      <div class="portada__slide" [attr.aria-hidden]="indice() !== i + 1" [attr.inert]="indice() !== i + 1 ? '' : null">
+        <div class="portada__fondo" [style.background-image]="'url(' + e.imagenUrl + ')'"></div>
+        <div class="portada__contenido">
+          <span class="portada__etiqueta">{{ e.tipo === 'Campana' ? 'Campaña' : 'Próximo evento' }}</span>
+          <h2>{{ e.titulo }}</h2>
+          <p>
+            <span class="ico">calendar_today</span> {{ e.fechaInicio | date: "EEEE d 'de' MMMM" : '-0500' }}
+            · <span class="ico">location_on</span> {{ e.lugar }}
+          </p>
+          <div class="portada__acciones">
+            <a class="btn btn--naranja" routerLink="/participar">Participar</a>
+            <a class="btn btn--blanco" routerLink="/" [fragment]="e.tipo === 'Campana' ? 'campanas' : 'eventos'">Ver más</a>
           </div>
         </div>
       </div>
@@ -110,7 +43,7 @@
 
   @if (totalSlides() > 1) {
     <div class="portada__control">
-      <button type="button" aria-label="Anterior" (click)="ir(indice() - 1)">‹</button>
+      <button type="button" aria-label="Anterior" (click)="ir(indice() - 1)"><span class="ico">chevron_left</span></button>
       @for (n of puntos(); track n) {
         <button
           type="button"
@@ -120,104 +53,181 @@
           (click)="ir(n)"
         ></button>
       }
-      <button type="button" aria-label="Siguiente" (click)="ir(indice() + 1)">›</button>
+      <button type="button" aria-label="Siguiente" (click)="ir(indice() + 1)"><span class="ico">chevron_right</span></button>
     </div>
   }
 </section>
 
-<section class="seccion">
-  <div class="seccion__interior">
-    <h2 class="etiqueta-titulo">¿Quiénes somos?</h2>
-
-    <div class="quienes">
-      <article class="quienes__panel quienes__panel--lima">
-        <p>{{ ong.descripcion }}</p>
-        <h3>Propósito</h3>
-        <p>{{ ong.proposito }}</p>
-      </article>
-      <article class="quienes__panel quienes__panel--naranja">
-        <h3>Forma parte</h3>
-        <p>
-          Puedes sumarte como voluntario/a, con tareas sencillas de apoyo, o como practicante, realizando labores de tu
-          carrera en uno de nuestros departamentos.
-        </p>
-        <p>
-          Más información en
-          <a [href]="ong.web" target="_blank" rel="noopener">amaacperu.org</a> o en nuestro
-          <a [href]="ong.facebook" target="_blank" rel="noopener">Facebook</a>.
-        </p>
-      </article>
+<!-- Sobre AMAAC -->
+<section class="bloque bloque--suave">
+  <div class="interior sobre">
+    <img class="sobre__foto" src="/img/equipo.jpg" alt="Voluntarios de AMAAC en un taller comunitario" />
+    <div>
+      <h2 class="titulo">Sobre AMAAC</h2>
+      <p class="sobre__texto">{{ ong.descripcion }}</p>
+      <p class="sobre__texto">{{ ong.proposito }}</p>
+      <a class="btn btn--verde" routerLink="/nosotros">Conocer más</a>
     </div>
   </div>
 </section>
 
-<section class="seccion seccion--crema">
-  <div class="seccion__interior">
-    <h2 class="etiqueta-titulo">Iniciativas</h2>
-    <p class="seccion__subtitulo">Explora nuestras iniciativas y sé parte de las acciones que forman agentes de cambio.</p>
+<!-- Campañas -->
+<section class="bloque" id="campanas">
+  <div class="interior">
+    <h2 class="titulo titulo--centro">Nuestras campañas</h2>
+    <p class="subtitulo">Conoce nuestras campañas y cómo participar.</p>
 
-    <div class="iniciativas">
-      @for (i of iniciativas(); track i.id) {
-        <article class="iniciativa iniciativa--{{ i.color }}">
-          @if (i.imagenUrl) {
-            <img class="iniciativa__imagen" [src]="i.imagenUrl" [alt]="i.titulo" />
-          } @else {
-            <span class="iniciativa__icono">{{ i.icono }}</span>
-          }
-          <div>
+    @if (campanas().length === 0) {
+      <p class="vacio">Pronto publicaremos nuevas campañas.</p>
+    } @else {
+      <div class="rejilla">
+        @for (c of campanas(); track c.id) {
+          <article class="tarjeta">
+            <div class="tarjeta__imagen">
+              @if (c.imagenUrl) {
+                <img [src]="c.imagenUrl" [alt]="c.titulo" (error)="ocultarImagen($event)" />
+              } @else {
+                <span class="ico">campaign</span>
+              }
+            </div>
+            <div class="tarjeta__cuerpo">
+              <h3>{{ c.titulo }}</h3>
+              <p>{{ c.descripcion }}</p>
+              <ul class="datos">
+                <li><span class="ico">calendar_today</span> {{ c.fechaInicio | date: "EEEE d 'de' MMMM" : '-0500' }}</li>
+                <li><span class="ico">location_on</span> {{ c.lugar }}</li>
+              </ul>
+              <div class="tarjeta__acciones">
+                <a class="btn btn--naranja btn--chico" routerLink="/participar">Participar</a>
+                <span class="chip">{{ c.modalidad }}</span>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    }
+  </div>
+</section>
+
+<!-- Iniciativas -->
+<section class="bloque bloque--suave">
+  <div class="interior">
+    <h2 class="titulo titulo--centro">Iniciativas</h2>
+    <p class="subtitulo">Proyectos continuos impulsados por nuestra comunidad y aliados.</p>
+
+    @if (iniciativas().length === 0) {
+      <p class="vacio">Pronto publicaremos nuestras iniciativas.</p>
+    } @else {
+      <div class="rejilla">
+        @for (i of iniciativas(); track i.id) {
+          <article class="tarjeta tarjeta--texto">
+            <span class="chip" [class.chip--naranja]="i.creadaPorNombre">{{ i.creadaPorNombre ? 'Miembro de AMAAC' : 'AMAAC' }}</span>
             <h3>{{ i.titulo }}</h3>
             <p>{{ i.texto }}</p>
-          </div>
-        </article>
-      }
-    </div>
-
-    <a class="seccion__mas" routerLink="/iniciativas">Ver todas las iniciativas →</a>
-  </div>
-</section>
-
-@if (!auth.autenticado()) {
-  <section class="seccion">
-    <div class="seccion__interior unete-inicio">
-      <div>
-        <h2>Únete a AMAAC</h2>
-        <p>Sé voluntario/a o practicante y ayúdanos a formar agentes de cambio en la comunidad.</p>
+            <a class="enlace" routerLink="/iniciativas">Ver iniciativa <span class="ico">arrow_forward</span></a>
+          </article>
+        }
       </div>
-      <a class="boton" routerLink="/unete">Únete</a>
-    </div>
-  </section>
-}
+    }
+  </div>
+</section>
 
-<section class="seccion seccion--crema">
-  <div class="seccion__interior">
-    <h2 class="etiqueta-titulo">Canales de atención</h2>
-    <p class="seccion__subtitulo">¿Tienes dudas? Conoce nuestros canales y comunícate con nosotros. ¡Estamos aquí para apoyarte!</p>
+<!-- Noticias -->
+<section class="bloque" id="noticias">
+  <div class="interior">
+    <h2 class="titulo titulo--centro">Noticias</h2>
+    <p class="subtitulo">Conoce las novedades de nuestras actividades.</p>
 
-    <div class="canales">
-      <a class="canal" [href]="ong.facebook" target="_blank" rel="noopener">
-        <span class="canal__icono">f</span>
-        Facebook
-      </a>
-      <a class="canal" [href]="'mailto:' + ong.correo">
-        <span class="canal__icono">✉</span>
-        Correo
-        <small>{{ ong.correo }}</small>
-      </a>
-      <a class="canal" [href]="ong.web" target="_blank" rel="noopener">
-        <span class="canal__icono">🌐</span>
-        Sitio web
-        <small>amaacperu.org</small>
-      </a>
+    @if (noticias().length === 0) {
+      <p class="vacio">Todavía no hay noticias publicadas.</p>
+    } @else {
+      <div class="rejilla">
+        @for (n of noticias(); track n.id) {
+          <article class="tarjeta tarjeta--texto">
+            @if (n.imagenUrl) {
+              <img class="tarjeta__foto" [src]="n.imagenUrl" [alt]="n.titulo" (error)="ocultarImagen($event)" />
+            }
+            <span class="fecha"><span class="ico">calendar_today</span> {{ n.fecha | date: "d 'de' MMMM, y" }}</span>
+            <h3>{{ n.titulo }}</h3>
+            <p>{{ n.resumen }}</p>
+            @if (noticiaAbierta() === n.id && n.contenido) {
+              <p class="tarjeta__contenido">{{ n.contenido }}</p>
+            }
+            @if (n.contenido) {
+              <button type="button" class="enlace" (click)="alternarNoticia(n.id)">
+                {{ noticiaAbierta() === n.id ? 'Leer menos' : 'Leer más' }} <span class="ico">arrow_forward</span>
+              </button>
+            }
+          </article>
+        }
+      </div>
+    }
+  </div>
+</section>
+
+<!-- Próximos eventos -->
+<section class="bloque bloque--suave" id="eventos">
+  <div class="interior interior--angosto">
+    <h2 class="titulo titulo--centro">Próximos eventos</h2>
+    <p class="subtitulo">Consulta las fechas, horarios y lugares de nuestras actividades.</p>
+
+    @if (proximosEventos().length === 0) {
+      <p class="vacio">No hay eventos programados por ahora.</p>
+    } @else {
+      <div class="eventos">
+        @for (e of proximosEventos(); track e.id) {
+          <article class="evento">
+            <div>
+              <h3>{{ e.titulo }}</h3>
+              <p>{{ e.descripcion }}</p>
+              <ul class="datos datos--fila">
+                <li><span class="ico">calendar_today</span> {{ e.fechaInicio | date: "EEEE d 'de' MMMM" : '-0500' }}</li>
+                <li><span class="ico">schedule</span> {{ e.fechaInicio | date: 'h:mm a' : '-0500' }}</li>
+                <li><span class="ico">location_on</span> {{ e.lugar }}</li>
+              </ul>
+            </div>
+            <div class="evento__acciones">
+              <a class="btn btn--naranja btn--chico" routerLink="/participar">Participar</a>
+              <span class="chip">{{ e.modalidad }}</span>
+            </div>
+          </article>
+        }
+      </div>
+    }
+  </div>
+</section>
+
+<!-- Donaciones -->
+<section class="bloque">
+  <div class="interior interior--angosto">
+    <div class="donacion">
+      <span class="donacion__icono"><span class="ico">inventory_2</span></span>
+      <h2>Donaciones de artículos</h2>
+      <p>Registra los artículos que deseas entregar a AMAAC. La entrega es presencial y no recibimos dinero.</p>
+      <a class="btn btn--verde" routerLink="/donar">Registrar donación</a>
     </div>
   </div>
 </section>
 
-<section class="llamado">
-  <div class="llamado__interior">
-    <h2>¿Quieres ser parte del cambio?</h2>
-    <p>Escríbenos o únete como voluntario/a o practicante.</p>
-    @if (!auth.autenticado()) {
-      <a class="boton boton--claro" routerLink="/contacto">Contactar ahora</a>
-    }
+<!-- Únete -->
+<section class="bloque bloque--suave">
+  <div class="interior interior--angosto">
+    <h2 class="titulo titulo--centro">Únete a AMAAC</h2>
+    <p class="subtitulo">Postula como voluntario o practicante y participa en nuestras actividades.</p>
+
+    <div class="unete">
+      <article class="unete__opcion">
+        <span class="unete__icono unete__icono--naranja"><span class="ico">volunteer_activism</span></span>
+        <h3>Voluntariado</h3>
+        <p>Súmate como voluntario a las actividades de AMAAC.</p>
+        <a class="btn btn--naranja" routerLink="/participar" [queryParams]="{ tipo: 'Voluntario' }">Postular como voluntario</a>
+      </article>
+      <article class="unete__opcion">
+        <span class="unete__icono"><span class="ico">school</span></span>
+        <h3>Prácticas</h3>
+        <p>Postula como practicante para colaborar con AMAAC.</p>
+        <a class="btn btn--verde" routerLink="/participar" [queryParams]="{ tipo: 'Practicante' }">Postular como practicante</a>
+      </article>
+    </div>
   </div>
 </section>

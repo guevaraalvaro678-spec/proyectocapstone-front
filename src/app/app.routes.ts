@@ -19,6 +19,12 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./modules/modulo-practicante/modulo-practicante-module').then((m) => m.ModuloPracticanteModule),
   },
+  // Portal del postulante: formulario de postulación y seguimiento.
+  {
+    path: '',
+    loadChildren: () =>
+      import('./modules/modulo-postulante/modulo-postulante-module').then((m) => m.ModuloPostulanteModule),
+  },
   // Login, recuperar contraseña y panel de administrador / Recursos Humanos.
   {
     path: '',

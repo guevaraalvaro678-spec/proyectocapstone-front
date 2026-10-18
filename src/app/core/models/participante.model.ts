@@ -15,6 +15,9 @@ export interface BloqueHorario {
   diaSemana: number;
   horaInicio: string;
   horaFin: string;
+  /** Solo en el horario de prácticas. */
+  modalidad?: 'Presencial' | 'Virtual' | null;
+  lugar?: string | null;
 }
 
 export type EstadoHorario = 'SinEnviar' | 'Pendiente' | 'EnRevision' | 'Aceptado';
@@ -69,6 +72,7 @@ export interface Practicante {
   departamentoSecundario: string;
   estadoHorario: EstadoHorario;
   notaHorario: string | null;
+  horarioConfirmado: boolean;
   fechaEnvioHorario: string | null;
   activo: boolean;
   fechaRegistro: string;

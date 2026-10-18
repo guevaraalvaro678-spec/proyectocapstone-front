@@ -1,43 +1,67 @@
-<div class="admin">
-  <aside class="admin__menu">
-    <div class="admin__marca">
-      <span class="admin__logo">🧠</span>
-      <div>
-        <strong>Capstone</strong>
-        <small>Psicología</small>
-      </div>
+<div class="panel" [class.panel--menu-abierto]="menuAbierto()">
+  <aside class="panel__lateral">
+    <div class="panel__marca">
+      <app-marca [claro]="true" subtitulo="Gestión institucional" />
     </div>
 
-    <nav class="admin__nav">
-      @for (item of items(); track item.ruta) {
-        <a [routerLink]="item.ruta" routerLinkActive="activo">
-          <span class="admin__icono">{{ item.icono }}</span>
-          {{ item.etiqueta }}
-        </a>
+    <nav class="panel__nav" aria-label="Menú del panel">
+      @for (grupo of menu(); track grupo.titulo) {
+        <p class="panel__grupo">{{ grupo.titulo }}</p>
+        @for (item of grupo.items; track item.ruta) {
+          <a [routerLink]="item.ruta" routerLinkActive="activo">
+            <span class="ico">{{ item.icono }}</span>
+            {{ item.etiqueta }}
+          </a>
+        }
       }
     </nav>
 
-    <div class="admin__usuario">
-      <span class="admin__avatar">{{ inicial() }}</span>
-      <div class="admin__datos">
-        <strong>{{ auth.sesion()?.usuario }}</strong>
-        <small>{{ auth.sesion()?.rol }}</small>
-      </div>
-      <button type="button" title="Cerrar sesión" (click)="auth.logout()">⎋</button>
+    <div class="panel__pie">
+      <a routerLink="mi-cuenta" routerLinkActive="activo" class="panel__cuenta">
+        <span class="panel__avatar">{{ iniciales() }}</span>
+        <span>
+          <strong>{{ auth.sesion()?.nombre || auth.sesion()?.usuario }}</strong>
+          <small>{{ nombreRol() }}</small>
+        </span>
+      </a>
+      <button type="button" class="panel__salir" (click)="auth.logout()">
+        <span class="ico">logout</span> Cerrar sesión
+      </button>
     </div>
   </aside>
 
-  <div class="admin__contenido">
-    <header class="admin__cabecera">
-      <div>
-        <h1>{{ auth.esRRHH() ? 'Recursos Humanos' : 'Administrador' }}</h1>
-        <p>Panel de gestión del sistema</p>
+  <div class="panel__velo" (click)="menuAbierto.set(false)"></div>
+
+  <div class="panel__principal">
+    <header class="panel__barra">
+      <button type="button" class="panel__hamburguesa" aria-label="Abrir menú" (click)="menuAbierto.set(true)">
+        <span class="ico">menu</span>
+      </button>
+      <p class="panel__migas">
+        AMAAC Perú <span class="ico">chevron_right</span> Panel administrativo
+        @if (seccionActual()) {
+          <span class="ico">chevron_right</span> <strong>{{ seccionActual() }}</strong>
+        }
+      </p>
+      <div class="panel__barra-acciones">
+        <a routerLink="/" class="panel__icono-btn" title="Ver sitio público"><span class="ico">public</span></a>
+        <a routerLink="mi-cuenta" class="panel__usuario">
+          <span class="panel__avatar panel__avatar--chico">{{ iniciales() }}</span>
+          <span>
+            <strong>{{ auth.sesion()?.nombre || auth.sesion()?.usuario }}</strong>
+            <small>{{ nombreRol() }}</small>
+          </span>
+        </a>
       </div>
-      <span class="admin__fecha">{{ fecha }}</span>
     </header>
 
-    <main class="admin__pagina">
+    <main class="panel__pagina">
       <router-outlet />
     </main>
+
+    <footer class="panel__creditos">
+      <span>Asociación AMAAC Perú</span>
+      <span>Panel de control y gestión institucional</span>
+    </footer>
   </div>
 </div>

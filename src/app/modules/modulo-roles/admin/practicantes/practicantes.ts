@@ -70,14 +70,26 @@ export class Practicantes {
 
   protected abrirAsignacion(p: Practicante): void {
     this.asignando.set(p.usuarioId);
-    this.bloques.set(
-      p.horarioPracticas.length ? [...p.horarioPracticas] : [{ diaSemana: 1, horaInicio: '09:00', horaFin: '13:00' }],
-    );
+    this.bloques.set(p.horarioPracticas.length ? p.horarioPracticas.map((b) => ({ ...b })) : [this.bloqueNuevo(1)]);
     this.nota.set('');
   }
 
   protected agregarBloque(): void {
-    this.bloques.update((b) => [...b, { diaSemana: 1, horaInicio: '09:00', horaFin: '13:00' }]);
+    const siguiente = Math.min(6, (this.bloques().at(-1)?.diaSemana ?? 0) + 1);
+    this.bloques.update((b) => [...b, this.bloqueNuevo(siguiente)]);
+  }
+
+  /** Horas asignadas en total (las reglas: lunes a sábado, máx. 5 h por día y 30 h por semana). */
+  protected readonly totalHoras = computed(() => this.bloques().reduce((s, b) => s + this.horas(b), 0));
+
+  protected horas(b: BloqueHorario): number {
+    const [hi, mi] = b.horaInicio.split(':').map(Number);
+    const [hf, mf] = b.horaFin.split(':').map(Number);
+    return Math.max(0, (hf * 60 + mf - (hi * 60 + mi)) / 60);
+  }
+
+  private bloqueNuevo(dia: number): BloqueHorario {
+    return { diaSemana: dia, horaInicio: '08:00', horaFin: '13:00', modalidad: 'Presencial', lugar: 'Sede central AMAAC' };
   }
 
   protected quitarBloque(indice: number): void {

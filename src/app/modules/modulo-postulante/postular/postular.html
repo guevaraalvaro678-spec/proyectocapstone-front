@@ -1,0 +1,221 @@
+<section class="portada">
+  <span class="portada__linea"></span>
+  <h1>Postula a AMAAC Perú</h1>
+  <p>Elige cómo quieres participar y completa tus datos.</p>
+</section>
+
+@if (cargando()) {
+  <p class="ui-vacio">Cargando...</p>
+} @else {
+  <form class="tarjeta" [formGroup]="form" (ngSubmit)="enviar()">
+    @if (sinCuenta()) {
+      <p class="ui-mensaje ui-mensaje--exito">
+        <span class="ico">info</span> Elige si quieres ser voluntario o practicante y completa tus datos. Al final creas tu cuenta con Google o con tu correo.
+        ¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a>.
+      </p>
+    }
+    @if (anterior(); as a) {
+      <p class="ui-mensaje ui-mensaje--aviso">
+        Tu postulación anterior ({{ a.codigo }}) no fue admitida. Puedes volver a postular con datos actualizados.
+      </p>
+    }
+
+    <div class="modalidad">
+      <div class="modalidad__cabecera">
+        <div>
+          <strong>Modalidad de postulación <span class="req">*</span></strong>
+          <small>Selecciona el rol con el que deseas sumarte a nuestros programas de impacto.</small>
+        </div>
+        <span class="chip">Modalidad: {{ esPracticante() ? 'Practicante' : 'Voluntario' }}</span>
+      </div>
+      <div class="modalidad__opciones">
+        <button type="button" class="opcion" [class.activa]="!esPracticante()" (click)="elegirTipo('Voluntario')">
+          <span class="opcion__icono"><span class="ico">volunteer_activism</span></span>
+          <span><strong>Voluntario</strong><small>Aporte solidario por vocación de servicio</small></span>
+        </button>
+        <button type="button" class="opcion" [class.activa]="esPracticante()" (click)="elegirTipo('Practicante')">
+          <span class="opcion__icono"><span class="ico">school</span></span>
+          <span><strong>Practicante</strong><small>Prácticas preprofesionales o profesionales</small></span>
+        </button>
+      </div>
+    </div>
+
+    <h2 class="seccion"><span class="seccion__icono"><span class="ico">person</span></span> Datos personales</h2>
+    <div class="rejilla">
+      <label>
+        <span>DNI <span class="req">*</span></span>
+        <input type="text" formControlName="dni" inputmode="numeric" maxlength="8" placeholder="8 dígitos" />
+        @if (invalido('dni')) { <small class="aviso">El DNI debe tener 8 dígitos</small> }
+      </label>
+      <label>
+        <span>Fecha de nacimiento <span class="req">*</span></span>
+        <input type="date" formControlName="fechaNacimiento" />
+        @if (invalido('fechaNacimiento')) { <small class="aviso">Obligatorio</small> }
+      </label>
+      <label>
+        <span>Nombres <span class="req">*</span></span>
+        <input type="text" formControlName="nombres" autocomplete="given-name" placeholder="Ej. Mariana Sofía" />
+        @if (invalido('nombres')) { <small class="aviso">Obligatorio</small> }
+      </label>
+      <label>
+        <span>Apellidos <span class="req">*</span></span>
+        <input type="text" formControlName="apellidos" autocomplete="family-name" placeholder="Ej. Morales Villanueva" />
+        @if (invalido('apellidos')) { <small class="aviso">Obligatorio</small> }
+      </label>
+      <label class="ancho">
+        <span>Dirección residencial <span class="req">*</span></span>
+        <input type="text" formControlName="direccion" autocomplete="street-address" placeholder="Av., Jr., Calle, Manzana, Lote y Urbanización" />
+        @if (invalido('direccion')) { <small class="aviso">Obligatorio</small> }
+      </label>
+      <label>
+        <span>Distrito <span class="req">*</span></span>
+        <input type="text" formControlName="distrito" placeholder="Ej. Villa El Salvador" />
+        @if (invalido('distrito')) { <small class="aviso">Obligatorio</small> }
+      </label>
+      <label>
+        <span>Provincia <span class="req">*</span></span>
+        <input type="text" formControlName="provincia" />
+        @if (invalido('provincia')) { <small class="aviso">Obligatorio</small> }
+      </label>
+      <label>
+        <span>Teléfono celular <span class="req">*</span></span>
+        <input type="tel" formControlName="telefono" autocomplete="tel" placeholder="Ej. 987654321" />
+        @if (invalido('telefono')) { <small class="aviso">Obligatorio</small> }
+      </label>
+      @if (!sinCuenta()) {
+        <label>
+          <span class="etiqueta-doble">Correo electrónico <span class="chip chip--suave">Cuenta activa</span></span>
+          <input type="email" [value]="correo()" readonly />
+          <small class="suave"><span class="ico">lock</span> Asociado a tu sesión en el portal AMAAC Perú.</small>
+        </label>
+      }
+    </div>
+
+    <h2 class="seccion">
+      <span class="seccion__icono"><span class="ico">school</span></span> Formación académica
+      <small>{{ esPracticante() ? 'Obligatoria para practicantes' : 'Opcional' }}</small>
+    </h2>
+    <div class="rejilla">
+      <label class="ancho">
+        <span>Universidad o instituto @if (esPracticante()) { <span class="req">*</span> }</span>
+        <input type="text" formControlName="universidad" />
+        @if (invalido('universidad')) { <small class="aviso">Obligatorio para practicantes</small> }
+      </label>
+      <label>
+        <span>Carrera @if (esPracticante()) { <span class="req">*</span> }</span>
+        <input type="text" formControlName="carrera" />
+        @if (invalido('carrera')) { <small class="aviso">Obligatorio para practicantes</small> }
+      </label>
+      <label>
+        <span>Ciclo o año @if (esPracticante()) { <span class="req">*</span> }</span>
+        <input type="text" formControlName="ciclo" placeholder="Ej. 8.º ciclo" />
+        @if (invalido('ciclo')) { <small class="aviso">Obligatorio para practicantes</small> }
+      </label>
+    </div>
+
+    <h2 class="seccion"><span class="seccion__icono"><span class="ico">work</span></span> Área y CV</h2>
+    <div class="rejilla">
+      <label [class.ancho]="!esPracticante()">
+        <span>Departamento o área al que deseas postular <span class="req">*</span></span>
+        <select formControlName="departamento">
+          <option value="" disabled>Selecciona el departamento o área</option>
+          @for (a of areas; track a) {
+            <option [value]="a">{{ a }}</option>
+          }
+        </select>
+        @if (invalido('departamento')) { <small class="aviso">Elige un área</small> }
+      </label>
+      @if (esPracticante()) {
+        <label>
+          <span>Área secundaria (opcional)</span>
+          <select formControlName="departamentoSecundario">
+            <option value="">Ninguna</option>
+            @for (a of areas; track a) {
+              <option [value]="a">{{ a }}</option>
+            }
+          </select>
+        </label>
+      }
+      <div class="ancho">
+        <span class="etiqueta">CV en PDF <span class="req">*</span></span>
+        <div class="cv">
+          <label class="cv__boton">
+            <span class="ico">upload_file</span> {{ subiendoCv() ? 'Subiendo...' : 'Seleccionar PDF' }}
+            <input type="file" accept="application/pdf" (change)="elegirCv($event)" [disabled]="subiendoCv()" hidden />
+          </label>
+          <small>Máx. 10 MB</small>
+          <span class="cv__archivo">
+            <span class="ico">attach_file</span> {{ nombreCv() ?? 'Ningún archivo seleccionado' }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="seccion"><span class="seccion__icono"><span class="ico">lightbulb</span></span> Participación en iniciativas</h2>
+    <div class="iniciativa">
+      <strong>¿Actualmente realizas o participas en alguna iniciativa social o comunitaria? <span class="req">*</span></strong>
+      <small>Esta información forma parte de tu postulación y evaluación. No crea automáticamente una iniciativa pública.</small>
+      <div class="iniciativa__opciones">
+        <label class="radio" [class.activa]="form.controls.participaIniciativa.value === true">
+          <input type="radio" formControlName="participaIniciativa" [value]="true" /> Sí, participo en una iniciativa
+        </label>
+        <label class="radio" [class.activa]="form.controls.participaIniciativa.value === false">
+          <input type="radio" formControlName="participaIniciativa" [value]="false" /> No participo actualmente
+        </label>
+      </div>
+      @if (invalido('participaIniciativa')) { <small class="aviso">Elige una opción</small> }
+      @if (form.controls.participaIniciativa.value === true) {
+        <textarea rows="3" formControlName="iniciativaDescripcion" placeholder="Cuéntanos brevemente en qué consiste y cuál es tu rol."></textarea>
+      }
+    </div>
+
+    @if (sinCuenta()) {
+      <h2 class="seccion"><span class="seccion__icono"><span class="ico">key</span></span> Tu cuenta</h2>
+      <p class="ayuda-cuenta">Con esta cuenta seguirás el estado de tu postulación. Elige cómo crearla:</p>
+
+      @if (conGoogle()) {
+        <div class="google-ok">
+          <span class="ico">verified_user</span>
+          <span>Te unirás con Google como <strong>{{ correo() }}</strong>. Tu cuenta quedará vinculada.</span>
+          <button type="button" (click)="quitarGoogle()">Usar otro método</button>
+        </div>
+      } @else {
+        <div class="google">
+          <div #botonGoogle></div>
+          <small>Únete con Google: solo te pedirá permiso para usar tu nombre y correo.</small>
+        </div>
+        <span class="separador">o con tu correo</span>
+        <div class="rejilla" [formGroup]="formCuenta">
+          <label class="ancho">
+            <span>Correo electrónico <span class="req">*</span></span>
+            <input type="email" formControlName="correo" autocomplete="email" placeholder="correo@ejemplo.com" />
+          </label>
+          <label>
+            <span>Contraseña <span class="req">*</span></span>
+            <input type="password" formControlName="password" autocomplete="new-password" placeholder="Mínimo 8 caracteres" />
+          </label>
+          <label>
+            <span>Confirmar contraseña <span class="req">*</span></span>
+            <input type="password" formControlName="confirmar" autocomplete="new-password" />
+          </label>
+        </div>
+      }
+
+      <label class="acepto">
+        <input type="checkbox" [checked]="acepto()" (change)="acepto.set($any($event.target).checked)" />
+        Acepto los términos y condiciones y el tratamiento de mis datos personales.
+      </label>
+    }
+
+    @if (error()) {
+      <p class="ui-mensaje ui-mensaje--error">{{ error() }}</p>
+    }
+
+    <div class="pie">
+      <small>Al enviar declaras bajo juramento la autenticidad de la información brindada.</small>
+      <button type="submit" class="enviar" [disabled]="enviando() || subiendoCv()">
+        {{ enviando() ? 'Enviando...' : 'Enviar postulación' }} <span class="ico">arrow_forward</span>
+      </button>
+    </div>
+  </form>
+}
