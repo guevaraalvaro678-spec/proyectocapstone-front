@@ -1,0 +1,48 @@
+// Variables que heredan las páginas públicas (Nosotros, Contacto, Iniciativas), mapeadas al sistema de diseño.
+:host {
+  --verde: var(--am-verde);
+  --verde-oscuro: var(--am-verde-oscuro);
+  --arena: var(--am-borde);
+  --crema: var(--am-superficie-baja);
+  --naranja: var(--am-naranja);
+  --lima: var(--am-verde-medio);
+  --barra: var(--am-verde-oscuro);
+  --texto: var(--am-texto);
+  --gris: var(--am-gris);
+  display: block;
+}
+
+.web {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--am-fondo);
+
+  &__contenido {
+    flex: 1;
+  }
+}
+
+.whatsapp {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  width: 3.4rem;
+  height: 3.4rem;
+  border-radius: 50%;
+  background: #25d366;
+  color: #fff;
+  box-shadow: 0 8px 20px rgb(0 0 0 / 0.2);
+
+  svg {
+    width: 1.9rem;
+    height: 1.9rem;
+  }
+
+  &:hover {
+    filter: brightness(0.95);
+  }
+}

@@ -5,7 +5,7 @@ import { ApplicationConfig, LOCALE_ID, provideBrowserGlobalErrorListeners } from
 import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router';
 
 import { routes } from './app.routes';
-import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { authInterceptor } from './interceptors/auth.interceptor';
 
 // Fechas y números en español de Perú ("12 de octubre de 2026").
 registerLocaleData(localeEsPe);

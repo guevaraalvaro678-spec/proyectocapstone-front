@@ -1,0 +1,145 @@
+.crece {
+  flex: 1;
+  min-width: 15rem;
+
+  input {
+    width: 100%;
+  }
+}
+
+.titulo-seccion {
+  margin: 1.4rem 0 0.75rem;
+  color: var(--am-verde);
+  font-size: 0.95rem;
+
+  &:first-child {
+    margin-top: 0;
+  }
+}
+
+.texto {
+  margin: 0;
+  color: var(--am-texto-suave);
+  font-size: 0.92rem;
+}
+
+.cv {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 1px dashed var(--am-borde);
+  border-radius: 0.75rem;
+  background: var(--am-superficie-baja);
+  color: var(--am-texto);
+  text-align: left;
+  cursor: pointer;
+
+  > .ico {
+    font-size: 2rem;
+    color: var(--am-error);
+  }
+
+  strong,
+  small {
+    display: block;
+  }
+
+  small {
+    color: var(--am-gris);
+  }
+
+  &:hover {
+    background: var(--am-verde-suave);
+  }
+}
+
+.sesion {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--am-borde-suave);
+  border-radius: 0.75rem;
+  background: #f1f6f3;
+
+  > .ico {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.6rem;
+    background: var(--am-verde);
+    color: #fff;
+  }
+
+  strong,
+  small {
+    display: block;
+  }
+
+  small {
+    color: var(--am-texto-suave);
+  }
+}
+
+.historial {
+  margin: 0 0 0.5rem;
+  padding: 0 0 0 1.1rem;
+  border-left: 2px solid var(--am-verde-suave);
+  list-style: none;
+
+  li {
+    position: relative;
+    padding: 0 0 0.75rem;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0.35rem;
+      left: -1.45rem;
+      width: 0.6rem;
+      height: 0.6rem;
+      border-radius: 50%;
+      background: var(--am-verde-medio);
+    }
+  }
+
+  strong,
+  small {
+    display: block;
+  }
+
+  strong {
+    font-size: 0.9rem;
+  }
+
+  small {
+    color: var(--am-gris);
+  }
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+  color: var(--am-texto-suave);
+  font-size: 0.88rem;
+  font-weight: 600;
+
+  select,
+  textarea {
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--am-borde);
+    border-radius: 0.6rem;
+    font-size: 0.9rem;
+    font-weight: 400;
+  }
+
+  small {
+    color: var(--am-gris);
+    font-weight: 400;
+  }
+}

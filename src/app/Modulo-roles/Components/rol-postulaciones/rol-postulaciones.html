@@ -1,0 +1,254 @@
+<header class="am-encabezado">
+  <div>
+    <p class="am-encabezado__migas">Panel administrativo / <strong>Postulaciones</strong></p>
+    <h2>Postulaciones</h2>
+    <p>Consulta y seguimiento de las personas que iniciaron el proceso de postulación.</p>
+  </div>
+  <button type="button" class="ui-btn ui-btn--claro" [disabled]="postulaciones().length === 0" (click)="exportar()">
+    <span class="ico">download</span> Exportar a Excel
+  </button>
+</header>
+
+@if (error()) {
+  <p class="ui-mensaje ui-mensaje--error">{{ error() }}</p>
+}
+@if (aviso()) {
+  <p class="ui-mensaje ui-mensaje--exito">{{ aviso() }}</p>
+}
+
+<div class="ui-indicadores">
+  <div class="ui-indicador">
+    <span>Total de postulaciones</span>
+    <strong>{{ indicadores().total }}</strong>
+    <small>Postulaciones registradas</small>
+  </div>
+  <div class="ui-indicador ui-indicador--alerta">
+    <span>Requieren atención</span>
+    <strong>{{ indicadores().recibidas + indicadores().habilitadas }}</strong>
+    <small>{{ indicadores().recibidas }} recibidas · {{ indicadores().habilitadas }} por agendar</small>
+  </div>
+  <div class="ui-indicador">
+    <span>Entrevistas agendadas</span>
+    <strong>{{ indicadores().agendadas }}</strong>
+    <small>En proceso de entrevista</small>
+  </div>
+  <div class="ui-indicador">
+    <span>Resultado final</span>
+    <strong>{{ indicadores().aceptadas + indicadores().noAdmitidas }}</strong>
+    <small>{{ indicadores().aceptadas }} aceptadas · {{ indicadores().noAdmitidas }} no admitidas</small>
+  </div>
+</div>
+
+<div class="ui-filtros">
+  <label class="crece">
+    Buscar
+    <input type="search" [formControl]="buscar" placeholder="Nombre, DNI, correo o código..." />
+  </label>
+  <label>
+    Tipo
+    <select [value]="tipo()" (change)="filtrarTipo($any($event.target).value)">
+      <option value="">Todos</option>
+      <option value="Voluntario">Voluntario</option>
+      <option value="Practicante">Practicante</option>
+    </select>
+  </label>
+  <label>
+    Estado
+    <select [value]="estado()" (change)="filtrarEstado($any($event.target).value)">
+      <option value="">Todos</option>
+      @for (e of estados; track e) {
+        <option [value]="e" [selected]="estado() === e">{{ etiquetas[e] }}</option>
+      }
+    </select>
+  </label>
+  <button type="button" class="ui-btn ui-btn--claro" (click)="limpiar()"><span class="ico">restart_alt</span> Limpiar filtros</button>
+</div>
+
+@if (cargando()) {
+  <p class="ui-vacio">Cargando postulaciones...</p>
+} @else if (postulaciones().length === 0) {
+  <p class="ui-vacio">No hay postulaciones con esos filtros.</p>
+} @else {
+  <div class="ui-tabla">
+    <table>
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Postulante</th>
+          <th>Tipo</th>
+          <th>Área</th>
+          <th>Fecha</th>
+          <th>Estado</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (p of postulaciones(); track p.id) {
+          <tr>
+            <td><span class="am-codigo">{{ p.codigo }}</span></td>
+            <td>
+              <strong>{{ p.nombres }} {{ p.apellidos }}</strong>
+              <small>{{ p.correo }}</small>
+            </td>
+            <td><span class="ui-etiqueta ui-etiqueta--sin-punto" [class.ui-etiqueta--verde]="p.tipo === 'Voluntario'" [class.ui-etiqueta--naranja]="p.tipo === 'Practicante'">{{ p.tipo }}</span></td>
+            <td>{{ p.departamento }}</td>
+            <td>{{ p.fechaEnvio | date: 'd MMM, y' }}</td>
+            <td><span class="ui-etiqueta ui-etiqueta--{{ colores[p.estado] }}">{{ etiquetas[p.estado] }}</span></td>
+            <td class="ui-tabla__acciones">
+              <button type="button" class="ui-btn ui-btn--claro ui-btn--chico" (click)="abrir(p)">Ver detalle</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+@if (detalle(); as p) {
+  <div class="am-velo" (click)="cerrar()"></div>
+  <aside class="am-cajon" role="dialog" aria-label="Detalle de la postulación">
+    <div class="am-cajon__cabecera">
+      <div>
+        <small>Postulación · {{ p.tipo }}</small>
+        <h3>{{ p.codigo }}</h3>
+        <span class="ui-etiqueta ui-etiqueta--{{ colores[p.estado] }}">{{ etiquetas[p.estado] }}</span>
+      </div>
+      <button type="button" aria-label="Cerrar" (click)="cerrar()"><span class="ico">close</span></button>
+    </div>
+
+    <div class="am-cajon__cuerpo">
+      <h4 class="titulo-seccion">Datos personales</h4>
+      <dl class="ui-detalle__datos">
+        <div><dt>Nombres y apellidos</dt><dd>{{ p.nombres }} {{ p.apellidos }}</dd></div>
+        <div><dt>DNI</dt><dd>{{ p.dni }}</dd></div>
+        <div><dt>Fecha de nacimiento</dt><dd>{{ p.fechaNacimiento | date: 'dd/MM/yyyy' : 'UTC' }}</dd></div>
+        <div><dt>Teléfono</dt><dd>{{ p.telefono }}</dd></div>
+        <div><dt>Correo</dt><dd>{{ p.correo }}</dd></div>
+        <div><dt>Dirección</dt><dd>{{ p.direccion }}, {{ p.distrito }}, {{ p.provincia }}</dd></div>
+      </dl>
+
+      <h4 class="titulo-seccion">Formación y área</h4>
+      <dl class="ui-detalle__datos">
+        <div><dt>Área a la que postula</dt><dd>{{ p.departamento }}</dd></div>
+        @if (p.departamentoSecundario) {
+          <div><dt>Área secundaria</dt><dd>{{ p.departamentoSecundario }}</dd></div>
+        }
+        <div><dt>Universidad</dt><dd>{{ p.universidad || '—' }}</dd></div>
+        <div><dt>Carrera y ciclo</dt><dd>{{ p.carrera || '—' }}{{ p.ciclo ? ' · ' + p.ciclo : '' }}</dd></div>
+      </dl>
+
+      @if (p.cvArchivoId) {
+        <button type="button" class="cv" (click)="verCv(p)">
+          <span class="ico">picture_as_pdf</span>
+          <span><strong>{{ p.cvNombre || 'CV del postulante' }}</strong><small>Abrir en otra pestaña</small></span>
+        </button>
+      }
+
+      <h4 class="titulo-seccion">Participación en iniciativas</h4>
+      <p class="texto">
+        @if (p.participaIniciativa) {
+          Sí participa: {{ p.iniciativaDescripcion || 'sin descripción' }}
+        } @else {
+          No participa actualmente en una iniciativa.
+        }
+      </p>
+
+      @if (p.sesion) {
+        <h4 class="titulo-seccion">Entrevista</h4>
+        <div class="sesion">
+          <span class="ico">{{ p.sesion.modalidad === 'Virtual' ? 'videocam' : 'location_on' }}</span>
+          <div>
+            <strong>{{ p.sesion.nombre }}</strong>
+            <small>{{ p.sesion.inicio | date: "EEEE d 'de' MMMM, HH:mm" : '-0500' }} · {{ p.sesion.modalidad }} · {{ p.sesion.inscritos }}/{{ p.sesion.cupo }}</small>
+          </div>
+        </div>
+      }
+
+      @if (p.historial?.length) {
+        <h4 class="titulo-seccion">Historial</h4>
+        <ol class="historial">
+          @for (h of p.historial; track $index) {
+            <li>
+              <strong>{{ etiquetas[h.estado] }}</strong>
+              <small>{{ h.fecha | date: 'dd/MM/yyyy HH:mm' : '-0500' }} · {{ h.responsable ?? 'Sistema' }}</small>
+              @if (h.nota) { <small>{{ h.nota }}</small> }
+            </li>
+          }
+        </ol>
+      }
+
+      @if (p.estado === 'Aceptada' || p.estado === 'NoAdmitida') {
+        <p class="ui-mensaje" [class.ui-mensaje--exito]="p.estado === 'Aceptada'" [class.ui-mensaje--aviso]="p.estado === 'NoAdmitida'">
+          {{ p.estado === 'Aceptada' ? 'Postulación aceptada: ya es ' + p.tipo.toLowerCase() + ' de AMAAC.' : 'Postulación no admitida.' }}
+          @if (p.notaEvaluacion) {
+            <br /><strong>Comentario:</strong> {{ p.notaEvaluacion }}
+          }
+        </p>
+      } @else {
+        <h4 class="titulo-seccion">Siguiente paso</h4>
+
+        @if (p.estado === 'HabilitadaEntrevista' || p.estado === 'EntrevistaAgendada') {
+          <label class="campo">
+            Sesión de entrevista
+            <select [value]="sesionElegida()" (change)="sesionElegida.set(+$any($event.target).value)">
+              <option value="0">Elige una sesión</option>
+              @for (s of sesionesDisponibles(); track s.id) {
+                <option [value]="s.id" [selected]="s.id === sesionElegida()">
+                  {{ s.codigo }} · {{ s.nombre }} — {{ s.inicio | date: 'dd/MM HH:mm' : '-0500' }} ({{ s.inscritos }}/{{ s.cupo }})
+                </option>
+              }
+            </select>
+            @if (sesionesDisponibles().length === 0) {
+              <small>No hay sesiones programadas con cupo. Crea una en <a routerLink="../entrevistas">Entrevistas</a>.</small>
+            }
+          </label>
+        }
+
+        @if (p.estado === 'EnCalificacion' || p.estado === 'EntrevistaRealizada') {
+          <label class="campo">
+            Comentario de la evaluación (se le muestra al postulante)
+            <textarea rows="3" [value]="nota()" (input)="nota.set($any($event.target).value)"></textarea>
+          </label>
+        }
+
+        @if (errorDetalle()) {
+          <p class="ui-mensaje ui-mensaje--error">{{ errorDetalle() }}</p>
+        }
+      }
+    </div>
+
+    @if (p.estado !== 'Aceptada' && p.estado !== 'NoAdmitida') {
+      <div class="am-cajon__pie">
+        <button type="button" class="ui-btn ui-btn--peligro" [disabled]="trabajando()" (click)="mover('NoAdmitida')">No admitir</button>
+        @switch (p.estado) {
+          @case ('Recibida') {
+            <button type="button" class="ui-btn" [disabled]="trabajando()" (click)="mover('HabilitadaEntrevista')">
+              <span class="ico">check</span> Habilitar para entrevista
+            </button>
+          }
+          @case ('HabilitadaEntrevista') {
+            <button type="button" class="ui-btn" [disabled]="trabajando()" (click)="mover('EntrevistaAgendada')">
+              <span class="ico">event</span> Agendar entrevista
+            </button>
+          }
+          @case ('EntrevistaAgendada') {
+            <button type="button" class="ui-btn ui-btn--claro" [disabled]="trabajando()" (click)="mover('EntrevistaAgendada')">Cambiar sesión</button>
+            <button type="button" class="ui-btn" [disabled]="trabajando()" (click)="mover('EntrevistaRealizada')">
+              <span class="ico">task_alt</span> Entrevista realizada
+            </button>
+          }
+          @case ('EntrevistaRealizada') {
+            <button type="button" class="ui-btn" [disabled]="trabajando()" (click)="mover('EnCalificacion')">
+              <span class="ico">rate_review</span> Pasar a calificación
+            </button>
+          }
+          @case ('EnCalificacion') {
+            <button type="button" class="ui-btn ui-btn--acento" [disabled]="trabajando()" (click)="mover('Aceptada')">
+              <span class="ico">verified</span> Aceptar como {{ p.tipo.toLowerCase() }}
+            </button>
+          }
+        }
+      </div>
+    }
+  </aside>
+}
