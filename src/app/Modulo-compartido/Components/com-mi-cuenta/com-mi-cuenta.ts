@@ -50,11 +50,8 @@ export class MiCuenta {
 
   protected readonly rol = computed(() => NOMBRE_ROL[this.cuenta()?.rol ?? ''] ?? this.cuenta()?.rol ?? '');
 
-  /** El DNI se muestra con asteriscos, salvo los dos últimos dígitos. */
-  protected readonly dniOculto = computed(() => {
-    const dni = this.cuenta()?.dni;
-    return dni ? '******' + dni.slice(-2) : 'No registrado';
-  });
+  /** El backend ya envía el DNI oculto (•••••678): nunca llega completo al navegador. */
+  protected readonly dniOculto = computed(() => this.cuenta()?.dni ?? 'No registrado');
 
   protected readonly formPerfil = this.fb.nonNullable.group({
     nombre: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],

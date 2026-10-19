@@ -40,6 +40,15 @@ export interface DonacionCrear {
   articulos: DonacionArticulo[];
 }
 
+/** Totales por estado e inventario de lo recibido (GET api/donacion/resumen). */
+export interface DonacionResumen {
+  pendientes: number;
+  recibidas: number;
+  desestimadas: number;
+  total: number;
+  inventario: DonacionArticulo[];
+}
+
 export type EstadoNoticia = 'Borrador' | 'Publicada' | 'NoPublicada';
 
 export const ETIQUETA_NOTICIA: Record<EstadoNoticia, string> = {

@@ -21,6 +21,31 @@
   &__contenido {
     flex: 1;
   }
+
+  // Barra fina de progreso de lectura arriba (solo navegadores con animaciones ligadas al scroll).
+  @supports (animation-timeline: scroll()) {
+    &::before {
+      content: '';
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 31;
+      height: 3px;
+      background: linear-gradient(90deg, var(--am-naranja), #f59e0b);
+      transform-origin: 0 50%;
+      animation: progreso-lectura linear both;
+      animation-timeline: scroll(root);
+    }
+  }
+}
+
+@keyframes progreso-lectura {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
 }
 
 .whatsapp {

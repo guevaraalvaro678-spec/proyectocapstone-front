@@ -149,7 +149,7 @@
       @if (d.estado !== 'Recibida') {
         <button type="button" class="ui-btn" [disabled]="trabajando()" (click)="cambiar('Recibida')"><span class="ico">check_circle</span> Marcar como recibida</button>
       } @else {
-        <button type="button" class="ui-btn" [disabled]="trabajando()" (click)="cambiar('Recibida')">Guardar observaciones</button>
+        <button type="button" class="ui-btn" [disabled]="trabajando()" (click)="guardarObservaciones()">Guardar observaciones</button>
       }
     </div>
   </aside>

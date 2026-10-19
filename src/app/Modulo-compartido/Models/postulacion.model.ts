@@ -1,3 +1,5 @@
+import { Sesion } from './auth.model';
+
 export type TipoPostulacion = 'Voluntario' | 'Practicante';
 
 export type EstadoPostulacion =
@@ -40,18 +42,6 @@ export const COLOR_POSTULACION: Record<EstadoPostulacion, string> = {
   NoAdmitida: 'gris',
 };
 
-/** Áreas a las que se puede postular. */
-export const AREAS = [
-  'Educación y Desarrollo Comunitario',
-  'Gestión Social',
-  'Comunicaciones',
-  'Proyectos Sociales',
-  'Eventos',
-  'Recursos Humanos',
-  'Administración y Finanzas',
-  'Tecnología',
-];
-
 export interface SesionEntrevista {
   id: number;
   codigo: string;
@@ -64,6 +54,9 @@ export interface SesionEntrevista {
   cupo: number;
   inscritos: number;
   estado: 'Programada' | 'Realizada' | 'Cancelada';
+  /** Lo decide el backend: programada, sin terminar y con cupos. */
+  disponible: boolean;
+  porcentajeOcupacion: number;
 }
 
 export interface SesionEntrevistaDetalle extends SesionEntrevista {
@@ -85,18 +78,19 @@ export interface Postulacion {
   usuarioId: number;
   correo: string;
   tipo: TipoPostulacion;
-  dni: string;
+  /** DNI, nacimiento, dirección y área: null en las postulaciones de voluntario. */
+  dni: string | null;
   nombres: string;
   apellidos: string;
-  fechaNacimiento: string;
-  direccion: string;
-  distrito: string;
-  provincia: string;
+  fechaNacimiento: string | null;
+  direccion: string | null;
+  distrito: string | null;
+  provincia: string | null;
   telefono: string;
   universidad: string | null;
   carrera: string | null;
   ciclo: string | null;
-  departamento: string;
+  departamento: string | null;
   departamentoSecundario: string | null;
   cvArchivoId: number | null;
   cvNombre: string | null;
@@ -109,6 +103,27 @@ export interface Postulacion {
   sesion: SesionEntrevista | null;
   /** Solo llega en el detalle de una postulación. */
   historial?: HistorialPostulacion[] | null;
+  /** Estados a los que puede pasar ahora; los define el backend. */
+  acciones: EstadoPostulacion[];
+}
+
+/** Indicadores de la lista con los filtros aplicados (GET api/postulacion/resumen). */
+export interface PostulacionResumen {
+  total: number;
+  recibidas: number;
+  habilitadas: number;
+  agendadas: number;
+  enProceso: number;
+  aceptadas: number;
+  noAdmitidas: number;
+  requierenAtencion: number;
+}
+
+/** Respuesta del envío completo del formulario. */
+export interface PostulacionEnviada {
+  sesion: Sesion | null;
+  esMiembro: boolean;
+  postulacion: Postulacion | null;
 }
 
 export interface HistorialPostulacion {
@@ -118,23 +133,23 @@ export interface HistorialPostulacion {
   fecha: string;
 }
 
+/** El voluntario solo envía nombres, apellidos y teléfono; el resto es del practicante. */
 export interface PostulacionCrear {
   tipo: TipoPostulacion;
-  dni: string;
   nombres: string;
   apellidos: string;
-  fechaNacimiento: string;
-  direccion: string;
-  distrito: string;
-  provincia: string;
   telefono: string;
+  dni?: string;
+  fechaNacimiento?: string;
+  direccion?: string;
+  distrito?: string;
+  provincia?: string;
   universidad?: string;
   carrera?: string;
   ciclo?: string;
-  departamento: string;
+  departamento?: string;
   departamentoSecundario?: string;
-  cvArchivoId: number;
-  participaIniciativa: boolean;
+  participaIniciativa?: boolean;
   iniciativaDescripcion?: string;
 }
 
@@ -142,9 +157,4 @@ export interface PostulacionEstado {
   estado: EstadoPostulacion;
   sesionEntrevistaId?: number | null;
   notaEvaluacion?: string;
-}
-
-export interface ArchivoSubido {
-  id: number;
-  nombre: string;
 }

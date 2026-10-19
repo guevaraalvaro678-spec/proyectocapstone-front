@@ -179,7 +179,7 @@
             <li>
               <span>
                 <strong>{{ p.nombres }} {{ p.apellidos }}</strong>
-                <small>{{ p.codigo }} · {{ p.tipo }} · {{ p.departamento }}</small>
+                <small>{{ p.codigo }} · {{ p.tipo }}{{ p.departamento ? ' · ' + p.departamento : '' }}</small>
               </span>
               <span class="ui-etiqueta ui-etiqueta--gris ui-etiqueta--sin-punto">{{ etiquetas[p.estado] }}</span>
             </li>

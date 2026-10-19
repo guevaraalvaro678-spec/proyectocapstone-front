@@ -35,3 +35,47 @@
     }
   </div>
 </section>
+
+<section class="ui-tarjeta yape">
+  <div class="yape__texto">
+    <h3>Donaciones con Yape</h3>
+    <p>Se muestran en la página <strong>Donar</strong> para quien quiera apoyar con dinero. El sistema no procesa pagos: solo muestra el número y el QR de la ONG.</p>
+  </div>
+
+  <form class="yape__form" [formGroup]="formYape" (ngSubmit)="guardarYape()">
+    <label>
+      Número de Yape
+      <input id="yape-numero" type="text" formControlName="numero" inputmode="numeric" maxlength="9" placeholder="Ej. 987654321" />
+    </label>
+    <label>
+      Titular (como aparece en Yape)
+      <input id="yape-titular" type="text" formControlName="titular" maxlength="100" placeholder="Ej. Asociación AMAAC Perú" />
+    </label>
+
+    <div class="yape__qr">
+      <div class="yape__vista">
+        @if (qrVista(); as qr) {
+          <img [src]="qr" alt="QR de Yape" />
+        } @else {
+          <span class="ico">qr_code_2</span>
+        }
+      </div>
+      <div class="ui-acciones">
+        <label class="ui-btn ui-btn--claro subir">
+          <span class="ico">upload</span> {{ qrVista() ? 'Cambiar QR' : 'Subir QR' }}
+          <input type="file" accept="image/png,image/jpeg,image/webp" (change)="elegirQr($event)" [disabled]="guardandoYape()" hidden />
+        </label>
+        @if (qrVista()) {
+          <button type="button" class="ui-btn ui-btn--claro" (click)="quitarQr()">Quitar QR</button>
+        }
+      </div>
+    </div>
+
+    <div class="ui-acciones">
+      <button type="submit" class="ui-btn" [disabled]="guardandoYape()"><span class="ico">save</span> Guardar datos de Yape</button>
+      @if (sitio().yape) {
+        <button type="button" class="ui-btn ui-btn--peligro" [disabled]="guardandoYape()" (click)="quitarYape()">Quitar Yape del sitio</button>
+      }
+    </div>
+  </form>
+</section>

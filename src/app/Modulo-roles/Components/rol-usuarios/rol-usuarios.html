@@ -2,7 +2,7 @@
   <header class="ui-cabecera">
     <div>
       <h2>Usuarios</h2>
-      <p>Cuentas registradas en el sistema. Abre una para ver su detalle, sus solicitudes y sus citas.</p>
+      <p>Cuentas registradas en el sistema. Abre una para ver su detalle, su rol y su estado.</p>
     </div>
     <span class="ui-etiqueta ui-etiqueta--azul">{{ total() }} {{ total() === 1 ? 'resultado' : 'resultados' }}</span>
   </header>
@@ -64,47 +64,8 @@
         </div>
         <div><dt>Registro</dt><dd>{{ fechaHora(d.fechaRegistro) }}</dd></div>
         <div><dt>Último acceso</dt><dd>{{ d.ultimoAcceso ? fechaHora(d.ultimoAcceso) : 'Nunca' }}</dd></div>
-        <div><dt>Ubicación</dt><dd>{{ d.ubicacion || 'Sin especificar' }}</dd></div>
-        <div><dt>Intereses</dt><dd>{{ d.intereses || 'Sin especificar' }}</dd></div>
         <div><dt>Recordatorios por correo</dt><dd>{{ d.recordatoriosCorreo ? 'Sí' : 'No' }}</dd></div>
-        <div><dt>Prefiere atención virtual</dt><dd>{{ d.preferenciaVirtual ? 'Sí' : 'No' }}</dd></div>
       </dl>
-
-      <h4>Solicitudes de orientación ({{ d.solicitudes.length }})</h4>
-      @for (s of d.solicitudes; track s.id) {
-        <p class="usuarios__linea">
-          <span class="ui-etiqueta ui-etiqueta--azul">{{ s.estado === 'EnRevision' ? 'En revisión' : s.estado }}</span>
-          {{ s.motivo }}
-          @if (s.psicologoAsignadoNombre) {
-            <small>· Asignada a {{ s.psicologoAsignadoNombre }}</small>
-          }
-        </p>
-      } @empty {
-        <p class="usuarios__vacio">No ha pedido orientación.</p>
-      }
-
-      <h4>Citas ({{ d.citas.length }})</h4>
-      @if (d.citas.length > 0) {
-        <div class="ui-tabla">
-          <table>
-            <thead>
-              <tr><th>Cuándo</th><th>Psicólogo</th><th>Modalidad</th><th>Estado</th></tr>
-            </thead>
-            <tbody>
-              @for (c of d.citas; track c.id) {
-                <tr>
-                  <td>{{ fecha(c.fechaInicio) }}<small>{{ hora(c.fechaInicio) }}</small></td>
-                  <td>{{ c.psicologoNombre }}</td>
-                  <td>{{ c.modalidad }}</td>
-                  <td><span class="ui-etiqueta">{{ c.estado }}</span></td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      } @else {
-        <p class="usuarios__vacio">Sin citas.</p>
-      }
     </div>
   }
 

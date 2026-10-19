@@ -9,7 +9,7 @@ import { Inicio } from './Components/web-inicio/web-inicio';
 import { Iniciativas } from './Components/web-iniciativas/web-iniciativas';
 import { ModuloWebRoutingModule } from './modulo-web-routing-module';
 import { Nosotros } from './Components/web-nosotros/web-nosotros';
-import { WebLayout } from './Components/web-web-layout/web-web-layout';
+import { WebLayout } from './Components/web-layout/web-layout';
 
 @NgModule({
   declarations: [WebLayout, Inicio, Nosotros, Contacto, Iniciativas, Donar],

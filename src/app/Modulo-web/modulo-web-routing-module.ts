@@ -8,7 +8,7 @@ import { Donar } from './Components/web-donar/web-donar';
 import { Inicio } from './Components/web-inicio/web-inicio';
 import { Iniciativas } from './Components/web-iniciativas/web-iniciativas';
 import { Nosotros } from './Components/web-nosotros/web-nosotros';
-import { WebLayout } from './Components/web-web-layout/web-web-layout';
+import { WebLayout } from './Components/web-layout/web-layout';
 
 /** Portal público: no requiere sesión. "Participar" decide a dónde ir según la cuenta. */
 const routes: Routes = [

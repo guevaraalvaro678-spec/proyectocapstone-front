@@ -10,7 +10,7 @@
   <form class="tarjeta" [formGroup]="form" (ngSubmit)="enviar()">
     @if (sinCuenta()) {
       <p class="ui-mensaje ui-mensaje--exito">
-        <span class="ico">info</span> Elige si quieres ser voluntario o practicante y completa tus datos. Al final creas tu cuenta con Google o con tu correo.
+        <span class="ico">info</span> Como voluntario solo te pedimos tu nombre y tu celular; como practicante, también tus datos académicos y tu CV. Al final creas tu cuenta con Google o con tu correo.
         ¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a>.
       </p>
     }
@@ -43,16 +43,6 @@
     <h2 class="seccion"><span class="seccion__icono"><span class="ico">person</span></span> Datos personales</h2>
     <div class="rejilla">
       <label>
-        <span>DNI <span class="req">*</span></span>
-        <input type="text" formControlName="dni" inputmode="numeric" maxlength="8" placeholder="8 dígitos" />
-        @if (invalido('dni')) { <small class="aviso">El DNI debe tener 8 dígitos</small> }
-      </label>
-      <label>
-        <span>Fecha de nacimiento <span class="req">*</span></span>
-        <input type="date" formControlName="fechaNacimiento" />
-        @if (invalido('fechaNacimiento')) { <small class="aviso">Obligatorio</small> }
-      </label>
-      <label>
         <span>Nombres <span class="req">*</span></span>
         <input type="text" formControlName="nombres" autocomplete="given-name" placeholder="Ej. Mariana Sofía" />
         @if (invalido('nombres')) { <small class="aviso">Obligatorio</small> }
@@ -62,26 +52,38 @@
         <input type="text" formControlName="apellidos" autocomplete="family-name" placeholder="Ej. Morales Villanueva" />
         @if (invalido('apellidos')) { <small class="aviso">Obligatorio</small> }
       </label>
-      <label class="ancho">
-        <span>Dirección residencial <span class="req">*</span></span>
-        <input type="text" formControlName="direccion" autocomplete="street-address" placeholder="Av., Jr., Calle, Manzana, Lote y Urbanización" />
-        @if (invalido('direccion')) { <small class="aviso">Obligatorio</small> }
-      </label>
-      <label>
-        <span>Distrito <span class="req">*</span></span>
-        <input type="text" formControlName="distrito" placeholder="Ej. Villa El Salvador" />
-        @if (invalido('distrito')) { <small class="aviso">Obligatorio</small> }
-      </label>
-      <label>
-        <span>Provincia <span class="req">*</span></span>
-        <input type="text" formControlName="provincia" />
-        @if (invalido('provincia')) { <small class="aviso">Obligatorio</small> }
-      </label>
       <label>
         <span>Teléfono celular <span class="req">*</span></span>
-        <input type="tel" formControlName="telefono" autocomplete="tel" placeholder="Ej. 987654321" />
-        @if (invalido('telefono')) { <small class="aviso">Obligatorio</small> }
+        <input type="tel" formControlName="telefono" autocomplete="tel" inputmode="numeric" maxlength="9" placeholder="Ej. 987654321" />
+        @if (invalido('telefono')) { <small class="aviso">9 dígitos, empieza con 9</small> }
       </label>
+      @if (esPracticante()) {
+        <label>
+          <span>DNI <span class="req">*</span></span>
+          <input type="text" formControlName="dni" inputmode="numeric" maxlength="8" placeholder="8 dígitos" />
+          @if (invalido('dni')) { <small class="aviso">El DNI debe tener 8 dígitos</small> }
+        </label>
+        <label>
+          <span>Fecha de nacimiento <span class="req">*</span></span>
+          <input type="date" formControlName="fechaNacimiento" />
+          @if (invalido('fechaNacimiento')) { <small class="aviso">Obligatorio</small> }
+        </label>
+        <label class="ancho">
+          <span>Dirección residencial <span class="req">*</span></span>
+          <input type="text" formControlName="direccion" autocomplete="street-address" placeholder="Av., Jr., Calle, Manzana, Lote y Urbanización" />
+          @if (invalido('direccion')) { <small class="aviso">Obligatorio</small> }
+        </label>
+        <label>
+          <span>Distrito <span class="req">*</span></span>
+          <input type="text" formControlName="distrito" placeholder="Ej. Villa El Salvador" />
+          @if (invalido('distrito')) { <small class="aviso">Obligatorio</small> }
+        </label>
+        <label>
+          <span>Provincia <span class="req">*</span></span>
+          <input type="text" formControlName="provincia" />
+          @if (invalido('provincia')) { <small class="aviso">Obligatorio</small> }
+        </label>
+      }
       @if (!sinCuenta()) {
         <label>
           <span class="etiqueta-doble">Correo electrónico <span class="chip chip--suave">Cuenta activa</span></span>
@@ -91,57 +93,56 @@
       }
     </div>
 
+    @if (esPracticante()) {
     <h2 class="seccion">
       <span class="seccion__icono"><span class="ico">school</span></span> Formación académica
-      <small>{{ esPracticante() ? 'Obligatoria para practicantes' : 'Opcional' }}</small>
+      <small>Obligatoria para practicantes</small>
     </h2>
     <div class="rejilla">
       <label class="ancho">
-        <span>Universidad o instituto @if (esPracticante()) { <span class="req">*</span> }</span>
+        <span>Universidad o instituto <span class="req">*</span></span>
         <input type="text" formControlName="universidad" />
-        @if (invalido('universidad')) { <small class="aviso">Obligatorio para practicantes</small> }
+        @if (invalido('universidad')) { <small class="aviso">Obligatorio</small> }
       </label>
       <label>
-        <span>Carrera @if (esPracticante()) { <span class="req">*</span> }</span>
+        <span>Carrera <span class="req">*</span></span>
         <input type="text" formControlName="carrera" />
-        @if (invalido('carrera')) { <small class="aviso">Obligatorio para practicantes</small> }
+        @if (invalido('carrera')) { <small class="aviso">Obligatorio</small> }
       </label>
       <label>
-        <span>Ciclo o año @if (esPracticante()) { <span class="req">*</span> }</span>
+        <span>Ciclo o año <span class="req">*</span></span>
         <input type="text" formControlName="ciclo" placeholder="Ej. 8.º ciclo" />
-        @if (invalido('ciclo')) { <small class="aviso">Obligatorio para practicantes</small> }
+        @if (invalido('ciclo')) { <small class="aviso">Obligatorio</small> }
       </label>
     </div>
 
     <h2 class="seccion"><span class="seccion__icono"><span class="ico">work</span></span> Área y CV</h2>
     <div class="rejilla">
-      <label [class.ancho]="!esPracticante()">
+      <label>
         <span>Departamento o área al que deseas postular <span class="req">*</span></span>
         <select formControlName="departamento">
           <option value="" disabled>Selecciona el departamento o área</option>
-          @for (a of areas; track a) {
+          @for (a of areas(); track a) {
             <option [value]="a">{{ a }}</option>
           }
         </select>
         @if (invalido('departamento')) { <small class="aviso">Elige un área</small> }
       </label>
-      @if (esPracticante()) {
-        <label>
-          <span>Área secundaria (opcional)</span>
-          <select formControlName="departamentoSecundario">
-            <option value="">Ninguna</option>
-            @for (a of areas; track a) {
-              <option [value]="a">{{ a }}</option>
-            }
-          </select>
-        </label>
-      }
+      <label>
+        <span>Área secundaria (opcional)</span>
+        <select formControlName="departamentoSecundario">
+          <option value="">Ninguna</option>
+          @for (a of areas(); track a) {
+            <option [value]="a">{{ a }}</option>
+          }
+        </select>
+      </label>
       <div class="ancho">
         <span class="etiqueta">CV en PDF <span class="req">*</span></span>
         <div class="cv">
           <label class="cv__boton">
-            <span class="ico">upload_file</span> {{ subiendoCv() ? 'Subiendo...' : 'Seleccionar PDF' }}
-            <input type="file" accept="application/pdf" (change)="elegirCv($event)" [disabled]="subiendoCv()" hidden />
+            <span class="ico">upload_file</span> Seleccionar PDF
+            <input type="file" accept="application/pdf" (change)="elegirCv($event)" hidden />
           </label>
           <small>Máx. 10 MB</small>
           <span class="cv__archivo">
@@ -168,6 +169,7 @@
         <textarea rows="3" formControlName="iniciativaDescripcion" placeholder="Cuéntanos brevemente en qué consiste y cuál es tu rol."></textarea>
       }
     </div>
+    }
 
     @if (sinCuenta()) {
       <h2 class="seccion"><span class="seccion__icono"><span class="ico">key</span></span> Tu cuenta</h2>
@@ -213,7 +215,7 @@
 
     <div class="pie">
       <small>Al enviar declaras bajo juramento la autenticidad de la información brindada.</small>
-      <button type="submit" class="enviar" [disabled]="enviando() || subiendoCv()">
+      <button type="submit" class="enviar" [disabled]="enviando()">
         {{ enviando() ? 'Enviando...' : 'Enviar postulación' }} <span class="ico">arrow_forward</span>
       </button>
     </div>

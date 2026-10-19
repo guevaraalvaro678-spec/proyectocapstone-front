@@ -1,5 +1,5 @@
 export type EstadoCorreo = 'Pendiente' | 'Enviando' | 'Enviado' | 'Fallido';
-export type AudienciaCorreo = 'Usuarios' | 'Psicologos' | 'Administradores' | 'Todos' | 'Individual';
+export type AudienciaCorreo = 'Usuarios' | 'Psicologos' | 'Postulantes' | 'Administradores' | 'Todos' | 'Individual';
 
 export interface Correo {
   id: number;
@@ -33,10 +33,3 @@ export interface CorreoEstado {
   pendientes: number;
 }
 
-export const AUDIENCIAS: { valor: AudienciaCorreo; texto: string }[] = [
-  { valor: 'Usuarios', texto: 'Todos los usuarios (pacientes)' },
-  { valor: 'Psicologos', texto: 'Todos los psicólogos' },
-  { valor: 'Administradores', texto: 'Los administradores' },
-  { valor: 'Todos', texto: 'Todas las cuentas' },
-  { valor: 'Individual', texto: 'Una sola persona (escribir correo)' },
-];

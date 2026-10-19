@@ -1,45 +1,17 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { API_URL } from '../../config/api.config';
-import { Sesion } from '../Models/auth.model';
-import {
-  BloqueHorario,
-  HorarioRevision,
-  Marcacion,
-  Practicante,
-  PracticanteRegistro,
-  Tarea,
-  TareaCrear,
-  Voluntario,
-  VoluntarioRegistro,
-} from '../Models/participante.model';
-import { AuthService } from './auth.service';
+import { BloqueHorario, HorarioRevision, Marcacion, Practicante, Tarea, TareaCrear, Voluntario } from '../Models/participante.model';
 
-/** Voluntarios y practicantes: registro público, sus datos, horarios, tareas y asistencia. */
+/**
+ * Voluntarios y practicantes: sus datos, horarios, tareas y asistencia.
+ * Nadie se registra directo como miembro: se entra postulando y siendo aceptado.
+ */
 @Injectable({ providedIn: 'root' })
 export class ParticipanteService {
   private readonly http = inject(HttpClient);
-  private readonly auth = inject(AuthService);
-
-  // ---- Público ----
-
-  /** Con Google la respuesta trae la sesión y queda logueado; si no, solo un mensaje (la clave llega por correo). */
-  registrarVoluntario(datos: VoluntarioRegistro): Observable<Sesion | { mensaje: string }> {
-    return this.http.post<Sesion | { mensaje: string }>(`${API_URL}/voluntario/registro`, datos).pipe(
-      tap((respuesta) => {
-        if ('token' in respuesta) this.auth.iniciarSesion(respuesta);
-      }),
-    );
-  }
-
-  /** El practicante elige su contraseña, así que la respuesta ya trae la sesión. */
-  registrarPracticante(datos: PracticanteRegistro): Observable<Sesion> {
-    return this.http
-      .post<Sesion>(`${API_URL}/practicante/registro`, datos)
-      .pipe(tap((sesion) => this.auth.iniciarSesion(sesion)));
-  }
 
   // ---- Voluntario ----
 

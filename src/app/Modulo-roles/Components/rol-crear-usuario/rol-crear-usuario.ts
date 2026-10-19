@@ -29,7 +29,7 @@ export class CrearUsuario {
   protected readonly form = this.fb.nonNullable.group(
     {
       usuario: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
-      password: ['', [Validators.required, Validators.minLength(3)]],
+      password: ['', [Validators.required, Validators.minLength(8)]],
       confirmar: ['', Validators.required],
       rol: ['Admin' as RolAdmin, Validators.required],
     },

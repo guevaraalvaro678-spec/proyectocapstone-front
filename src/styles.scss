@@ -26,6 +26,10 @@
   --am-radio-lg: 1rem;
   --am-sombra: 0 1px 3px rgb(1 45 29 / 0.06), 0 1px 2px rgb(1 45 29 / 0.04);
   --am-sombra-alta: 0 12px 32px rgb(1 45 29 / 0.12);
+  --am-sombra-hover: 0 10px 24px rgb(1 45 29 / 0.1), 0 2px 6px rgb(1 45 29 / 0.06);
+  --am-anillo: 0 0 0 4px rgb(45 106 79 / 0.16);
+  /* Curva de las animaciones: arranca rápido y frena suave. */
+  --am-curva: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 *,
@@ -1160,4 +1164,293 @@ a {
 app-portal-postulante .pp-portada {
   margin: 0 0 1.5rem;
   border-radius: 1.25rem;
+}
+
+/* =====================================================================
+ * Capa de interacción: transiciones, estados hover/foco y animaciones de entrada.
+ * Solo cambia cómo se ve y se siente; no toca el flujo de ninguna pantalla.
+ * ===================================================================== */
+
+::selection {
+  background: rgb(234 88 12 / 0.2);
+  color: var(--am-verde-oscuro);
+}
+
+/* Barras de desplazamiento finas y en el tono de la marca. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #c3d3ca transparent;
+}
+
+/* Anillo de foco visible al navegar con teclado. */
+:where(a, button, [tabindex]):focus-visible {
+  outline: 2px solid var(--am-naranja);
+  outline-offset: 2px;
+}
+
+:where(input:not([type='checkbox'], [type='radio'], [type='file']), select, textarea) {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+
+  &:hover:not(:disabled, [readonly]) {
+    border-color: #b9cfc3;
+  }
+
+  &:focus-visible {
+    border-color: var(--am-verde-medio);
+    outline: none;
+    box-shadow: var(--am-anillo);
+  }
+}
+
+/* ---- Botones: se elevan al pasar el mouse y se hunden al hacer clic ---- */
+
+.ui-btn,
+.pp-btn {
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.25s var(--am-curva),
+    transform 0.2s var(--am-curva);
+
+  .ico {
+    transition: transform 0.25s var(--am-curva);
+  }
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgb(1 45 29 / 0.14);
+
+    .ico {
+      transform: scale(1.1);
+    }
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
+    box-shadow: none;
+  }
+}
+
+.ui-btn--acento:hover:not(:disabled),
+.pp-btn--acento:hover:not(:disabled) {
+  box-shadow: 0 8px 20px rgb(234 88 12 / 0.28);
+}
+
+.ui-btn--claro:hover:not(:disabled),
+.ui-btn--peligro:hover:not(:disabled) {
+  box-shadow: 0 4px 12px rgb(1 45 29 / 0.08);
+}
+
+/* ---- Tarjetas e indicadores ---- */
+
+.ui-tarjeta,
+.ui-indicador,
+.pp-tarjeta {
+  transition: transform 0.3s var(--am-curva), box-shadow 0.3s var(--am-curva), border-color 0.3s ease;
+
+  &:hover {
+    border-color: #d3e3da;
+    box-shadow: var(--am-sombra-hover);
+  }
+}
+
+.ui-indicador:hover {
+  transform: translateY(-3px);
+}
+
+/* Los indicadores entran uno detrás de otro. */
+.ui-indicadores > * {
+  animation: am-subir 0.5s var(--am-curva) backwards;
+
+  @for $i from 1 through 6 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{($i - 1) * 60}ms;
+    }
+  }
+}
+
+/* ---- Tablas: la fila bajo el mouse se resalta ---- */
+
+.ui-tabla {
+  tbody tr {
+    transition: background 0.15s ease;
+    animation: am-aparecer 0.35s ease backwards;
+  }
+
+  tbody tr:hover {
+    background: #f3f8f5;
+  }
+}
+
+/* ---- Mensajes, etiquetas y filtros ---- */
+
+.ui-mensaje,
+.pp-mensaje {
+  animation: am-bajar 0.35s var(--am-curva) backwards;
+}
+
+.ui-etiqueta {
+  transition: transform 0.2s var(--am-curva), filter 0.2s ease;
+
+  tr:hover & {
+    filter: saturate(1.25);
+  }
+}
+
+.ui-filtros {
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+
+  &:focus-within {
+    border-color: #d3e3da;
+    box-shadow: var(--am-sombra);
+  }
+}
+
+.ui-vacio {
+  animation: am-aparecer 0.4s ease backwards;
+}
+
+/* ---- Cajón lateral de detalle: entra desde la derecha sobre un fondo desenfocado ---- */
+
+.am-velo {
+  backdrop-filter: blur(3px);
+  animation: am-aparecer 0.25s ease backwards;
+}
+
+.am-cajon {
+  animation: am-cajon-entra 0.35s var(--am-curva) backwards;
+
+  &__cabecera button:has(> .ico:only-child) {
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.25s var(--am-curva);
+
+    &:hover {
+      background: var(--am-superficie-baja);
+      color: var(--am-texto);
+      transform: rotate(90deg);
+    }
+  }
+}
+
+/* ---- Pasos del proceso: el paso actual "late" para llamar la atención ---- */
+
+.am-paso {
+  transition: transform 0.3s var(--am-curva), box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  &--actual .am-paso__icono {
+    animation: am-latido 2s ease-out infinite;
+  }
+}
+
+/* ---- Pantallas de acceso (login, registro): la tarjeta entra suave ---- */
+
+.acceso__tarjeta {
+  animation: am-subir 0.5s var(--am-curva) backwards;
+}
+
+.acceso__texto {
+  animation: am-subir 0.6s var(--am-curva) 0.08s backwards;
+}
+
+/* ---- Sitio público: las secciones aparecen al hacer scroll (navegadores que lo soportan) ---- */
+
+@supports (animation-timeline: view()) {
+  app-web-layout main section:not(:first-child) {
+    animation: am-revelar linear backwards;
+    animation-timeline: view();
+    animation-range: entry 0% entry 35%;
+  }
+}
+
+/* ---- Transición entre páginas ---- */
+
+/* Fundido corto de toda la vista (View Transitions del router). */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.2s;
+}
+
+/* La página que llega a un router-outlet entra subiendo un poco (los layouts de primer nivel no). */
+:not(app-root) > router-outlet + * {
+  animation: am-subir 0.35s var(--am-curva) backwards;
+}
+
+/* ---- Animaciones ---- */
+
+@keyframes am-aparecer {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes am-salir {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes am-subir {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+@keyframes am-bajar {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes am-revelar {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+}
+
+@keyframes am-cajon-entra {
+  from {
+    opacity: 0.6;
+    transform: translateX(100%);
+  }
+}
+
+@keyframes am-latido {
+  0% {
+    box-shadow: 0 0 0 0 rgb(234 88 12 / 0.45);
+  }
+
+  70%,
+  100% {
+    box-shadow: 0 0 0 10px rgb(234 88 12 / 0);
+  }
+}
+
+/* Quien prefiere menos movimiento (configuración del sistema) ve todo sin animaciones. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
 }

@@ -3,7 +3,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY, catchError, switchMap, timer } from 'rxjs';
 
 import { DashboardOng } from '../../../Modulo-compartido/Models/cuenta.model';
-import { ESTADOS_POSTULACION, ETIQUETA_POSTULACION } from '../../../Modulo-compartido/Models/postulacion.model';
 import { AuthService } from '../../../Modulo-compartido/Services/auth.service';
 import { CuentaService } from '../../../Modulo-compartido/Services/cuenta.service';
 
@@ -22,51 +21,24 @@ export class Dashboard {
   protected readonly error = signal('');
   protected readonly actualizado = signal<Date | null>(null);
 
-  /** Embudo: cuántas postulaciones llegaron a cada etapa (o más allá). */
-  protected readonly embudo = computed(() => {
-    const d = this.datos();
-    if (!d) return [];
-    const total = d.totalPostulaciones;
-    const cuenta = (e: (typeof ESTADOS_POSTULACION)[number]) => d.postulaciones[e] ?? 0;
-    // Una postulación que ya avanzó también "pasó" por las etapas anteriores.
-    const desde = (indice: number) =>
-      ESTADOS_POSTULACION.slice(indice, 5).reduce((s, e) => s + cuenta(e), 0) + cuenta('Aceptada') + cuenta('NoAdmitida');
-
-    return ESTADOS_POSTULACION.map((estado, i) => {
-      const valor = i < 5 ? (i === 0 ? total : desde(i)) : cuenta(estado);
-      return {
-        etiqueta: `${i + 1}. ${i === 0 ? 'Postulaciones recibidas' : ETIQUETA_POSTULACION[estado]}`,
-        valor,
-        porcentaje: total ? Math.round((valor / total) * 100) : 0,
-        alerta: estado === 'EnCalificacion',
-      };
-    });
-  });
-
-  protected readonly pendientes = computed(() => {
-    const p = this.datos()?.postulaciones;
-    return p ? (p.Recibida ?? 0) + (p.HabilitadaEntrevista ?? 0) : 0;
-  });
-
-  protected readonly evaluaciones = computed(() => {
-    const p = this.datos()?.postulaciones;
-    return p ? (p.EntrevistaRealizada ?? 0) + (p.EnCalificacion ?? 0) : 0;
-  });
-
-  protected readonly miembros = computed(() => (this.datos()?.voluntarios ?? 0) + (this.datos()?.practicantes ?? 0));
-
-  protected readonly pctVoluntarios = computed(() =>
-    this.miembros() ? Math.round(((this.datos()?.voluntarios ?? 0) / this.miembros()) * 100) : 0,
-  );
+  // Todos los indicadores llegan calculados del backend (GET api/dashboard/ong); aquí solo se leen.
+  protected readonly embudo = computed(() => this.datos()?.embudo ?? []);
+  protected readonly pendientes = computed(() => this.datos()?.pendientesAtencion ?? 0);
+  protected readonly evaluaciones = computed(() => this.datos()?.enEvaluacion ?? 0);
+  protected readonly miembros = computed(() => this.datos()?.miembros ?? 0);
+  protected readonly pctVoluntarios = computed(() => this.datos()?.porcentajeVoluntarios ?? 0);
 
   protected readonly donaciones = computed(() => {
-    const d = this.datos()?.donaciones ?? {};
-    const pendientes = d.PendienteRecepcion ?? 0;
-    const recibidas = d.Recibida ?? 0;
-    const descartadas = d.Desestimada ?? 0;
-    const total = pendientes + recibidas + descartadas;
-    const pct = (n: number) => (total ? Math.round((n / total) * 1000) / 10 : 0);
-    return { total, pendientes, recibidas, descartadas, pPendientes: pct(pendientes), pRecibidas: pct(recibidas), pDescartadas: pct(descartadas) };
+    const r = this.datos()?.resumenDonaciones;
+    return {
+      total: r?.total ?? 0,
+      pendientes: r?.pendientes ?? 0,
+      recibidas: r?.recibidas ?? 0,
+      descartadas: r?.desestimadas ?? 0,
+      pPendientes: r?.porcentajePendientes ?? 0,
+      pRecibidas: r?.porcentajeRecibidas ?? 0,
+      pDescartadas: r?.porcentajeDesestimadas ?? 0,
+    };
   });
 
   constructor() {

@@ -7,8 +7,15 @@
 
 .cab {
   border-bottom: 1px solid var(--am-borde-suave);
-  background: rgb(255 255 255 / 0.96);
-  backdrop-filter: blur(8px);
+  background: rgb(255 255 255 / 0.82);
+  backdrop-filter: saturate(1.4) blur(12px);
+
+  // Al bajar por la página la cabecera toma sombra (solo navegadores con animaciones ligadas al scroll).
+  @supports (animation-timeline: scroll()) {
+    animation: cab-sombra linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 120px;
+  }
 
   &__interior {
     display: flex;
@@ -38,21 +45,45 @@
     gap: 0.25rem;
 
     a {
+      position: relative;
       padding: 0.5rem 0.75rem;
       border-radius: 0.5rem;
       color: var(--am-texto-suave);
       font-size: 0.95rem;
       font-weight: 500;
       text-decoration: none;
+      transition: color 0.2s ease, background 0.2s ease;
+
+      // Subrayado naranja que crece desde el centro.
+      &::after {
+        content: '';
+        position: absolute;
+        right: 0.75rem;
+        bottom: 0.3rem;
+        left: 0.75rem;
+        height: 2px;
+        border-radius: 2px;
+        background: var(--am-naranja);
+        transform: scaleX(0);
+        transition: transform 0.25s var(--am-curva);
+      }
 
       &:hover {
         background: var(--am-superficie-baja);
         color: var(--am-verde);
+
+        &::after {
+          transform: scaleX(1);
+        }
       }
 
       &.activo {
         color: var(--am-verde);
         font-weight: 700;
+
+        &::after {
+          transform: scaleX(1);
+        }
       }
     }
   }
@@ -145,6 +176,7 @@
 
       &.abierto {
         display: flex;
+        animation: menu-abre 0.25s var(--am-curva);
       }
     }
 
@@ -157,5 +189,19 @@
       align-items: stretch;
       padding-bottom: 0.5rem;
     }
+  }
+}
+
+@keyframes cab-sombra {
+  to {
+    background: rgb(255 255 255 / 0.92);
+    box-shadow: 0 6px 24px rgb(1 45 29 / 0.08);
+  }
+}
+
+@keyframes menu-abre {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
   }
 }

@@ -31,7 +31,7 @@
       <label>
         Para
         <select formControlName="audiencia" (change)="cambiarAudiencia($any($event.target).value)">
-          @for (a of audiencias; track a.valor) {
+          @for (a of audiencias(); track a.valor) {
             <option [value]="a.valor">{{ a.texto }}</option>
           }
         </select>

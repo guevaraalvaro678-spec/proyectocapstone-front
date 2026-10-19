@@ -1,3 +1,74 @@
 :host {
   display: block;
 }
+
+/* ---- Verificación en dos pasos ---- */
+
+.canales {
+  display: grid;
+  gap: 0.6rem;
+  margin: 1.25rem 0;
+}
+
+.canal {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--am-borde);
+  border-radius: 0.75rem;
+  background: var(--am-superficie);
+  color: var(--am-texto);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+
+  > .ico {
+    display: grid;
+    place-items: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 0.6rem;
+    background: var(--am-verde-suave);
+    color: var(--am-verde);
+  }
+
+  strong,
+  small {
+    display: block;
+  }
+
+  small {
+    color: var(--am-gris);
+  }
+
+  &:hover {
+    border-color: #b9cfc3;
+  }
+
+  &.activo {
+    border-color: var(--am-verde);
+    background: #f1f6f3;
+    box-shadow: var(--am-anillo);
+  }
+}
+
+.codigo {
+  font-size: 1.4rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.5em;
+}
+
+.volver {
+  margin-top: 0.75rem;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.reenviar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem;
+}

@@ -54,7 +54,7 @@ export class Entrevistas {
     const programadas = this.sesiones().filter((s) => s.estado === 'Programada' && new Date(s.fin).getTime() >= ahora);
     return {
       proximas: programadas.length,
-      conCupo: programadas.filter((s) => s.inscritos < s.cupo).length,
+      conCupo: this.sesiones().filter((s) => s.disponible).length,
       realizadas: this.sesiones().filter((s) => s.estado === 'Realizada').length,
     };
   });
@@ -77,7 +77,7 @@ export class Entrevistas {
   }
 
   protected porcentaje(s: SesionEntrevista): number {
-    return s.cupo ? Math.round((s.inscritos / s.cupo) * 100) : 0;
+    return s.porcentajeOcupacion;
   }
 
   protected nueva(): void {

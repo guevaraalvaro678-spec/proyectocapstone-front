@@ -28,4 +28,26 @@ export interface DashboardOng {
   iniciativasPendientes: number;
   horariosPendientes: number;
   proximasSesiones: SesionEntrevista[];
+  // Indicadores que ya vienen calculados del backend.
+  embudo: EtapaEmbudo[];
+  pendientesAtencion: number;
+  enEvaluacion: number;
+  miembros: number;
+  porcentajeVoluntarios: number;
+  resumenDonaciones: {
+    total: number;
+    pendientes: number;
+    recibidas: number;
+    desestimadas: number;
+    porcentajePendientes: number;
+    porcentajeRecibidas: number;
+    porcentajeDesestimadas: number;
+  };
+}
+
+export interface EtapaEmbudo {
+  etiqueta: string;
+  valor: number;
+  porcentaje: number;
+  alerta: boolean;
 }

@@ -10,6 +10,59 @@
       </div>
 
       <section class="acceso__tarjeta">
+        @if (paso() === 'canal') {
+          <h2>Verificación en dos pasos</h2>
+          <p>Tu contraseña es correcta. Para terminar de entrar te enviaremos un código de 6 dígitos. ¿Dónde quieres recibirlo?</p>
+
+          <div class="canales" role="radiogroup" aria-label="Medio para recibir el código">
+            @for (c of canales(); track c.canal) {
+              <button type="button" class="canal" role="radio" [attr.aria-checked]="canalElegido() === c.canal" [class.activo]="canalElegido() === c.canal" (click)="canalElegido.set(c.canal)">
+                <span class="ico">{{ c.canal === 'correo' ? 'mail' : 'sms' }}</span>
+                <span>
+                  <strong>{{ c.canal === 'correo' ? 'Correo electrónico' : 'Mensaje de texto (SMS)' }}</strong>
+                  <small>{{ c.destino }}</small>
+                </span>
+              </button>
+            }
+          </div>
+
+          @if (error()) {
+            <p class="acceso__error">{{ error() }}</p>
+          }
+          <button type="button" class="acceso__boton" [disabled]="cargando()" (click)="enviarCodigo()">
+            {{ cargando() ? 'Enviando...' : 'Enviar código' }}
+          </button>
+          <button type="button" class="acceso__volver volver" (click)="volver()"><span class="ico">arrow_back</span> Volver</button>
+        } @else if (paso() === 'codigo') {
+          <h2>Escribe el código</h2>
+          @if (aviso()) {
+            <p class="acceso__exito">{{ aviso() }}</p>
+          }
+
+          <form (ngSubmit)="verificar()">
+            <label class="acceso__campo">
+              Código de verificación
+              <span class="acceso__entrada">
+                <span class="ico">pin</span>
+                <input id="codigo-verificacion" type="text" [formControl]="codigo" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000" class="codigo" />
+              </span>
+            </label>
+
+            @if (error()) {
+              <p class="acceso__error">{{ error() }}</p>
+            }
+            <button type="submit" class="acceso__boton" [disabled]="cargando()">
+              {{ cargando() ? 'Verificando...' : 'Verificar y entrar' }}
+            </button>
+          </form>
+
+          <div class="reenviar">
+            <button type="button" class="acceso__volver volver" [disabled]="cargando()" (click)="enviarCodigo()"><span class="ico">refresh</span> Reenviar código</button>
+            @if (canales().length > 1) {
+              <button type="button" class="acceso__volver volver" (click)="paso.set('canal')"><span class="ico">swap_horiz</span> Usar otro medio</button>
+            }
+          </div>
+        } @else {
         <h2>Inicia sesión</h2>
         <p>Accede a tu cuenta de AMAAC.</p>
 
@@ -55,6 +108,7 @@
         </form>
 
         <p class="acceso__pie">¿No tienes una cuenta? <a routerLink="/registro">Crear cuenta</a></p>
+        }
       </section>
     </div>
   </main>

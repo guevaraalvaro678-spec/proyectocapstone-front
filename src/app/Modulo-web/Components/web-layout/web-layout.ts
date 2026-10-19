@@ -6,8 +6,8 @@ import { SitioService } from '../../../Modulo-compartido/Services/sitio.service'
 @Component({
   selector: 'app-web-layout',
   standalone: false,
-  templateUrl: './web-web-layout.html',
-  styleUrl: './web-web-layout.scss',
+  templateUrl: './web-layout.html',
+  styleUrl: './web-layout.scss',
 })
 export class WebLayout {
   /** Número de WhatsApp de la ONG (código de país + número, sin espacios). Reemplazar por el real. */

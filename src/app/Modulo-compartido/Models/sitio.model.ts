@@ -40,6 +40,24 @@ export interface IniciativaGuardar {
 export interface SitioPublico {
   logoUrl: string | null;
   iniciativas: Iniciativa[];
+  /** Null si la ONG no configuró Yape. */
+  yape: Yape | null;
+}
+
+/** Datos para donar dinero con Yape (la plataforma no procesa pagos, solo los muestra). */
+export interface Yape {
+  numero: string | null;
+  /** Con espacios para leerlo fácil: 987 654 321. */
+  numeroVisible: string | null;
+  titular: string | null;
+  qrImagenId: number | null;
+  qrUrl: string | null;
+}
+
+export interface YapeGuardar {
+  numero: string | null;
+  titular: string | null;
+  qrImagenId: number | null;
 }
 
 export interface ImagenSubida {

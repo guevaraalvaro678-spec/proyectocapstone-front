@@ -3,11 +3,35 @@
     <a class="cabecera__volver" routerLink="/"><span class="ico">arrow_back</span> Volver al inicio</a>
     <h1>Registra tu donación</h1>
     <p>Agrega los artículos que deseas entregar a AMAAC.</p>
-    <span class="cabecera__aviso"><span class="ico">info</span> La entrega es presencial. Esta plataforma no recibe pagos.</span>
+    <span class="cabecera__aviso"><span class="ico">info</span> La entrega de artículos es presencial en nuestra sede.</span>
   </div>
 </section>
 
 <div class="interior cuerpo">
+  @if (yape(); as y) {
+    <section class="tarjeta yape" aria-labelledby="yape-titulo">
+      @if (y.qrUrl) {
+        <img class="yape__qr" [src]="y.qrUrl" alt="Código QR de Yape de AMAAC Perú" />
+      }
+      <div class="yape__info">
+        <span class="yape__marca">Yape</span>
+        <h2 id="yape-titulo">¿Prefieres donar dinero?</h2>
+        <p>Abre Yape, toca <strong>Yapear</strong> y escanea el QR o escribe el número. Cualquier monto ayuda.</p>
+        @if (y.numero) {
+          <div class="yape__numero">
+            <strong>{{ y.numeroVisible }}</strong>
+            <button type="button" class="boton boton--claro" (click)="copiarNumero(y.numero)">
+              <span class="ico">{{ copiado() ? 'check' : 'content_copy' }}</span> {{ copiado() ? 'Copiado' : 'Copiar número' }}
+            </button>
+          </div>
+        }
+        @if (y.titular) {
+          <p class="yape__titular">Verifica que el nombre sea <strong>{{ y.titular }}</strong> antes de confirmar.</p>
+        }
+      </div>
+    </section>
+  }
+
   @if (registrada(); as d) {
     <section class="tarjeta exito">
       <span class="exito__icono"><span class="ico ico--lleno">check_circle</span></span>

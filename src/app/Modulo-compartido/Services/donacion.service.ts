@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 
 import { API_URL, urlServidor } from '../../config/api.config';
-import { Donacion, DonacionCrear, EstadoDonacion, Noticia, NoticiaGuardar } from '../Models/donacion.model';
+import { Donacion, DonacionCrear, DonacionResumen, EstadoDonacion, Noticia, NoticiaGuardar } from '../Models/donacion.model';
 
 const conUrl = (n: Noticia): Noticia => ({ ...n, imagenUrl: urlServidor(n.imagenUrl) });
 
@@ -27,6 +27,15 @@ export class DonacionService {
 
   cambiarEstado(id: number, estado: EstadoDonacion, observaciones: string): Observable<Donacion> {
     return this.http.put<Donacion>(`${API_URL}/donacion/${id}/estado`, { estado, observaciones });
+  }
+
+  guardarObservaciones(id: number, observaciones: string): Observable<Donacion> {
+    return this.http.put<Donacion>(`${API_URL}/donacion/${id}/observaciones`, { observaciones });
+  }
+
+  /** Totales por estado e inventario de lo recibido (calculados en el backend). */
+  resumen(): Observable<DonacionResumen> {
+    return this.http.get<DonacionResumen>(`${API_URL}/donacion/resumen`);
   }
 
   // ---- Noticias ----

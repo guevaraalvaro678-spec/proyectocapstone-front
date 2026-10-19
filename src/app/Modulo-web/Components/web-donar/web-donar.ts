@@ -4,8 +4,12 @@ import { FormBuilder, Validators } from '@angular/forms';
 
 import { CATEGORIAS_DONACION, CategoriaDonacion, Donacion, DonacionArticulo } from '../../../Modulo-compartido/Models/donacion.model';
 import { DonacionService } from '../../../Modulo-compartido/Services/donacion.service';
+import { SitioService } from '../../../Modulo-compartido/Services/sitio.service';
 
-/** "Registra tu donación": artículos físicos que la persona entregará en la sede (no se reciben pagos). */
+/**
+ * "Registra tu donación": artículos físicos que la persona entregará en la sede.
+ * Si la ONG configuró Yape, también muestra el número y el QR para donar dinero (la plataforma no procesa pagos).
+ */
 @Component({
   selector: 'app-donar',
   standalone: false,
@@ -22,6 +26,21 @@ export class Donar {
   protected readonly enviando = signal(false);
   protected readonly error = signal('');
   protected readonly registrada = signal<Donacion | null>(null);
+
+  /** Datos de Yape que configura el administrador (null: la sección no se muestra). */
+  protected readonly yape = computed(() => this.sitioService.sitio().yape);
+  protected readonly copiado = signal(false);
+  private readonly sitioService = inject(SitioService);
+
+  protected copiarNumero(numero: string): void {
+    navigator.clipboard
+      ?.writeText(numero)
+      .then(() => {
+        this.copiado.set(true);
+        setTimeout(() => this.copiado.set(false), 2000);
+      })
+      .catch(() => this.copiado.set(false));
+  }
 
   protected readonly totalArticulos = computed(() => this.articulos().reduce((s, a) => s + a.cantidad, 0));
 

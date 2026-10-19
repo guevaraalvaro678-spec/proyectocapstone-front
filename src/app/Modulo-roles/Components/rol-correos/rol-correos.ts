@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 
-import { AUDIENCIAS, AudienciaCorreo, Correo, CorreoEstado } from '../../Models/correo.model';
+import { AudienciaCorreo, Correo, CorreoEstado } from '../../Models/correo.model';
 import { CorreoService } from '../../Services/correo.service';
 import { fechaHora } from '../../Utils/fechas';
 
@@ -17,7 +17,8 @@ export class Correos {
   private readonly fb = inject(FormBuilder);
   private readonly correoService = inject(CorreoService);
 
-  protected readonly audiencias = AUDIENCIAS;
+  /** Grupos de envío con su texto: los define el backend (GET api/correo/audiencias). */
+  protected readonly audiencias = signal<{ valor: AudienciaCorreo; texto: string }[]>([]);
 
   protected readonly estado = signal<CorreoEstado | null>(null);
   protected readonly historial = signal<Correo[]>([]);
@@ -40,11 +41,13 @@ export class Correos {
   protected readonly esIndividual = computed(() => this.audiencia() === 'Individual');
   protected readonly incluyeUsuarios = computed(() => this.audiencia() === 'Usuarios' || this.audiencia() === 'Todos');
 
-  protected readonly pendientes = computed(() => this.historial().filter((c) => c.estado === 'Pendiente').length);
+  /** Correos que esperan salir, según el backend (no se recuenta del historial, que llega recortado). */
+  protected readonly pendientes = computed(() => this.estado()?.pendientes ?? 0);
 
   protected readonly fechaHora = fechaHora;
 
   constructor() {
+    this.correoService.audiencias().subscribe((a) => this.audiencias.set(a));
     this.cargar();
   }
 
@@ -82,7 +85,7 @@ export class Correos {
     }
 
     const v = this.form.getRawValue();
-    const destino = this.esIndividual() ? v.correo : (this.audiencias.find((a) => a.valor === v.audiencia)?.texto ?? '').toLowerCase();
+    const destino = this.esIndividual() ? v.correo : (this.audiencias().find((a) => a.valor === v.audiencia)?.texto ?? '').toLowerCase();
 
     if (!confirm(`¿Enviar "${v.asunto}" a: ${destino}?`)) return;
 

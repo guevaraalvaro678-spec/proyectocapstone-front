@@ -10,6 +10,7 @@ import {
   ETIQUETA_POSTULACION,
   EstadoPostulacion,
   Postulacion,
+  PostulacionResumen,
   SesionEntrevista,
 } from '../../../Modulo-compartido/Models/postulacion.model';
 import { PostulacionService } from '../../../Modulo-compartido/Services/postulacion.service';
@@ -48,24 +49,20 @@ export class Postulaciones {
   protected readonly trabajando = signal(false);
   protected readonly errorDetalle = signal('');
 
-  /** Sesiones programadas que todavía tienen cupo (o la que ya tiene asignada). */
+  /** Sesiones que el backend marca como disponibles (o la que ya tiene asignada). */
   protected readonly sesionesDisponibles = computed(() =>
-    this.sesiones().filter((s) => s.inscritos < s.cupo || s.id === this.detalle()?.sesion?.id),
+    this.sesiones().filter((s) => s.disponible || s.id === this.detalle()?.sesion?.id),
   );
 
-  protected readonly indicadores = computed(() => {
-    const lista = this.postulaciones();
-    const contar = (...e: EstadoPostulacion[]) => lista.filter((p) => e.includes(p.estado)).length;
-    return {
-      total: lista.length,
-      recibidas: contar('Recibida'),
-      habilitadas: contar('HabilitadaEntrevista'),
-      agendadas: contar('EntrevistaAgendada'),
-      aceptadas: contar('Aceptada'),
-      noAdmitidas: contar('NoAdmitida'),
-      enProceso: contar('EntrevistaRealizada', 'EnCalificacion'),
-    };
+  /** Indicadores con los filtros aplicados: los calcula el backend (GET api/postulacion/resumen). */
+  protected readonly indicadores = signal<PostulacionResumen>({
+    total: 0, recibidas: 0, habilitadas: 0, agendadas: 0, enProceso: 0, aceptadas: 0, noAdmitidas: 0, requierenAtencion: 0,
   });
+
+  /** El backend dice a qué estados puede pasar la postulación abierta; el panel muestra esos botones. */
+  protected puede(estado: EstadoPostulacion): boolean {
+    return this.detalle()?.acciones?.includes(estado) ?? false;
+  }
 
   constructor() {
     this.buscar.valueChanges.pipe(debounceTime(300), distinctUntilChanged()).subscribe(() => this.cargar());
@@ -84,6 +81,7 @@ export class Postulaciones {
         this.cargando.set(false);
       },
     });
+    this.postulacionService.resumen(this.tipo(), this.estado(), this.buscar.value).subscribe((r) => this.indicadores.set(r));
   }
 
   protected filtrarTipo(valor: string): void {
@@ -103,21 +101,18 @@ export class Postulaciones {
     this.cargar();
   }
 
-  /** Descarga en CSV (se abre en Excel) las postulaciones que se ven con los filtros actuales. */
+  /** Descarga el CSV que arma el backend con los filtros actuales (se abre en Excel). */
   protected exportar(): void {
-    const columnas = ['Código', 'Tipo', 'DNI', 'Nombres', 'Apellidos', 'Correo', 'Teléfono', 'Distrito', 'Área', 'Universidad', 'Carrera', 'Estado', 'Fecha de envío'];
-    const filas = this.postulaciones().map((p) => [
-      p.codigo, p.tipo, p.dni, p.nombres, p.apellidos, p.correo, p.telefono, p.distrito, p.departamento,
-      p.universidad ?? '', p.carrera ?? '', this.etiquetas[p.estado], p.fechaEnvio.slice(0, 10),
-    ]);
-    const celda = (v: string) => `"${String(v).replaceAll('"', '""')}"`;
-    const csv = [columnas, ...filas].map((f) => f.map(celda).join(';')).join('\r\n');
-
-    const enlace = document.createElement('a');
-    enlace.href = URL.createObjectURL(new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' }));
-    enlace.download = `postulaciones_${new Date().toISOString().slice(0, 10)}.csv`;
-    enlace.click();
-    URL.revokeObjectURL(enlace.href);
+    this.postulacionService.exportar(this.tipo(), this.estado(), this.buscar.value).subscribe({
+      next: (archivo) => {
+        const enlace = document.createElement('a');
+        enlace.href = URL.createObjectURL(archivo);
+        enlace.download = `postulaciones_${new Date().toISOString().slice(0, 10)}.csv`;
+        enlace.click();
+        URL.revokeObjectURL(enlace.href);
+      },
+      error: () => this.error.set('No se pudo exportar la lista'),
+    });
   }
 
   protected abrir(p: Postulacion): void {
@@ -147,17 +142,13 @@ export class Postulaciones {
     const p = this.detalle();
     if (!p) return;
 
-    if (estado === 'EntrevistaAgendada' && !this.sesionElegida()) {
-      this.errorDetalle.set('Elige la sesión de entrevista.');
-      return;
-    }
-
+    // Las reglas (sesión obligatoria, pasos permitidos) las valida el backend y su mensaje se muestra abajo.
     this.trabajando.set(true);
     this.errorDetalle.set('');
     this.postulacionService
       .cambiarEstado(p.id, {
         estado,
-        sesionEntrevistaId: estado === 'EntrevistaAgendada' ? this.sesionElegida() : null,
+        sesionEntrevistaId: estado === 'EntrevistaAgendada' ? this.sesionElegida() || null : null,
         notaEvaluacion: this.nota() || undefined,
       })
       .subscribe({

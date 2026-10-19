@@ -24,7 +24,7 @@
   </div>
   <div class="ui-indicador ui-indicador--alerta">
     <span>Requieren atención</span>
-    <strong>{{ indicadores().recibidas + indicadores().habilitadas }}</strong>
+    <strong>{{ indicadores().requierenAtencion }}</strong>
     <small>{{ indicadores().recibidas }} recibidas · {{ indicadores().habilitadas }} por agendar</small>
   </div>
   <div class="ui-indicador">
@@ -91,7 +91,7 @@
               <small>{{ p.correo }}</small>
             </td>
             <td><span class="ui-etiqueta ui-etiqueta--sin-punto" [class.ui-etiqueta--verde]="p.tipo === 'Voluntario'" [class.ui-etiqueta--naranja]="p.tipo === 'Practicante'">{{ p.tipo }}</span></td>
-            <td>{{ p.departamento }}</td>
+            <td>{{ p.departamento || 'Voluntariado general' }}</td>
             <td>{{ p.fechaEnvio | date: 'd MMM, y' }}</td>
             <td><span class="ui-etiqueta ui-etiqueta--{{ colores[p.estado] }}">{{ etiquetas[p.estado] }}</span></td>
             <td class="ui-tabla__acciones">
@@ -120,22 +120,26 @@
       <h4 class="titulo-seccion">Datos personales</h4>
       <dl class="ui-detalle__datos">
         <div><dt>Nombres y apellidos</dt><dd>{{ p.nombres }} {{ p.apellidos }}</dd></div>
-        <div><dt>DNI</dt><dd>{{ p.dni }}</dd></div>
-        <div><dt>Fecha de nacimiento</dt><dd>{{ p.fechaNacimiento | date: 'dd/MM/yyyy' : 'UTC' }}</dd></div>
         <div><dt>Teléfono</dt><dd>{{ p.telefono }}</dd></div>
         <div><dt>Correo</dt><dd>{{ p.correo }}</dd></div>
-        <div><dt>Dirección</dt><dd>{{ p.direccion }}, {{ p.distrito }}, {{ p.provincia }}</dd></div>
+        @if (p.tipo === 'Practicante') {
+          <div><dt>DNI</dt><dd>{{ p.dni }}</dd></div>
+          <div><dt>Fecha de nacimiento</dt><dd>{{ p.fechaNacimiento | date: 'dd/MM/yyyy' : 'UTC' }}</dd></div>
+          <div><dt>Dirección</dt><dd>{{ p.direccion }}, {{ p.distrito }}, {{ p.provincia }}</dd></div>
+        }
       </dl>
 
-      <h4 class="titulo-seccion">Formación y área</h4>
-      <dl class="ui-detalle__datos">
-        <div><dt>Área a la que postula</dt><dd>{{ p.departamento }}</dd></div>
-        @if (p.departamentoSecundario) {
-          <div><dt>Área secundaria</dt><dd>{{ p.departamentoSecundario }}</dd></div>
-        }
-        <div><dt>Universidad</dt><dd>{{ p.universidad || '—' }}</dd></div>
-        <div><dt>Carrera y ciclo</dt><dd>{{ p.carrera || '—' }}{{ p.ciclo ? ' · ' + p.ciclo : '' }}</dd></div>
-      </dl>
+      @if (p.tipo === 'Practicante') {
+        <h4 class="titulo-seccion">Formación y área</h4>
+        <dl class="ui-detalle__datos">
+          <div><dt>Área a la que postula</dt><dd>{{ p.departamento }}</dd></div>
+          @if (p.departamentoSecundario) {
+            <div><dt>Área secundaria</dt><dd>{{ p.departamentoSecundario }}</dd></div>
+          }
+          <div><dt>Universidad</dt><dd>{{ p.universidad || '—' }}</dd></div>
+          <div><dt>Carrera y ciclo</dt><dd>{{ p.carrera || '—' }}{{ p.ciclo ? ' · ' + p.ciclo : '' }}</dd></div>
+        </dl>
+      }
 
       @if (p.cvArchivoId) {
         <button type="button" class="cv" (click)="verCv(p)">
@@ -187,7 +191,7 @@
       } @else {
         <h4 class="titulo-seccion">Siguiente paso</h4>
 
-        @if (p.estado === 'HabilitadaEntrevista' || p.estado === 'EntrevistaAgendada') {
+        @if (puede('EntrevistaAgendada')) {
           <label class="campo">
             Sesión de entrevista
             <select [value]="sesionElegida()" (change)="sesionElegida.set(+$any($event.target).value)">
@@ -204,7 +208,7 @@
           </label>
         }
 
-        @if (p.estado === 'EnCalificacion' || p.estado === 'EntrevistaRealizada') {
+        @if (puede('EnCalificacion') || puede('Aceptada')) {
           <label class="campo">
             Comentario de la evaluación (se le muestra al postulante)
             <textarea rows="3" [value]="nota()" (input)="nota.set($any($event.target).value)"></textarea>
@@ -217,36 +221,36 @@
       }
     </div>
 
-    @if (p.estado !== 'Aceptada' && p.estado !== 'NoAdmitida') {
+    <!-- Un botón por cada paso que el backend permite (p.acciones). -->
+    @if (p.acciones.length) {
       <div class="am-cajon__pie">
-        <button type="button" class="ui-btn ui-btn--peligro" [disabled]="trabajando()" (click)="mover('NoAdmitida')">No admitir</button>
-        @switch (p.estado) {
-          @case ('Recibida') {
-            <button type="button" class="ui-btn" [disabled]="trabajando()" (click)="mover('HabilitadaEntrevista')">
-              <span class="ico">check</span> Habilitar para entrevista
-            </button>
-          }
-          @case ('HabilitadaEntrevista') {
-            <button type="button" class="ui-btn" [disabled]="trabajando()" (click)="mover('EntrevistaAgendada')">
-              <span class="ico">event</span> Agendar entrevista
-            </button>
-          }
-          @case ('EntrevistaAgendada') {
-            <button type="button" class="ui-btn ui-btn--claro" [disabled]="trabajando()" (click)="mover('EntrevistaAgendada')">Cambiar sesión</button>
-            <button type="button" class="ui-btn" [disabled]="trabajando()" (click)="mover('EntrevistaRealizada')">
-              <span class="ico">task_alt</span> Entrevista realizada
-            </button>
-          }
-          @case ('EntrevistaRealizada') {
-            <button type="button" class="ui-btn" [disabled]="trabajando()" (click)="mover('EnCalificacion')">
-              <span class="ico">rate_review</span> Pasar a calificación
-            </button>
-          }
-          @case ('EnCalificacion') {
-            <button type="button" class="ui-btn ui-btn--acento" [disabled]="trabajando()" (click)="mover('Aceptada')">
-              <span class="ico">verified</span> Aceptar como {{ p.tipo.toLowerCase() }}
-            </button>
-          }
+        @if (puede('NoAdmitida')) {
+          <button type="button" class="ui-btn ui-btn--peligro" [disabled]="trabajando()" (click)="mover('NoAdmitida')">No admitir</button>
+        }
+        @if (puede('HabilitadaEntrevista')) {
+          <button type="button" class="ui-btn" [disabled]="trabajando()" (click)="mover('HabilitadaEntrevista')">
+            <span class="ico">check</span> Habilitar para entrevista
+          </button>
+        }
+        @if (puede('EntrevistaAgendada')) {
+          <button type="button" class="ui-btn" [class.ui-btn--claro]="p.estado === 'EntrevistaAgendada'" [disabled]="trabajando()" (click)="mover('EntrevistaAgendada')">
+            @if (p.estado === 'EntrevistaAgendada') { Cambiar sesión } @else { <span class="ico">event</span> Agendar entrevista }
+          </button>
+        }
+        @if (puede('EntrevistaRealizada')) {
+          <button type="button" class="ui-btn" [disabled]="trabajando()" (click)="mover('EntrevistaRealizada')">
+            <span class="ico">task_alt</span> Entrevista realizada
+          </button>
+        }
+        @if (puede('EnCalificacion')) {
+          <button type="button" class="ui-btn" [disabled]="trabajando()" (click)="mover('EnCalificacion')">
+            <span class="ico">rate_review</span> Pasar a calificación
+          </button>
+        }
+        @if (puede('Aceptada')) {
+          <button type="button" class="ui-btn ui-btn--acento" [disabled]="trabajando()" (click)="mover('Aceptada')">
+            <span class="ico">verified</span> Aceptar como {{ p.tipo.toLowerCase() }}
+          </button>
         }
       </div>
     }

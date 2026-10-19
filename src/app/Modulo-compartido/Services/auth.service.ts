@@ -5,7 +5,10 @@ import { Observable, tap } from 'rxjs';
 
 import { API_URL } from '../../config/api.config';
 import {
+  CanalVerificacion,
+  CodigoEnviado,
   LoginRequest,
+  LoginResultado,
   RegistroRequest,
   Sesion,
   UsuarioCreado,
@@ -36,10 +39,25 @@ export class AuthService {
   /** Quien gestiona voluntarios y practicantes: administradores y Recursos Humanos. */
   readonly esGestion = computed(() => this.esAdmin() || this.esRRHH());
 
-  /** Login de cualquier cuenta: administradores (por usuario) y el resto por correo. */
-  login(datos: LoginRequest): Observable<Sesion> {
+  /**
+   * Primer paso del login (usuario y contraseña). Si el backend pide verificación en dos pasos, todavía
+   * no hay sesión: llega un desafío para pedir el código.
+   */
+  login(datos: LoginRequest): Observable<LoginResultado> {
     return this.http
-      .post<Sesion>(`${API_URL}/admin/login`, datos)
+      .post<LoginResultado>(`${API_URL}/admin/login`, datos)
+      .pipe(tap((r) => r.sesion && this.guardarSesion(r.sesion)));
+  }
+
+  /** Pide el código de verificación por correo o SMS. */
+  solicitarCodigo(desafio: string, canal: CanalVerificacion['canal']): Observable<CodigoEnviado> {
+    return this.http.post<CodigoEnviado>(`${API_URL}/admin/login/codigo`, { desafio, canal });
+  }
+
+  /** Segundo paso: con el código correcto el backend entrega la sesión. */
+  verificarCodigo(desafio: string, codigo: string): Observable<Sesion> {
+    return this.http
+      .post<Sesion>(`${API_URL}/admin/login/verificar`, { desafio, codigo })
       .pipe(tap((sesion) => this.guardarSesion(sesion)));
   }
 

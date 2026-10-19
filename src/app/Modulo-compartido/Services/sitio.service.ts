@@ -9,6 +9,7 @@ import {
   IniciativaGuardar,
   IniciativaPropuesta,
   SitioPublico,
+  YapeGuardar,
 } from '../Models/sitio.model';
 
 /** Las imágenes vienen del backend con una ruta relativa (/api/imagen/1): aquí se vuelven absolutas. */
@@ -20,11 +21,16 @@ export class SitioService {
   private readonly http = inject(HttpClient);
 
   /** Lo que muestra el sitio público; se refresca con `cargar()`. */
-  readonly sitio = signal<SitioPublico>({ logoUrl: null, iniciativas: [] });
+  readonly sitio = signal<SitioPublico>({ logoUrl: null, iniciativas: [], yape: null });
 
   cargar(): void {
     this.http.get<SitioPublico>(`${API_URL}/sitio`).subscribe({
-      next: (s) => this.sitio.set({ logoUrl: urlServidor(s.logoUrl), iniciativas: s.iniciativas.map(conUrl) }),
+      next: (s) =>
+        this.sitio.set({
+          logoUrl: urlServidor(s.logoUrl),
+          iniciativas: s.iniciativas.map(conUrl),
+          yape: s.yape ? { ...s.yape, qrUrl: urlServidor(s.yape.qrUrl) } : null,
+        }),
       error: () => {
         // Sin conexión el sitio sigue funcionando con el logo de texto y sin iniciativas.
       },
@@ -44,6 +50,11 @@ export class SitioService {
 
   guardarLogo(imagenId: number | null): Observable<void> {
     return this.http.put<void>(`${API_URL}/sitio/logo`, { imagenId });
+  }
+
+  /** Número, titular y QR de Yape; todo en null quita la sección de la página Donar. */
+  guardarYape(datos: YapeGuardar): Observable<void> {
+    return this.http.put<void>(`${API_URL}/sitio/yape`, datos);
   }
 
   listarIniciativas(): Observable<Iniciativa[]> {

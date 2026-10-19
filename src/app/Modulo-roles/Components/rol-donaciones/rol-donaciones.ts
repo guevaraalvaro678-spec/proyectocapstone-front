@@ -1,12 +1,13 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { Observable, debounceTime, distinctUntilChanged } from 'rxjs';
 
 import {
   CATEGORIAS_DONACION,
   CategoriaDonacion,
   Donacion,
+  DonacionResumen,
   ETIQUETA_DONACION,
   EstadoDonacion,
 } from '../../../Modulo-compartido/Models/donacion.model';
@@ -30,35 +31,19 @@ export class Donaciones {
   protected readonly error = signal('');
   protected readonly aviso = signal('');
 
-  /** Donaciones recibidas: con ellas se arma el inventario, sin importar el filtro de la tabla. */
-  private readonly recibidas = signal<Donacion[]>([]);
-
-  /** Inventario: lo recibido sumado por artículo y categoría. Se actualiza solo al marcar una donación como recibida. */
-  protected readonly inventario = computed(() => {
-    const total = new Map<string, { categoria: CategoriaDonacion; nombre: string; cantidad: number }>();
-    for (const a of this.recibidas().flatMap((d) => d.articulos)) {
-      const clave = `${a.categoria}|${a.nombre.trim().toLowerCase()}`;
-      const item = total.get(clave) ?? { categoria: a.categoria, nombre: a.nombre.trim(), cantidad: 0 };
-      item.cantidad += a.cantidad;
-      total.set(clave, item);
-    }
-    return [...total.values()].sort((x, y) => x.categoria.localeCompare(y.categoria) || x.nombre.localeCompare(y.nombre));
-  });
+  /** Totales por estado e inventario de lo recibido: los calcula el backend (GET api/donacion/resumen). */
+  private readonly totales = signal<DonacionResumen | null>(null);
+  protected readonly inventario = computed(() => this.totales()?.inventario ?? []);
+  protected readonly indicadores = computed(() => ({
+    pendientes: this.totales()?.pendientes ?? 0,
+    recibidas: this.totales()?.recibidas ?? 0,
+    desestimadas: this.totales()?.desestimadas ?? 0,
+    total: this.totales()?.total ?? 0,
+  }));
 
   protected readonly detalle = signal<Donacion | null>(null);
   protected readonly observaciones = signal('');
   protected readonly trabajando = signal(false);
-
-  protected readonly indicadores = computed(() => {
-    const lista = this.donaciones();
-    const contar = (e: EstadoDonacion) => lista.filter((d) => d.estado === e).length;
-    return {
-      pendientes: contar('PendienteRecepcion'),
-      recibidas: contar('Recibida'),
-      desestimadas: contar('Desestimada'),
-      total: lista.length,
-    };
-  });
 
   constructor() {
     this.buscar.valueChanges.pipe(debounceTime(300), distinctUntilChanged()).subscribe(() => this.cargar());
@@ -76,7 +61,7 @@ export class Donaciones {
         this.cargando.set(false);
       },
     });
-    this.donacionService.listar('Recibida', '').subscribe((lista) => this.recibidas.set(lista));
+    this.donacionService.resumen().subscribe((r) => this.totales.set(r));
   }
 
   protected filtrar(valor: string): void {
@@ -100,9 +85,18 @@ export class Donaciones {
   protected cambiar(estado: EstadoDonacion): void {
     const d = this.detalle();
     if (!d) return;
+    this.guardar(this.donacionService.cambiarEstado(d.id, estado, this.observaciones()));
+  }
 
+  protected guardarObservaciones(): void {
+    const d = this.detalle();
+    if (!d) return;
+    this.guardar(this.donacionService.guardarObservaciones(d.id, this.observaciones()));
+  }
+
+  private guardar(peticion: Observable<Donacion>): void {
     this.trabajando.set(true);
-    this.donacionService.cambiarEstado(d.id, estado, this.observaciones()).subscribe({
+    peticion.subscribe({
       next: (actualizada) => {
         this.trabajando.set(false);
         this.detalle.set(actualizada);
