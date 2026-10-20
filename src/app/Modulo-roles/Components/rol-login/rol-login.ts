@@ -40,6 +40,8 @@ export class Login {
   protected readonly destino = signal('');
   protected readonly aviso = signal('');
   protected readonly codigo = this.fb.nonNullable.control('', [Validators.required, Validators.pattern(/^\d{6}$/)]);
+  // Sin [formGroup] el <form> no tiene directiva de Angular: ngSubmit no se dispara y el navegador recarga la página.
+  protected readonly formCodigo = this.fb.group({ codigo: this.codigo });
 
   constructor() {
     void this.google.preparar();

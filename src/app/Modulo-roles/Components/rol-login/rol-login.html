@@ -39,12 +39,12 @@
             <p class="acceso__exito">{{ aviso() }}</p>
           }
 
-          <form (ngSubmit)="verificar()">
+          <form [formGroup]="formCodigo" (ngSubmit)="verificar()">
             <label class="acceso__campo">
               Código de verificación
               <span class="acceso__entrada">
                 <span class="ico">pin</span>
-                <input id="codigo-verificacion" type="text" [formControl]="codigo" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000" class="codigo" />
+                <input id="codigo-verificacion" type="text" formControlName="codigo" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000" class="codigo" />
               </span>
             </label>
 
