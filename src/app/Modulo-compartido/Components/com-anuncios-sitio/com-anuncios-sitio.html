@@ -1,0 +1,14 @@
+@for (a of anuncios(); track a.id) {
+  <div class="anuncio" [class.anuncio--importante]="a.tipo === 'Importante'" role="status">
+    <span class="ico">{{ a.tipo === 'Importante' ? 'priority_high' : 'campaign' }}</span>
+    <p>{{ a.texto }}</p>
+    @if (a.enlace) {
+      @if (a.enlace.startsWith('/')) {
+        <a [routerLink]="a.enlace">Ver más</a>
+      } @else {
+        <a [href]="a.enlace" target="_blank" rel="noopener">Ver más</a>
+      }
+    }
+    <button type="button" aria-label="Cerrar anuncio" (click)="cerrar(a.id)"><span class="ico">close</span></button>
+  </div>
+}

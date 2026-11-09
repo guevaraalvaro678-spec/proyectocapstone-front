@@ -2,7 +2,7 @@
   <div>
     <p class="am-encabezado__migas">Panel administrativo / <strong>Postulaciones</strong></p>
     <h2>Postulaciones</h2>
-    <p>Consulta y seguimiento de las personas que iniciaron el proceso de postulación.</p>
+    <p>Marca varias postulaciones para agendarlas en una sesión, aceptarlas o no admitirlas de una sola vez.</p>
   </div>
   <button type="button" class="ui-btn ui-btn--claro" [disabled]="postulaciones().length === 0" (click)="exportar()">
     <span class="ico">download</span> Exportar a Excel
@@ -64,6 +64,45 @@
   <button type="button" class="ui-btn ui-btn--claro" (click)="limpiar()"><span class="ico">restart_alt</span> Limpiar filtros</button>
 </div>
 
+@if (seleccion().size > 0) {
+  <section class="masivo" aria-label="Acciones para las postulaciones marcadas">
+    <strong>{{ seleccion().size }} marcada(s)</strong>
+    @if (accionesComunes().length === 0) {
+      <span class="masivo__nota">Las marcadas están en etapas distintas: no comparten un siguiente paso.</span>
+    } @else {
+      @if (accionesComunes().includes('EntrevistaAgendada')) {
+        <select [value]="sesionMasiva()" (change)="sesionMasiva.set(+$any($event.target).value)" aria-label="Sesión de entrevista">
+          <option value="0">Elige la sesión</option>
+          @for (s of sesiones(); track s.id) {
+            @if (s.disponible) {
+              <option [value]="s.id">{{ s.codigo }} · {{ s.inicio | date: 'dd/MM HH:mm' : '-0500' }} ({{ s.cupo - s.inscritos }} cupos)</option>
+            }
+          }
+        </select>
+      }
+      @if (accionesComunes().includes('NoAdmitida')) {
+        <input type="text" maxlength="600" [value]="notaMasiva()" (input)="notaMasiva.set($any($event.target).value)" placeholder="Comentario para el postulante (opcional)" />
+      }
+      @for (a of accionesComunes(); track a) {
+        <button type="button" class="ui-btn ui-btn--chico" [class.ui-btn--peligro]="a === 'NoAdmitida'" [class.ui-btn--acento]="a === 'Aceptada'" [disabled]="trabajando()" (click)="moverVarias(a)">
+          {{ textoAccion[a] }}
+        </button>
+      }
+    }
+    <button type="button" class="ui-btn ui-btn--claro ui-btn--chico" (click)="marcarTodas(false)">Quitar marcas</button>
+  </section>
+}
+@if (erroresMasivos().length) {
+  <div class="ui-mensaje ui-mensaje--error">
+    No se pudieron mover {{ erroresMasivos().length }}:
+    <ul>
+      @for (e of erroresMasivos(); track e.id) {
+        <li><strong>{{ e.codigo }}</strong>: {{ e.mensaje }}</li>
+      }
+    </ul>
+  </div>
+}
+
 @if (cargando()) {
   <p class="ui-vacio">Cargando postulaciones...</p>
 } @else if (postulaciones().length === 0) {
@@ -73,6 +112,9 @@
     <table>
       <thead>
         <tr>
+          <th class="marca">
+            <input type="checkbox" aria-label="Marcar todas" [checked]="todasMarcadas()" (change)="marcarTodas($any($event.target).checked)" />
+          </th>
           <th>Código</th>
           <th>Postulante</th>
           <th>Tipo</th>
@@ -84,7 +126,12 @@
       </thead>
       <tbody>
         @for (p of postulaciones(); track p.id) {
-          <tr>
+          <tr [class.marcada]="seleccion().has(p.id)">
+            <td class="marca">
+              @if (p.acciones.length) {
+                <input type="checkbox" [attr.aria-label]="'Marcar ' + p.codigo" [checked]="seleccion().has(p.id)" (change)="marcar(p.id, $any($event.target).checked)" />
+              }
+            </td>
             <td><span class="am-codigo">{{ p.codigo }}</span></td>
             <td>
               <strong>{{ p.nombres }} {{ p.apellidos }}</strong>

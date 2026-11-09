@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { AbstractControl, FormBuilder, ValidationErrors, Validators } from '@angular/forms';
 
-import { RolAdmin } from '../../../Modulo-compartido/Models/auth.model';
+import { RolGestion } from '../../../Modulo-compartido/Models/auth.model';
 import { AuthService } from '../../../Modulo-compartido/Services/auth.service';
 
 function passwordsIguales(control: AbstractControl): ValidationErrors | null {
@@ -21,17 +21,22 @@ export class CrearUsuario {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
 
-  protected readonly roles: RolAdmin[] = ['Admin', 'SuperAdmin'];
+  protected readonly roles: { valor: RolGestion; etiqueta: string }[] = [
+    { valor: 'RRHH', etiqueta: 'Recursos Humanos' },
+    { valor: 'Admin', etiqueta: 'Administrador' },
+    { valor: 'SuperAdmin', etiqueta: 'Super administrador' },
+  ];
   protected readonly cargando = signal(false);
   protected readonly error = signal('');
   protected readonly exito = signal('');
 
   protected readonly form = this.fb.nonNullable.group(
     {
-      usuario: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
+      nombre: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
+      correo: ['', [Validators.required, Validators.email, Validators.maxLength(150)]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmar: ['', Validators.required],
-      rol: ['Admin' as RolAdmin, Validators.required],
+      rol: ['RRHH' as RolGestion, Validators.required],
     },
     { validators: passwordsIguales },
   );
@@ -46,23 +51,24 @@ export class CrearUsuario {
     this.error.set('');
     this.exito.set('');
 
-    const { usuario, password, rol } = this.form.getRawValue();
+    const { nombre, correo, password, rol } = this.form.getRawValue();
 
-    this.auth.crearUsuario({ usuario, password, rol }).subscribe({
+    this.auth.crearUsuario({ nombre, correo, password, rol }).subscribe({
       next: (creado) => {
         this.cargando.set(false);
-        this.exito.set(`Usuario "${creado.usuario}" creado como ${creado.rol}`);
-        this.form.reset({ usuario: '', password: '', confirmar: '', rol: 'Admin' });
+        this.exito.set(`Cuenta ${creado.usuario} creada como ${this.roles.find((r) => r.valor === creado.rol)?.etiqueta ?? creado.rol}. Le enviamos un correo con las indicaciones.`);
+        this.form.reset({ nombre: '', correo: '', password: '', confirmar: '', rol: 'RRHH' });
       },
       error: (err: HttpErrorResponse) => {
         this.cargando.set(false);
+        const validacion = err.error?.errors ? Object.values(err.error.errors as Record<string, string[]>)[0]?.[0] : null;
         this.error.set(
           err.status === 409
-            ? 'Ese nombre de usuario ya existe'
+            ? (err.error?.mensaje ?? 'Ese correo ya tiene una cuenta')
             : err.status === 403
               ? 'No tienes permiso para crear usuarios'
               : err.status === 400
-                ? 'Revisa los datos ingresados'
+                ? (validacion ?? 'Revisa los datos ingresados')
                 : 'No se pudo conectar con el servidor',
         );
       },

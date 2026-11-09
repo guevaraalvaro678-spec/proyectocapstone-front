@@ -52,7 +52,7 @@
           <tr>
             <td class="noticia">
               @if (n.imagenUrl) {
-                <img [src]="n.imagenUrl" alt="" />
+                <img loading="lazy" [src]="n.imagenUrl" alt="" />
               }
               <span><strong>{{ n.titulo }}</strong><small>{{ n.resumen }}</small></span>
             </td>

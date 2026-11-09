@@ -118,7 +118,7 @@
       <article class="ui-tarjeta item" [class.item--oculto]="!evento.publicado">
         <div class="item__imagen">
           @if (url(evento.imagenUrl); as img) {
-            <img [src]="img" [alt]="evento.titulo" />
+            <img loading="lazy" [src]="img" [alt]="evento.titulo" />
           } @else {
             <span class="ico">{{ evento.tipo === 'Campana' ? 'campaign' : 'event' }}</span>
           }

@@ -9,13 +9,22 @@ export const CATEGORIAS_DONACION: { valor: CategoriaDonacion; etiqueta: string; 
   { valor: 'Otros', etiqueta: 'Otros', icono: 'inventory_2' },
 ];
 
-export type EstadoDonacion = 'PendienteRecepcion' | 'Recibida' | 'Desestimada';
+export type EstadoDonacion = 'PendienteRecepcion' | 'Recibida' | 'Desestimada' | 'Entregada';
 
 export const ETIQUETA_DONACION: Record<EstadoDonacion, string> = {
   PendienteRecepcion: 'Pendiente de recepción',
   Recibida: 'Recibida',
   Desestimada: 'Desestimada',
+  Entregada: 'Entregada',
 };
+
+/** Cada movimiento de la donación: quién y cuándo (auditoría). */
+export interface HistorialDonacion {
+  accion: string;
+  detalle: string | null;
+  responsable: string | null;
+  fecha: string;
+}
 
 export interface DonacionArticulo {
   categoria: CategoriaDonacion;
@@ -31,7 +40,13 @@ export interface Donacion {
   estado: EstadoDonacion;
   observaciones: string | null;
   fechaRegistro: string;
+  fechaRevision: string | null;
+  destinoEntrega: string | null;
+  fechaEntrega: string | null;
   articulos: DonacionArticulo[];
+  /** Estados a los que se puede pasar (lo decide el backend). */
+  acciones: EstadoDonacion[];
+  historial: HistorialDonacion[];
 }
 
 export interface DonacionCrear {
@@ -45,6 +60,7 @@ export interface DonacionResumen {
   pendientes: number;
   recibidas: number;
   desestimadas: number;
+  entregadas: number;
   total: number;
   inventario: DonacionArticulo[];
 }

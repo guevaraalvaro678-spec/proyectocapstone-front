@@ -13,6 +13,8 @@
   <p class="ui-mensaje ui-mensaje--error">{{ error() }}</p>
 }
 
+<app-alertas-seguridad />
+
 @if (datos(); as d) {
   <div class="resumen">
     <section class="ui-tarjeta caja">
@@ -158,3 +160,5 @@
 } @else if (!error()) {
   <p class="ui-vacio">Cargando indicadores...</p>
 }
+
+<app-indicadores-proceso />

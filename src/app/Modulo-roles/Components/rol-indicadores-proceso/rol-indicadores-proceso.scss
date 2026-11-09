@@ -1,0 +1,23 @@
+.indicadores {
+  margin-bottom: 1.25rem;
+
+  h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .ui-indicadores {
+    margin-bottom: 0;
+  }
+
+  .ui-indicador strong {
+    font-size: 1.6rem;
+  }
+}
+
+.nota {
+  margin: -0.4rem 0 1rem;
+  color: var(--am-gris);
+  font-size: 0.82rem;
+}

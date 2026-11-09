@@ -25,8 +25,8 @@ export class DonacionService {
     return this.http.get<Donacion[]>(`${API_URL}/donacion`, { params });
   }
 
-  cambiarEstado(id: number, estado: EstadoDonacion, observaciones: string): Observable<Donacion> {
-    return this.http.put<Donacion>(`${API_URL}/donacion/${id}/estado`, { estado, observaciones });
+  cambiarEstado(id: number, estado: EstadoDonacion, observaciones: string, destinoEntrega = ''): Observable<Donacion> {
+    return this.http.put<Donacion>(`${API_URL}/donacion/${id}/estado`, { estado, observaciones, destinoEntrega });
   }
 
   guardarObservaciones(id: number, observaciones: string): Observable<Donacion> {

@@ -1,0 +1,22 @@
+@if (datos(); as d) {
+  @if (d.pendientes > 0) {
+    <section class="alertas" aria-label="Alertas de seguridad">
+      <div class="alertas__cabecera">
+        <h3><span class="ico">gpp_maybe</span> {{ d.pendientes }} alerta(s) de seguridad por revisar</h3>
+        <button type="button" class="ui-btn ui-btn--claro ui-btn--chico" [disabled]="trabajando()" (click)="revisarTodas()">Marcar todas como revisadas</button>
+      </div>
+      <ul>
+        @for (a of d.alertas; track a.id) {
+          <li>
+            <span class="ico">{{ a.tipo === 'CuentaBloqueada' ? 'lock' : 'warning' }}</span>
+            <span class="texto">
+              <strong>{{ a.titulo }}</strong>
+              <small>{{ a.detalle }} · {{ a.fecha | date: 'dd/MM/yyyy HH:mm' }}</small>
+            </span>
+            <button type="button" class="ui-btn ui-btn--claro ui-btn--chico" [disabled]="trabajando()" (click)="revisar(a.id)">Revisada</button>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+}

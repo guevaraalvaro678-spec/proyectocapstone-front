@@ -6,7 +6,9 @@ import { invitadoGuard } from '../guards/invitado.guard';
 import { superAdminGuard } from '../guards/super-admin.guard';
 import { MiCuenta } from '../Modulo-compartido/Components/com-mi-cuenta/com-mi-cuenta';
 import { Admin } from './Components/rol-admin/rol-admin';
+import { Anuncios } from './Components/rol-anuncios/rol-anuncios';
 import { Asistencia } from './Components/rol-asistencia/rol-asistencia';
+import { Bandeja } from './Components/rol-bandeja/rol-bandeja';
 import { Configuracion } from './Components/rol-configuracion/rol-configuracion';
 import { Correos } from './Components/rol-correos/rol-correos';
 import { CrearUsuario } from './Components/rol-crear-usuario/rol-crear-usuario';
@@ -39,6 +41,7 @@ const routes: Routes = [
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       { path: 'dashboard', component: Dashboard, canActivate: [soloAdminGuard] },
+      { path: 'bandeja', component: Bandeja },
 
       // Selección y miembros (también Recursos Humanos).
       { path: 'postulaciones', component: Postulaciones },
@@ -52,6 +55,7 @@ const routes: Routes = [
       { path: 'campanas', component: Eventos, canActivate: [soloAdminGuard] },
       { path: 'iniciativas', component: GestionIniciativas, canActivate: [soloAdminGuard] },
       { path: 'noticias', component: Noticias, canActivate: [soloAdminGuard] },
+      { path: 'anuncios', component: Anuncios, canActivate: [soloAdminGuard] },
       { path: 'donaciones', component: Donaciones, canActivate: [soloAdminGuard] },
 
       // Administración.

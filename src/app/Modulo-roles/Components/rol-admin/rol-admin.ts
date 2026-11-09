@@ -36,7 +36,10 @@ export class Admin {
   private readonly grupos: GrupoMenu[] = [
     {
       titulo: 'Principal',
-      items: [{ ruta: 'dashboard', etiqueta: 'Dashboard', icono: 'dashboard', soloAdmin: true }],
+      items: [
+        { ruta: 'dashboard', etiqueta: 'Dashboard', icono: 'dashboard', soloAdmin: true },
+        { ruta: 'bandeja', etiqueta: 'Bandeja de trabajo', icono: 'inbox' },
+      ],
     },
     {
       titulo: 'Selección y miembros',
@@ -55,6 +58,7 @@ export class Admin {
         { ruta: 'campanas', etiqueta: 'Campañas y eventos', icono: 'campaign', soloAdmin: true },
         { ruta: 'iniciativas', etiqueta: 'Iniciativas', icono: 'diversity_2', soloAdmin: true },
         { ruta: 'noticias', etiqueta: 'Noticias', icono: 'newspaper', soloAdmin: true },
+        { ruta: 'anuncios', etiqueta: 'Anuncios del sitio', icono: 'campaign', soloAdmin: true },
         { ruta: 'donaciones', etiqueta: 'Donaciones', icono: 'volunteer_activism', soloAdmin: true },
       ],
     },
@@ -62,7 +66,7 @@ export class Admin {
       titulo: 'Administración',
       items: [
         { ruta: 'usuarios', etiqueta: 'Usuarios y roles', icono: 'manage_accounts', soloAdmin: true },
-        { ruta: 'administradores', etiqueta: 'Administradores', icono: 'admin_panel_settings', soloSuperAdmin: true },
+        { ruta: 'administradores', etiqueta: 'Equipo de gestión', icono: 'admin_panel_settings', soloSuperAdmin: true },
         { ruta: 'mensajes', etiqueta: 'Mensajes', icono: 'mail', soloAdmin: true },
         { ruta: 'correos', etiqueta: 'Correos', icono: 'forward_to_inbox', soloAdmin: true },
         { ruta: 'configuracion', etiqueta: 'Configuración', icono: 'settings', soloAdmin: true },

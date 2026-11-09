@@ -1,0 +1,38 @@
+@if (datos(); as d) {
+  <section class="ui-tarjeta indicadores">
+    <h3><span class="ico">insights</span> Indicadores del proceso</h3>
+    <p class="nota">Sobre {{ d.totalPostulaciones }} postulaciones. Los calcula la base de datos (procedimiento <code>sp_IndicadoresProceso</code>).</p>
+    <div class="ui-indicadores">
+      <div class="ui-indicador">
+        <span>Tiempo hasta la decisión</span>
+        <strong>{{ d.promedioDiasDecision ?? '—' }}</strong>
+        <small>días en promedio · {{ d.decididas }} decididas</small>
+      </div>
+      <div class="ui-indicador">
+        <span>Respuesta a tiempo</span>
+        <strong>{{ d.porcentajeRespuestaATiempo === null ? '—' : d.porcentajeRespuestaATiempo + ' %' }}</strong>
+        <small>primera respuesta en 3 días o menos</small>
+      </div>
+      <div class="ui-indicador">
+        <span>Aceptación → horario</span>
+        <strong>{{ d.promedioDiasHorario ?? '—' }}</strong>
+        <small>días hasta asignar el horario de prácticas</small>
+      </div>
+      <div class="ui-indicador">
+        <span>Registros completos</span>
+        <strong>{{ d.porcentajeRegistrosCompletos === null ? '—' : d.porcentajeRegistrosCompletos + ' %' }}</strong>
+        <small>con todos los datos que pide su tipo</small>
+      </div>
+      <div class="ui-indicador">
+        <span>CV identificables</span>
+        <strong>{{ d.porcentajeCvIdentificables === null ? '—' : d.porcentajeCvIdentificables + ' %' }}</strong>
+        <small>renombrados con el código y apellidos</small>
+      </div>
+      <div class="ui-indicador">
+        <span>Tasa de aceptación</span>
+        <strong>{{ d.tasaAceptacion === null ? '—' : d.tasaAceptacion + ' %' }}</strong>
+        <small>{{ d.aceptadas }} aceptadas de {{ d.decididas }}</small>
+      </div>
+    </div>
+  </section>
+}

@@ -1,0 +1,44 @@
+.anuncio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.5rem 1rem;
+  background: var(--am-verde);
+  color: #fff;
+  font-size: 0.9rem;
+
+  &--importante {
+    background: var(--am-naranja-oscuro);
+  }
+
+  p {
+    margin: 0;
+  }
+
+  a {
+    color: inherit;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  button {
+    display: grid;
+    place-items: center;
+    margin-left: 0.25rem;
+    padding: 0.15rem;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+
+    &:hover {
+      background: rgb(255 255 255 / 0.18);
+    }
+
+    .ico {
+      font-size: 1.1rem;
+    }
+  }
+}

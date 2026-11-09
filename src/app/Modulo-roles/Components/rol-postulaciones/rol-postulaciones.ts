@@ -11,13 +11,14 @@ import {
   EstadoPostulacion,
   Postulacion,
   PostulacionResumen,
+  ResultadoMasivo,
   SesionEntrevista,
 } from '../../../Modulo-compartido/Models/postulacion.model';
 import { PostulacionService } from '../../../Modulo-compartido/Services/postulacion.service';
 
 /**
  * Postulaciones: el equipo revisa a cada postulante y lo avanza en el proceso
- * (habilitar → agendar entrevista → entrevista realizada → calificación → aceptar o no admitir).
+ * (agendar entrevista → entrevista realizada → aceptar o no admitir), una por una o varias a la vez.
  */
 @Component({
   selector: 'app-postulaciones',
@@ -59,6 +60,87 @@ export class Postulaciones {
     total: 0, recibidas: 0, habilitadas: 0, agendadas: 0, enProceso: 0, aceptadas: 0, noAdmitidas: 0, requierenAtencion: 0,
   });
 
+  // ---- Selección múltiple ----
+  protected readonly seleccion = signal<ReadonlySet<number>>(new Set());
+  protected readonly sesionMasiva = signal<number>(0);
+  protected readonly notaMasiva = signal('');
+  protected readonly erroresMasivos = signal<ResultadoMasivo['errores']>([]);
+
+  protected readonly textoAccion: Record<EstadoPostulacion, string> = {
+    Recibida: 'Volver a recibida',
+    HabilitadaEntrevista: 'Habilitar para entrevista',
+    EntrevistaAgendada: 'Agendar en la sesión',
+    EntrevistaRealizada: 'Entrevista realizada',
+    EnCalificacion: 'Pasar a calificación',
+    Aceptada: 'Aceptar',
+    NoAdmitida: 'No admitir',
+  };
+
+  protected readonly seleccionadas = computed(() => this.postulaciones().filter((p) => this.seleccion().has(p.id)));
+
+  /** Pasos que el backend permite a todas las seleccionadas a la vez. */
+  protected readonly accionesComunes = computed(() => {
+    const lista = this.seleccionadas();
+    if (lista.length === 0) return [];
+    return lista[0].acciones.filter((a) => lista.every((p) => p.acciones.includes(a)));
+  });
+
+  protected readonly todasMarcadas = computed(() => {
+    const conAcciones = this.postulaciones().filter((p) => p.acciones.length > 0);
+    return conAcciones.length > 0 && conAcciones.every((p) => this.seleccion().has(p.id));
+  });
+
+  protected marcar(id: number, marcada: boolean): void {
+    const nueva = new Set(this.seleccion());
+    if (marcada) nueva.add(id);
+    else nueva.delete(id);
+    this.seleccion.set(nueva);
+    if (marcada && this.sesiones().length === 0) {
+      this.postulacionService.listarSesiones('Programada').subscribe((s) => this.sesiones.set(s));
+    }
+  }
+
+  protected marcarTodas(marcada: boolean): void {
+    this.seleccion.set(new Set(marcada ? this.postulaciones().filter((p) => p.acciones.length > 0).map((p) => p.id) : []));
+    if (marcada && this.sesiones().length === 0) {
+      this.postulacionService.listarSesiones('Programada').subscribe((s) => this.sesiones.set(s));
+    }
+  }
+
+  protected moverVarias(estado: EstadoPostulacion): void {
+    const ids = [...this.seleccion()];
+    if (ids.length === 0) return;
+    if ((estado === 'Aceptada' || estado === 'NoAdmitida') && !confirm(`¿${this.textoAccion[estado]} ${ids.length} postulación(es)? Se les avisará por correo.`)) {
+      return;
+    }
+
+    this.trabajando.set(true);
+    this.error.set('');
+    this.erroresMasivos.set([]);
+    this.postulacionService
+      .cambiarEstadoVarias(ids, {
+        estado,
+        sesionEntrevistaId: estado === 'EntrevistaAgendada' ? this.sesionMasiva() || null : null,
+        notaEvaluacion: this.notaMasiva() || undefined,
+      })
+      .subscribe({
+        next: (r) => {
+          this.trabajando.set(false);
+          this.aviso.set(`${r.procesadas} postulación(es) pasaron a "${this.etiquetas[estado]}".`);
+          this.erroresMasivos.set(r.errores);
+          this.seleccion.set(new Set(r.errores.map((e) => e.id)));
+          this.notaMasiva.set('');
+          this.cargar();
+          this.postulacionService.listarSesiones('Programada').subscribe((s) => this.sesiones.set(s));
+        },
+        error: (err: HttpErrorResponse) => {
+          this.trabajando.set(false);
+          const validacion = err.error?.errors ? Object.values(err.error.errors as Record<string, string[]>)[0]?.[0] : null;
+          this.error.set(err.error?.mensaje ?? validacion ?? 'No se pudieron actualizar las postulaciones');
+        },
+      });
+  }
+
   /** El backend dice a qué estados puede pasar la postulación abierta; el panel muestra esos botones. */
   protected puede(estado: EstadoPostulacion): boolean {
     return this.detalle()?.acciones?.includes(estado) ?? false;
@@ -95,6 +177,7 @@ export class Postulaciones {
   }
 
   protected limpiar(): void {
+    this.seleccion.set(new Set());
     this.tipo.set('');
     this.estado.set('');
     this.buscar.setValue('', { emitEvent: false });

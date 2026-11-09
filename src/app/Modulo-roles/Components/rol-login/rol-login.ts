@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, ElementRef, effect, inject, signal, viewChild } from '@angular/core';
+import { Component, DestroyRef, ElementRef, effect, inject, signal, viewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -39,12 +39,16 @@ export class Login {
   protected readonly canalElegido = signal<CanalVerificacion['canal']>('correo');
   protected readonly destino = signal('');
   protected readonly aviso = signal('');
+  /** Segundos que faltan para poder reenviar el código. */
+  protected readonly esperaReenvio = signal(0);
+  private reloj: ReturnType<typeof setInterval> | undefined;
   protected readonly codigo = this.fb.nonNullable.control('', [Validators.required, Validators.pattern(/^\d{6}$/)]);
   // Sin [formGroup] el <form> no tiene directiva de Angular: ngSubmit no se dispara y el navegador recarga la página.
   protected readonly formCodigo = this.fb.group({ codigo: this.codigo });
 
   constructor() {
     void this.google.preparar();
+    inject(DestroyRef).onDestroy(() => clearInterval(this.reloj));
 
     // Dibuja el botón de Google cuando ya está disponible y el contenedor existe en pantalla.
     effect(() => {
@@ -76,7 +80,9 @@ export class Login {
         this.canales.set(r.canales);
         this.canalElegido.set(r.canales[0]?.canal ?? 'correo');
         this.codigo.reset();
-        this.paso.set('canal');
+        // Con un solo medio (el correo) no hay nada que elegir: el código se envía de una vez.
+        if (r.canales.length === 1) this.enviarCodigo();
+        else this.paso.set('canal');
       },
       error: (err: HttpErrorResponse) => {
         this.cargando.set(false);
@@ -99,8 +105,9 @@ export class Login {
       next: (r) => {
         this.cargando.set(false);
         this.destino.set(r.destino);
-        this.aviso.set(`Te enviamos un código a ${r.destino}. Vence en ${Math.round(r.expiraEnSegundos / 60)} minutos.`);
+        this.aviso.set(`Te enviamos un código a ${r.destino}. Vence en ${Math.round(r.expiraEnSegundos / 60)} minutos. Si no lo ves, revisa la carpeta de spam.`);
         this.paso.set('codigo');
+        this.contarReenvio(r.reenviarEnSegundos);
       },
       error: (err: HttpErrorResponse) => this.falloVerificacion(err),
     });
@@ -118,6 +125,21 @@ export class Login {
       next: () => this.router.navigate([this.auth.rutaInicial()]),
       error: (err: HttpErrorResponse) => this.falloVerificacion(err),
     });
+  }
+
+  /** Deja escribir solo dígitos (también al pegar el código con espacios). */
+  protected limpiarCodigo(valor: string): void {
+    const digitos = valor.replace(/\D/g, '').slice(0, 6);
+    if (digitos !== valor) this.codigo.setValue(digitos);
+  }
+
+  private contarReenvio(segundos: number): void {
+    clearInterval(this.reloj);
+    this.esperaReenvio.set(segundos);
+    this.reloj = setInterval(() => {
+      this.esperaReenvio.update((s) => Math.max(0, s - 1));
+      if (this.esperaReenvio() === 0) clearInterval(this.reloj);
+    }, 1000);
   }
 
   /** Vuelve al formulario de contraseña (por ejemplo, si el desafío venció). */

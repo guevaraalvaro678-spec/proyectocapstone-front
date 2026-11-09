@@ -77,7 +77,7 @@ export class AuthService {
   /** A dónde debe ir cada cuenta después de iniciar sesión. */
   rutaInicial(): string {
     if (this.esAdmin()) return '/admin';
-    if (this.esRRHH()) return '/admin/practicantes';
+    if (this.esRRHH()) return '/admin/bandeja';
     if (this.esPracticante()) return '/practicante';
     if (this.esPostulante()) return '/mi-postulacion';
     return '/voluntario';

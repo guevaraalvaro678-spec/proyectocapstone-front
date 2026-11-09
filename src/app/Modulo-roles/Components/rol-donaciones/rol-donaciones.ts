@@ -38,12 +38,22 @@ export class Donaciones {
     pendientes: this.totales()?.pendientes ?? 0,
     recibidas: this.totales()?.recibidas ?? 0,
     desestimadas: this.totales()?.desestimadas ?? 0,
+    entregadas: this.totales()?.entregadas ?? 0,
     total: this.totales()?.total ?? 0,
   }));
 
   protected readonly detalle = signal<Donacion | null>(null);
   protected readonly observaciones = signal('');
+  protected readonly destino = signal('');
   protected readonly trabajando = signal(false);
+
+  /** Texto de cada botón según el estado al que lleva. */
+  protected readonly botones: Record<EstadoDonacion, { texto: string; icono: string; clase: string }> = {
+    Recibida: { texto: 'Marcar como recibida', icono: 'check_circle', clase: '' },
+    Entregada: { texto: 'Registrar entrega', icono: 'local_shipping', clase: '' },
+    Desestimada: { texto: 'Desestimar', icono: 'block', clase: 'ui-btn--peligro' },
+    PendienteRecepcion: { texto: 'Volver a pendiente', icono: 'undo', clase: 'ui-btn--claro' },
+  };
 
   constructor() {
     this.buscar.valueChanges.pipe(debounceTime(300), distinctUntilChanged()).subscribe(() => this.cargar());
@@ -80,12 +90,13 @@ export class Donaciones {
   protected abrir(d: Donacion): void {
     this.detalle.set(d);
     this.observaciones.set(d.observaciones ?? '');
+    this.destino.set('');
   }
 
   protected cambiar(estado: EstadoDonacion): void {
     const d = this.detalle();
     if (!d) return;
-    this.guardar(this.donacionService.cambiarEstado(d.id, estado, this.observaciones()));
+    this.guardar(this.donacionService.cambiarEstado(d.id, estado, this.observaciones(), this.destino()));
   }
 
   protected guardarObservaciones(): void {
@@ -99,6 +110,8 @@ export class Donaciones {
     peticion.subscribe({
       next: (actualizada) => {
         this.trabajando.set(false);
+        this.error.set('');
+        this.destino.set('');
         this.detalle.set(actualizada);
         this.aviso.set(`${actualizada.codigo}: ${this.etiquetas[actualizada.estado]}.`);
         this.cargar();

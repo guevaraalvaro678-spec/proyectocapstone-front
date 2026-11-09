@@ -13,7 +13,7 @@
       @for (i of iniciativas(); track i.id) {
         <article class="tarjeta">
           @if (i.imagenUrl) {
-            <img class="tarjeta__imagen" [src]="i.imagenUrl" [alt]="i.titulo" />
+            <img class="tarjeta__imagen" loading="lazy" [src]="i.imagenUrl" [alt]="i.titulo" />
           } @else {
             <span class="tarjeta__icono">{{ i.icono }}</span>
           }

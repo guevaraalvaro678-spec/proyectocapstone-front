@@ -7,11 +7,15 @@ export interface LoginRequest {
   password: string;
 }
 
-/** Datos para que un SuperAdmin cree otro administrador. */
+/** Perfiles del equipo de gestión que puede crear un SuperAdmin. */
+export type RolGestion = RolAdmin | 'RRHH';
+
+/** Datos para que un SuperAdmin cree una cuenta del equipo (el correo es también el usuario). */
 export interface RegistroRequest {
-  usuario: string;
+  nombre: string;
+  correo: string;
   password: string;
-  rol: RolAdmin;
+  rol: RolGestion;
 }
 
 export interface Sesion {
@@ -39,6 +43,8 @@ export interface CanalVerificacion {
 export interface CodigoEnviado {
   destino: string;
   expiraEnSegundos: number;
+  /** Cuánto esperar para poder reenviar (lo decide el backend). */
+  reenviarEnSegundos: number;
 }
 
 export interface UsuarioCreado {

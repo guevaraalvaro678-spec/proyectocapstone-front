@@ -1,24 +1,33 @@
 <section class="crear">
-  <h2>Usuarios y permisos</h2>
+  <h2>Equipo de gestión</h2>
   <p class="crear__ayuda">
-    <strong>SuperAdmin</strong>: acceso total y puede crear usuarios.
-    <strong>Admin</strong>: acceso al panel, sin crear usuarios.
+    <strong>Recursos Humanos</strong>: selección, entrevistas, miembros, horarios, actividades y asistencia.
+    <strong>Administrador</strong>: todo lo anterior más campañas, noticias, donaciones, cuentas y configuración.
+    <strong>Super administrador</strong>: acceso total y crea cuentas del equipo.
   </p>
 
   <form class="crear__form" [formGroup]="form" (ngSubmit)="crear()">
     <label>
-      Usuario
-      <input type="text" formControlName="usuario" autocomplete="off" />
-      @if (form.controls.usuario.touched && form.controls.usuario.invalid) {
-        <small class="crear__aviso">Mínimo 3 caracteres</small>
+      Nombre completo
+      <input type="text" formControlName="nombre" autocomplete="off" />
+      @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
+        <small class="crear__aviso">Escribe el nombre (mínimo 2 caracteres)</small>
       }
     </label>
 
     <label>
-      Rol
+      Correo (con él inicia sesión y recibe el código de verificación)
+      <input type="email" formControlName="correo" autocomplete="off" />
+      @if (form.controls.correo.touched && form.controls.correo.invalid) {
+        <small class="crear__aviso">Escribe un correo válido</small>
+      }
+    </label>
+
+    <label>
+      Perfil
       <select formControlName="rol">
-        @for (rol of roles; track rol) {
-          <option [value]="rol">{{ rol }}</option>
+        @for (rol of roles; track rol.valor) {
+          <option [value]="rol.valor">{{ rol.etiqueta }}</option>
         }
       </select>
     </label>
@@ -47,7 +56,7 @@
     }
 
     <button type="submit" [disabled]="cargando()">
-      {{ cargando() ? 'Creando...' : 'Crear usuario' }}
+      {{ cargando() ? 'Creando...' : 'Crear cuenta' }}
     </button>
   </form>
 </section>

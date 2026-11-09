@@ -25,6 +25,11 @@ import { ModuloRolesRoutingModule } from './modulo-roles-routing-module';
 import { OlvidePassword } from './Components/rol-olvide-password/rol-olvide-password';
 import { Registro } from './Components/rol-registro/rol-registro';
 import { Restablecer } from './Components/rol-restablecer/rol-restablecer';
+import { AlertasSeguridadPanel } from './Components/rol-alertas-seguridad/rol-alertas-seguridad';
+import { Anuncios } from './Components/rol-anuncios/rol-anuncios';
+import { Bandeja } from './Components/rol-bandeja/rol-bandeja';
+import { IndicadoresProcesoPanel } from './Components/rol-indicadores-proceso/rol-indicadores-proceso';
+import { Respaldos } from './Components/rol-respaldos/rol-respaldos';
 
 /** Acceso (login, crear cuenta, recuperar contraseña) y el panel de administración / Recursos Humanos. */
 @NgModule({
@@ -50,6 +55,11 @@ import { Restablecer } from './Components/rol-restablecer/rol-restablecer';
     Mensajes,
     Correos,
     Configuracion,
+    Bandeja,
+    Anuncios,
+    Respaldos,
+    IndicadoresProcesoPanel,
+    AlertasSeguridadPanel,
   ],
   imports: [CommonModule, ReactiveFormsModule, ModuloCompartidoModule, ModuloRolesRoutingModule],
 })

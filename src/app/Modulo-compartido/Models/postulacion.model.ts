@@ -56,6 +56,8 @@ export interface SesionEntrevista {
   estado: 'Programada' | 'Realizada' | 'Cancelada';
   /** Lo decide el backend: programada, sin terminar y con cupos. */
   disponible: boolean;
+  /** Ya terminó y sigue programada: falta marcarla realizada. */
+  porCerrar: boolean;
   porcentajeOcupacion: number;
 }
 
@@ -157,4 +159,10 @@ export interface PostulacionEstado {
   estado: EstadoPostulacion;
   sesionEntrevistaId?: number | null;
   notaEvaluacion?: string;
+}
+
+/** Respuesta del cambio de estado masivo: cuántas se movieron y por qué falló cada una de las otras. */
+export interface ResultadoMasivo {
+  procesadas: number;
+  errores: { id: number; codigo: string; mensaje: string }[];
 }

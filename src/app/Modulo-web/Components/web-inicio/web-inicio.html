@@ -61,7 +61,7 @@
 <!-- Sobre AMAAC -->
 <section class="bloque bloque--suave">
   <div class="interior sobre">
-    <img class="sobre__foto" src="/img/equipo.jpg" alt="Voluntarios de AMAAC en un taller comunitario" />
+    <img class="sobre__foto" loading="lazy" src="/img/equipo.jpg" alt="Voluntarios de AMAAC en un taller comunitario" />
     <div>
       <h2 class="titulo">Sobre AMAAC</h2>
       <p class="sobre__texto">{{ ong.descripcion }}</p>
@@ -85,7 +85,7 @@
           <article class="tarjeta">
             <div class="tarjeta__imagen">
               @if (c.imagenUrl) {
-                <img [src]="c.imagenUrl" [alt]="c.titulo" (error)="ocultarImagen($event)" />
+                <img loading="lazy" [src]="c.imagenUrl" [alt]="c.titulo" (error)="ocultarImagen($event)" />
               } @else {
                 <span class="ico">campaign</span>
               }
@@ -145,7 +145,7 @@
         @for (n of noticias(); track n.id) {
           <article class="tarjeta tarjeta--texto">
             @if (n.imagenUrl) {
-              <img class="tarjeta__foto" [src]="n.imagenUrl" [alt]="n.titulo" (error)="ocultarImagen($event)" />
+              <img class="tarjeta__foto" loading="lazy" [src]="n.imagenUrl" [alt]="n.titulo" (error)="ocultarImagen($event)" />
             }
             <span class="fecha"><span class="ico">calendar_today</span> {{ n.fecha | date: "d 'de' MMMM, y" }}</span>
             <h3>{{ n.titulo }}</h3>

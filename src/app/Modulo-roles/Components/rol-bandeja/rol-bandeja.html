@@ -1,0 +1,130 @@
+<header class="am-encabezado">
+  <div>
+    <p class="am-encabezado__migas">Recursos Humanos / <strong>Bandeja de trabajo</strong></p>
+    <h2>Hola, {{ auth.sesion()?.nombre || auth.sesion()?.usuario }}</h2>
+    <p>Esto es lo que espera una acción hoy. Atiende primero lo marcado como atrasado.</p>
+  </div>
+  <button type="button" class="ui-btn ui-btn--claro" [disabled]="cargando()" (click)="cargar()"><span class="ico">refresh</span> Actualizar</button>
+</header>
+
+@if (error()) {
+  <p class="ui-mensaje ui-mensaje--error">{{ error() }}</p>
+}
+
+@if (datos(); as d) {
+  @if (d.atrasadas > 0) {
+    <a class="ui-mensaje ui-mensaje--aviso aviso" routerLink="../postulaciones">
+      <span class="ico">schedule</span>
+      {{ d.atrasadas }} postulación(es) llevan más de {{ d.diasLimiteRespuesta }} días sin respuesta.
+    </a>
+  }
+  @if (d.sesionesPorCerrar > 0) {
+    <a class="ui-mensaje ui-mensaje--aviso aviso" routerLink="../entrevistas">
+      <span class="ico">event_busy</span>
+      {{ d.sesionesPorCerrar }} sesión(es) de entrevista ya terminaron: márcalas como realizadas para que sus postulantes pasen a evaluación.
+    </a>
+  }
+
+  <div class="ui-indicadores">
+    <a class="ui-indicador" [class.ui-indicador--alerta]="d.porRevisar > 0" routerLink="../postulaciones" [queryParams]="{ estado: 'Recibida' }">
+      <span>Por revisar</span>
+      <strong>{{ d.porRevisar }}</strong>
+      <small>postulaciones nuevas</small>
+    </a>
+    <a class="ui-indicador" routerLink="../postulaciones" [queryParams]="{ estado: 'HabilitadaEntrevista' }">
+      <span>Por agendar</span>
+      <strong>{{ d.porAgendar }}</strong>
+      <small>sin sesión de entrevista</small>
+    </a>
+    <a class="ui-indicador" [class.ui-indicador--alerta]="d.porDecidir > 0" routerLink="../postulaciones" [queryParams]="{ estado: 'EntrevistaRealizada' }">
+      <span>Por decidir</span>
+      <strong>{{ d.porDecidir }}</strong>
+      <small>ya entrevistadas</small>
+    </a>
+    <a class="ui-indicador" [class.ui-indicador--alerta]="d.horariosPorRevisar > 0" routerLink="../horarios">
+      <span>Horarios por revisar</span>
+      <strong>{{ d.horariosPorRevisar }}</strong>
+      <small>practicantes esperando</small>
+    </a>
+    <a class="ui-indicador" [class.ui-indicador--alerta]="d.tareasVencidas > 0" routerLink="../tareas">
+      <span>Actividades vencidas</span>
+      <strong>{{ d.tareasVencidas }}</strong>
+      <small>pasaron su fecha límite</small>
+    </a>
+    <a class="ui-indicador" routerLink="../asistencia">
+      <span>En turno ahora</span>
+      <strong>{{ d.enTurnoAhora }}</strong>
+      <small>practicantes con entrada marcada</small>
+    </a>
+  </div>
+
+  <div class="bloques">
+    <section class="ui-tarjeta bloque">
+      <h3><span class="ico">how_to_reg</span> Postulaciones que esperan</h3>
+      <ul>
+        @for (p of d.postulaciones; track p.id) {
+          <li [class.atrasado]="p.atrasado">
+            <span class="texto"><strong>{{ p.titulo }}</strong><small>{{ p.detalle }}</small></span>
+            <span class="dias">{{ p.diasEspera === 0 ? 'Hoy' : p.diasEspera + ' d' }}</span>
+          </li>
+        } @empty {
+          <li class="vacio">No hay postulaciones esperando. ¡Al día!</li>
+        }
+      </ul>
+      <a class="ver" routerLink="../postulaciones">Ir a postulaciones <span class="ico">arrow_forward</span></a>
+    </section>
+
+    <section class="ui-tarjeta bloque">
+      <h3><span class="ico">event_available</span> Entrevistas</h3>
+      <ul>
+        @for (s of d.sesiones; track s.id) {
+          <li [class.atrasado]="s.porCerrar">
+            <span class="texto">
+              <strong>{{ s.nombre }}</strong>
+              <small>{{ s.inicio | date: "EEE d 'de' MMM, HH:mm" : '-0500' }} · {{ s.modalidad }} · {{ s.inscritos }}/{{ s.cupo }} inscritos</small>
+            </span>
+            @if (s.porCerrar) {
+              <span class="ui-etiqueta ui-etiqueta--naranja">Por cerrar</span>
+            }
+          </li>
+        } @empty {
+          <li class="vacio">No hay sesiones programadas. Crea una para agendar a los postulantes.</li>
+        }
+      </ul>
+      <a class="ver" routerLink="../entrevistas">Ir a entrevistas <span class="ico">arrow_forward</span></a>
+    </section>
+
+    <section class="ui-tarjeta bloque">
+      <h3><span class="ico">schedule</span> Horarios por revisar</h3>
+      <ul>
+        @for (h of d.horarios; track h.id) {
+          <li [class.atrasado]="h.atrasado">
+            <span class="texto"><strong>{{ h.titulo }}</strong><small>{{ h.detalle }}</small></span>
+            <span class="dias">{{ h.diasEspera === 0 ? 'Hoy' : h.diasEspera + ' d' }}</span>
+          </li>
+        } @empty {
+          <li class="vacio">Ningún horario pendiente.</li>
+        }
+      </ul>
+      <a class="ver" routerLink="../horarios">Ir a horarios <span class="ico">arrow_forward</span></a>
+    </section>
+
+    <section class="ui-tarjeta bloque">
+      <h3><span class="ico">assignment_late</span> Actividades vencidas</h3>
+      <ul>
+        @for (t of d.tareas; track t.id) {
+          <li class="atrasado">
+            <span class="texto"><strong>{{ t.titulo }}</strong><small>{{ t.detalle }} · venció el {{ t.fecha | date: 'dd/MM' }}</small></span>
+          </li>
+        } @empty {
+          <li class="vacio">Ninguna actividad vencida.</li>
+        }
+      </ul>
+      <a class="ver" routerLink="../tareas">Ir a actividades <span class="ico">arrow_forward</span></a>
+    </section>
+  </div>
+
+  <app-indicadores-proceso />
+} @else if (cargando()) {
+  <p class="ui-vacio">Cargando la bandeja...</p>
+}

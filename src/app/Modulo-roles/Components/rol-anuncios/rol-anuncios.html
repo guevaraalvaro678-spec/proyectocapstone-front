@@ -1,0 +1,87 @@
+<header class="am-encabezado">
+  <div>
+    <p class="am-encabezado__migas">Gestión institucional / <strong>Anuncios</strong></p>
+    <h2>Anuncios del sitio</h2>
+    <p>Avisos que aparecen en la franja superior del sitio público (convocatorias, cierres, campañas). Se publican y retiran solos según su vigencia.</p>
+  </div>
+</header>
+
+@if (error()) {
+  <p class="ui-mensaje ui-mensaje--error">{{ error() }}</p>
+}
+@if (aviso()) {
+  <p class="ui-mensaje ui-mensaje--exito">{{ aviso() }}</p>
+}
+
+<form class="ui-tarjeta ui-form formulario" [formGroup]="form" (ngSubmit)="guardar()">
+  <h3>{{ editando() ? 'Editar anuncio' : 'Nuevo anuncio' }}</h3>
+  <label>
+    Texto del anuncio
+    <textarea formControlName="texto" rows="2" maxlength="300" placeholder="Ej. ¡Convocatoria de voluntariado abierta hasta el 30 de noviembre!"></textarea>
+  </label>
+  <div class="ui-form__fila">
+    <label>
+      Enlace (opcional)
+      <input type="text" formControlName="enlace" placeholder="/postular o https://..." />
+    </label>
+    <label>
+      Tipo
+      <select formControlName="tipo">
+        <option value="Informativo">Informativo</option>
+        <option value="Importante">Importante (resaltado)</option>
+      </select>
+    </label>
+  </div>
+  <div class="ui-form__fila">
+    <label>
+      Publicar desde
+      <input type="datetime-local" formControlName="desde" />
+      <small>Vacío = desde ahora.</small>
+    </label>
+    <label>
+      Hasta
+      <input type="datetime-local" formControlName="hasta" />
+      <small>Vacío = sin fecha de fin.</small>
+    </label>
+  </div>
+  <label class="ui-check"><input type="checkbox" formControlName="activo" /> Activo</label>
+  <div class="ui-form__botones">
+    @if (editando()) {
+      <button type="button" class="ui-btn ui-btn--claro" (click)="cancelar()">Cancelar</button>
+    }
+    <button type="submit" class="ui-btn" [disabled]="trabajando()"><span class="ico">campaign</span> {{ editando() ? 'Guardar cambios' : 'Publicar anuncio' }}</button>
+  </div>
+</form>
+
+@if (cargando()) {
+  <p class="ui-vacio">Cargando anuncios...</p>
+} @else if (anuncios().length === 0) {
+  <p class="ui-vacio">Todavía no hay anuncios.</p>
+} @else {
+  <div class="ui-tabla">
+    <table>
+      <thead>
+        <tr><th>Anuncio</th><th>Tipo</th><th>Vigencia</th><th>Situación</th><th></th></tr>
+      </thead>
+      <tbody>
+        @for (a of anuncios(); track a.id) {
+          <tr>
+            <td><strong>{{ a.texto }}</strong>@if (a.enlace) { <small>{{ a.enlace }}</small> }</td>
+            <td>{{ a.tipo }}</td>
+            <td>{{ a.desde | date: 'dd/MM/yy HH:mm' }} → {{ a.hasta ? (a.hasta | date: 'dd/MM/yy HH:mm') : 'sin fin' }}</td>
+            <td>
+              <span class="ui-etiqueta" [class.ui-etiqueta--verde]="a.vigente" [class.ui-etiqueta--azul]="a.situacion === 'Programado'" [class.ui-etiqueta--gris]="!a.vigente && a.situacion !== 'Programado'">
+                {{ a.situacion }}
+              </span>
+            </td>
+            <td class="ui-tabla__acciones">
+              <button type="button" class="ui-btn ui-btn--claro ui-btn--chico" (click)="editar(a)">Editar</button>
+              <button type="button" class="ui-btn ui-btn--claro ui-btn--chico" [disabled]="trabajando()" (click)="alternar(a)">{{ a.activo ? 'Desactivar' : 'Activar' }}</button>
+              <button type="button" class="ui-btn ui-btn--peligro ui-btn--chico" [disabled]="trabajando()" (click)="eliminar(a)">Eliminar</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

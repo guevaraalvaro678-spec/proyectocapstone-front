@@ -9,6 +9,7 @@ import {
   PostulacionEnviada,
   PostulacionEstado,
   PostulacionResumen,
+  ResultadoMasivo,
   SesionEntrevista,
   SesionEntrevistaDetalle,
   SesionEntrevistaGuardar,
@@ -87,6 +88,11 @@ export class PostulacionService {
 
   cambiarEstado(id: number, datos: PostulacionEstado): Observable<Postulacion> {
     return this.http.put<Postulacion>(`${API_URL}/postulacion/${id}/estado`, datos);
+  }
+
+  /** El mismo cambio para varias postulaciones; el backend procesa cada una y devuelve las que fallaron. */
+  cambiarEstadoVarias(ids: number[], datos: PostulacionEstado): Observable<ResultadoMasivo> {
+    return this.http.put<ResultadoMasivo>(`${API_URL}/postulacion/estado`, { ...datos, ids });
   }
 
   listarSesiones(estado = ''): Observable<SesionEntrevista[]> {

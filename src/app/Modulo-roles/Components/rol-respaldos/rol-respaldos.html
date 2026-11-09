@@ -1,0 +1,39 @@
+<section class="ui-tarjeta respaldos">
+  <div class="respaldos__cabecera">
+    <h3><span class="ico">backup</span> Copias de seguridad</h3>
+    @if (estado() && !estado()!.enAzure) {
+      <button type="button" class="ui-btn" [disabled]="trabajando()" (click)="respaldar()">
+        <span class="ico">cloud_upload</span> {{ trabajando() ? 'Creando copia...' : 'Respaldar ahora' }}
+      </button>
+    }
+  </div>
+
+  @if (error()) {
+    <p class="ui-mensaje ui-mensaje--error">{{ error() }}</p>
+  }
+  @if (aviso()) {
+    <p class="ui-mensaje ui-mensaje--exito">{{ aviso() }}</p>
+  }
+
+  @if (estado(); as e) {
+    @if (e.enAzure) {
+      <p class="ui-mensaje">La base está en Azure SQL: Azure guarda copias automáticas y permite restaurar a un punto en el tiempo.</p>
+    } @else {
+      <p class="nota">
+        Se crea una copia automática cada {{ e.horasEntreCopias }} h y se conservan las últimas {{ e.copiasAConservar }}.
+        @if (e.proximaCopia) { Próxima: {{ e.proximaCopia | date: 'dd/MM/yyyy HH:mm' }}. }
+        <br />Carpeta: <code>{{ e.carpeta }}</code>
+      </p>
+      <ul>
+        @for (c of e.copias; track c.nombre) {
+          <li>
+            <span class="ico">description</span>
+            <span class="texto"><strong>{{ c.nombre }}</strong><small>{{ c.fecha | date: 'dd/MM/yyyy HH:mm' }} · {{ c.tamanoBytes / 1048576 | number: '1.1-1' }} MB</small></span>
+          </li>
+        } @empty {
+          <li class="vacio">Todavía no hay copias. Se creará la primera en unos minutos o puedes respaldar ahora.</li>
+        }
+      </ul>
+    }
+  }
+</section>

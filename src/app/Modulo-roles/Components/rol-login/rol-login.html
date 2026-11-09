@@ -44,7 +44,7 @@
               Código de verificación
               <span class="acceso__entrada">
                 <span class="ico">pin</span>
-                <input id="codigo-verificacion" type="text" formControlName="codigo" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000" class="codigo" />
+                <input id="codigo-verificacion" type="text" formControlName="codigo" inputmode="numeric" autocomplete="one-time-code" maxlength="12" placeholder="000000" class="codigo" (input)="limpiarCodigo($any($event.target).value)" />
               </span>
             </label>
 
@@ -57,10 +57,13 @@
           </form>
 
           <div class="reenviar">
-            <button type="button" class="acceso__volver volver" [disabled]="cargando()" (click)="enviarCodigo()"><span class="ico">refresh</span> Reenviar código</button>
+            <button type="button" class="acceso__volver volver" [disabled]="cargando() || esperaReenvio() > 0" (click)="enviarCodigo()">
+              <span class="ico">refresh</span> {{ esperaReenvio() > 0 ? 'Reenviar en ' + esperaReenvio() + ' s' : 'Reenviar código' }}
+            </button>
             @if (canales().length > 1) {
               <button type="button" class="acceso__volver volver" (click)="paso.set('canal')"><span class="ico">swap_horiz</span> Usar otro medio</button>
             }
+            <button type="button" class="acceso__volver volver" (click)="volver()"><span class="ico">arrow_back</span> Volver</button>
           </div>
         } @else {
         <h2>Inicia sesión</h2>
