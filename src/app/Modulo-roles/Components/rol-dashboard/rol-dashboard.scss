@@ -23,7 +23,7 @@
 }
 
 .leyenda .punto {
-  background: var(--am-verde);
+  background: var(--am-verde-fondo);
 }
 
 .leyenda .punto--naranja {
@@ -161,7 +161,7 @@
   background: var(--am-superficie-baja);
 
   &__verde {
-    background: var(--am-verde);
+    background: var(--am-verde-fondo);
   }
 
   &__naranja {
@@ -239,7 +239,7 @@
       display: block;
       height: 100%;
       border-radius: 999px;
-      background: var(--am-verde);
+      background: var(--am-verde-fondo);
       transition: width 0.5s ease;
 
       &.alerta {
@@ -297,8 +297,8 @@
   }
 
   &--recibida {
-    border-color: #c9ddd2;
-    background: #f1f6f3;
+    border-color: var(--am-borde);
+    background: var(--am-tinte);
     color: var(--am-verde);
   }
 }

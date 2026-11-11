@@ -36,7 +36,7 @@
   padding: 2rem;
   border: 1px solid var(--am-borde-suave);
   border-radius: 1.25rem;
-  background: #fff;
+  background: var(--am-superficie);
   box-shadow: var(--am-sombra-alta);
 }
 
@@ -90,7 +90,7 @@
   padding: 1.1rem 1.2rem;
   border: 1px solid var(--am-borde);
   border-radius: 0.85rem;
-  background: #f6f9f7;
+  background: var(--am-tinte);
   color: var(--am-texto);
   text-align: left;
   cursor: pointer;
@@ -102,7 +102,7 @@
     width: 2.5rem;
     height: 2.5rem;
     border-radius: 0.6rem;
-    background: #fff;
+    background: var(--am-superficie);
     color: var(--am-verde);
   }
 
@@ -118,7 +118,7 @@
 
   &.activa {
     border-color: var(--am-verde);
-    background: var(--am-verde);
+    background: var(--am-verde-fondo);
     color: #fff;
 
     small {
@@ -183,7 +183,7 @@
     padding: 0.7rem 0.85rem;
     border: 1px solid var(--am-borde);
     border-radius: 0.6rem;
-    background: #fff;
+    background: var(--am-superficie);
     font-size: 0.92rem;
     font-weight: 400;
 
@@ -231,9 +231,9 @@
   align-items: center;
   gap: 1rem;
   padding: 1rem 1.1rem;
-  border: 1px dashed #b9cfc3;
+  border: 1px dashed var(--am-borde);
   border-radius: 0.85rem;
-  background: #f6f9f7;
+  background: var(--am-tinte);
 
   small {
     color: var(--am-gris);
@@ -248,7 +248,7 @@
     padding: 0.55rem 1rem;
     border: 1px solid var(--am-verde);
     border-radius: 0.6rem;
-    background: #fff;
+    background: var(--am-superficie);
     color: var(--am-verde) !important;
     cursor: pointer;
   }
@@ -270,7 +270,7 @@
   padding: 1.25rem;
   border: 1px solid var(--am-borde-suave);
   border-radius: 0.85rem;
-  background: #f6f9f7;
+  background: var(--am-tinte);
 
   > small {
     color: var(--am-gris);
@@ -298,7 +298,7 @@
   padding: 0.85rem 1rem;
   border: 1px solid var(--am-borde);
   border-radius: 0.65rem;
-  background: #fff;
+  background: var(--am-superficie);
   cursor: pointer;
 
   input {
@@ -340,7 +340,7 @@
   box-shadow: 0 8px 20px rgb(234 88 12 / 0.3);
 
   &:hover:not(:disabled) {
-    background: var(--am-naranja-oscuro);
+    background: var(--am-naranja-fuerte);
   }
 
   &:disabled {
@@ -381,9 +381,9 @@
   align-items: center;
   gap: 0.6rem;
   padding: 0.9rem 1rem;
-  border: 1px solid #c9ddd2;
+  border: 1px solid var(--am-borde);
   border-radius: 0.75rem;
-  background: #f1f6f3;
+  background: var(--am-tinte);
   color: var(--am-verde);
 
   button {

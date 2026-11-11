@@ -66,7 +66,7 @@
   padding: 2rem;
   border: 1px solid var(--am-borde-suave);
   border-radius: 1.25rem;
-  background: #fff;
+  background: var(--am-superficie);
   box-shadow: var(--am-sombra);
 
   hr {
@@ -113,7 +113,7 @@
   padding: 1.25rem 0.75rem;
   border: 1px solid var(--am-borde);
   border-radius: 0.9rem;
-  background: #fff;
+  background: var(--am-superficie);
   color: var(--am-texto-suave);
   font-weight: 500;
   cursor: pointer;
@@ -129,7 +129,7 @@
 
   &.activa {
     border: 2px solid var(--am-verde);
-    background: #f1f6f3;
+    background: var(--am-tinte);
     color: var(--am-verde);
   }
 
@@ -150,7 +150,7 @@
   padding: 1.25rem;
   border: 1px solid var(--am-borde-suave);
   border-radius: 1rem;
-  background: #f6f9f7;
+  background: var(--am-tinte);
 
   label {
     display: flex;
@@ -174,7 +174,7 @@
     padding: 0.65rem 0.8rem;
     border: 1px solid var(--am-borde);
     border-radius: 0.6rem;
-    background: #fff;
+    background: var(--am-superficie);
     font-size: 0.92rem;
   }
 }
@@ -311,9 +311,9 @@
 
 .entrega {
   padding: 1.75rem;
-  border: 1px solid #d5e5dc;
+  border: 1px solid var(--am-borde);
   border-radius: 1.25rem;
-  background: #f1f6f3;
+  background: var(--am-tinte);
 
   h2 {
     margin: 0 0 1rem;
@@ -325,7 +325,7 @@
     display: flex;
     gap: 0.9rem;
     padding: 1rem 0;
-    border-top: 1px solid #d5e5dc;
+    border-top: 1px solid var(--am-borde);
 
     &:first-of-type {
       border-top: 0;
@@ -337,9 +337,9 @@
       flex-shrink: 0;
       width: 2.4rem;
       height: 2.4rem;
-      border: 1px solid #d5e5dc;
+      border: 1px solid var(--am-borde);
       border-radius: 50%;
-      background: #fff;
+      background: var(--am-superficie);
       color: var(--am-verde);
     }
 
@@ -373,7 +373,7 @@
   padding: 0.7rem 1.25rem;
   border: 0;
   border-radius: 0.75rem;
-  background: var(--am-verde);
+  background: var(--am-verde-fondo);
   color: #fff;
   font-weight: 700;
   text-decoration: none;
@@ -390,7 +390,7 @@
 
   &--claro {
     border: 1px solid var(--am-borde);
-    background: #fff;
+    background: var(--am-superficie);
     color: var(--am-verde);
 
     &:hover:not(:disabled) {
@@ -468,7 +468,7 @@
     padding: 0.5rem;
     border: 1px solid #e7d6ee;
     border-radius: 1rem;
-    background: #fff;
+    background: var(--am-superficie);
     object-fit: contain;
   }
 

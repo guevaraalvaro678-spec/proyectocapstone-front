@@ -57,7 +57,7 @@
   padding: 1.1rem 1.25rem;
   border: 2px solid var(--am-verde);
   border-radius: 1rem;
-  background: #f1f6f3;
+  background: var(--am-tinte);
 
   &__icono {
     display: grid;
@@ -65,7 +65,7 @@
     width: 3rem;
     height: 3rem;
     border-radius: 0.75rem;
-    background: var(--am-verde);
+    background: var(--am-verde-fondo);
     color: #fff;
   }
 
@@ -105,7 +105,7 @@
   div {
     padding: 1.1rem;
     border-radius: 0.85rem;
-    background: #f1f6f3;
+    background: var(--am-tinte);
   }
 
   span {
@@ -115,7 +115,7 @@
     height: 2rem;
     margin-bottom: 0.6rem;
     border-radius: 0.5rem;
-    background: var(--am-verde);
+    background: var(--am-verde-fondo);
     color: #fff;
     font-weight: 700;
   }

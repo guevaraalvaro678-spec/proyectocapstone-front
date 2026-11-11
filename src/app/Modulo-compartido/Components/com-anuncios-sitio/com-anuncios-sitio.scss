@@ -4,12 +4,12 @@
   justify-content: center;
   gap: 0.6rem;
   padding: 0.5rem 1rem;
-  background: var(--am-verde);
+  background: var(--am-verde-fondo);
   color: #fff;
   font-size: 0.9rem;
 
   &--importante {
-    background: var(--am-naranja-oscuro);
+    background: var(--am-naranja-fuerte);
   }
 
   p {

@@ -62,7 +62,7 @@
   padding: 0.9rem 1rem;
   border: 1px solid var(--am-borde-suave);
   border-radius: 0.75rem;
-  background: #f1f6f3;
+  background: var(--am-tinte);
 
   > .ico {
     display: grid;
@@ -70,7 +70,7 @@
     width: 2.5rem;
     height: 2.5rem;
     border-radius: 0.6rem;
-    background: var(--am-verde);
+    background: var(--am-verde-fondo);
     color: #fff;
   }
 

@@ -3,6 +3,15 @@
   <head>
     <meta charset="utf-8" />
     <title>AMAAC Perú</title>
+    <!-- Modo oscuro (HU-33): aplica el tema guardado (o el del sistema) antes de que cargue Angular, para que no parpadee. -->
+    <script>
+      try {
+        var tema = localStorage.getItem('tema');
+        document.documentElement.dataset.tema = tema || (matchMedia('(prefers-color-scheme: dark)').matches ? 'oscuro' : 'claro');
+      } catch (e) {
+        document.documentElement.dataset.tema = 'claro';
+      }
+    </script>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="AMAAC Perú: voluntariado, prácticas, campañas y donaciones para la comunidad." />

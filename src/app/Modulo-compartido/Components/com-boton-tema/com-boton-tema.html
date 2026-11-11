@@ -1,0 +1,10 @@
+<button
+  type="button"
+  class="boton-tema"
+  [attr.aria-label]="tema.oscuro() ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'"
+  [attr.aria-pressed]="tema.oscuro()"
+  [title]="tema.oscuro() ? 'Modo claro' : 'Modo oscuro'"
+  (click)="tema.alternar()"
+>
+  <span class="ico">{{ tema.oscuro() ? 'light_mode' : 'dark_mode' }}</span>
+</button>

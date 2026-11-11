@@ -7,7 +7,7 @@
 
 .cab {
   border-bottom: 1px solid var(--am-borde-suave);
-  background: rgb(255 255 255 / 0.82);
+  background: var(--am-cristal);
   backdrop-filter: saturate(1.4) blur(12px);
 
   // Al bajar por la página la cabecera toma sombra (solo navegadores con animaciones ligadas al scroll).
@@ -113,7 +113,7 @@
     }
 
     &--suave {
-      background: #eef4f0;
+      background: var(--am-tinte);
       color: var(--am-verde);
 
       &:hover {
@@ -127,13 +127,13 @@
       box-shadow: 0 4px 12px rgb(234 88 12 / 0.25);
 
       &:hover {
-        background: var(--am-naranja-oscuro);
+        background: var(--am-naranja-fuerte);
       }
     }
 
     &--borde {
       border-color: var(--am-borde);
-      background: #fff;
+      background: var(--am-superficie);
       color: var(--am-verde);
 
       &:hover {
@@ -194,7 +194,7 @@
 
 @keyframes cab-sombra {
   to {
-    background: rgb(255 255 255 / 0.92);
+    background: var(--am-cristal);
     box-shadow: 0 6px 24px rgb(1 45 29 / 0.08);
   }
 }

@@ -125,7 +125,7 @@
     &--chico {
       width: 2.3rem;
       height: 2.3rem;
-      background: var(--am-verde);
+      background: var(--am-verde-fondo);
     }
   }
 
@@ -164,7 +164,7 @@
     gap: 1rem;
     padding: 0.85rem 1.5rem;
     border-bottom: 1px solid var(--am-borde-suave);
-    background: rgb(255 255 255 / 0.96);
+    background: var(--am-cristal);
     backdrop-filter: blur(8px);
   }
 

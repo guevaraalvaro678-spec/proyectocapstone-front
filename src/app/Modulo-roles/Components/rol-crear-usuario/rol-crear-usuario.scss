@@ -1,7 +1,7 @@
 .crear {
   max-width: 24rem;
   padding: 1.5rem;
-  background: #fff;
+  background: var(--am-superficie);
   border-radius: 0.75rem;
   box-shadow: 0 4px 16px rgb(0 0 0 / 0.08);
 
@@ -12,7 +12,7 @@
 
   &__ayuda {
     margin: 0 0 1rem;
-    color: #6b7280;
+    color: var(--am-gris);
     font-size: 0.8rem;
   }
 
@@ -26,13 +26,13 @@
       flex-direction: column;
       gap: 0.25rem;
       font-size: 0.875rem;
-      color: #374151;
+      color: var(--am-texto-suave);
     }
 
     input,
     select {
       padding: 0.6rem 0.75rem;
-      border: 1px solid #d1d5db;
+      border: 1px solid var(--am-borde);
       border-radius: 0.5rem;
       font-size: 1rem;
 
@@ -46,7 +46,7 @@
       padding: 0.7rem;
       border: 0;
       border-radius: 0.5rem;
-      background: var(--am-verde);
+      background: var(--am-verde-fondo);
       color: #fff;
       font-size: 1rem;
       cursor: pointer;
@@ -60,7 +60,7 @@
 
   &__aviso,
   &__error {
-    color: #dc2626;
+    color: var(--am-rojo);
   }
 
   &__error,
@@ -70,6 +70,6 @@
   }
 
   &__exito {
-    color: #16a34a;
+    color: var(--am-exito);
   }
 }

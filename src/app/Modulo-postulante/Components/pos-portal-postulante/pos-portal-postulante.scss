@@ -24,7 +24,7 @@
     top: 0;
     z-index: 20;
     border-bottom: 1px solid var(--am-borde-suave);
-    background: rgb(255 255 255 / 0.96);
+    background: var(--am-cristal);
 
     .portal__interior {
       min-height: 4.5rem;
@@ -83,7 +83,7 @@
     width: 2.4rem;
     height: 2.4rem;
     border-radius: 50%;
-    background: var(--am-verde);
+    background: var(--am-verde-fondo);
     color: #fff;
     font-weight: 700;
   }

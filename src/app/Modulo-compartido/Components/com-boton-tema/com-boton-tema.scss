@@ -1,0 +1,35 @@
+:host {
+  display: inline-flex;
+}
+
+.boton-tema {
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  padding: 0;
+  border: 1px solid var(--am-borde);
+  border-radius: 50%;
+  background: var(--am-superficie);
+  color: var(--am-texto-suave);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+
+  &:hover {
+    background: var(--am-superficie-baja);
+    color: var(--am-verde);
+  }
+
+  &:active {
+    transform: scale(0.94);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: var(--am-anillo);
+  }
+
+  .ico {
+    font-size: 1.25rem;
+  }
+}

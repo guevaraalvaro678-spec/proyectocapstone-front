@@ -30,6 +30,65 @@
   --am-anillo: 0 0 0 4px rgb(45 106 79 / 0.16);
   /* Curva de las animaciones: arranca rápido y frena suave. */
   --am-curva: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* El verde y el naranja oscuro como FONDO (botones con texto blanco) se separan de su uso como texto,
+     porque en el modo oscuro el texto necesita un tono claro y el fondo uno oscuro. */
+  --am-verde-fondo: #1b4332;
+  --am-naranja-fuerte: #a73a00;
+  --am-tinte: #f1f6f3;
+  --am-cristal: rgb(255 255 255 / 0.9);
+  --am-rojo: #991b1b;
+  --am-rojo-suave: #fee2e2;
+  --am-exito: #166534;
+  --am-exito-suave: #dcfce7;
+  --am-azul: #1e40af;
+  --am-azul-suave: #e8eefc;
+  color-scheme: light;
+}
+
+/* ---- Modo oscuro (HU-33): mismas variables con tonos para fondo oscuro; se activa con data-tema="oscuro" en <html>. ---- */
+:root[data-tema='oscuro'] {
+  --am-verde: #8fd3ad;
+  --am-verde-fondo: #2d6a4f;
+  --am-verde-oscuro: #0c2219;
+  --am-verde-medio: #74c69d;
+  --am-verde-suave: #1c3a2d;
+  --am-naranja: #ea580c;
+  --am-naranja-oscuro: #ffb38a;
+  --am-naranja-suave: #3a2418;
+  --am-fondo: #0f1412;
+  --am-superficie: #171d1a;
+  --am-superficie-baja: #1f2723;
+  --am-borde: #34403a;
+  --am-borde-suave: #29322e;
+  --am-texto: #e4ebe7;
+  --am-texto-suave: #b8c4bd;
+  --am-gris: #93a09a;
+  --am-error: #ffb4ab;
+  --am-sombra: 0 1px 3px rgb(0 0 0 / 0.4), 0 1px 2px rgb(0 0 0 / 0.3);
+  --am-sombra-alta: 0 12px 32px rgb(0 0 0 / 0.5);
+  --am-sombra-hover: 0 10px 24px rgb(0 0 0 / 0.45), 0 2px 6px rgb(0 0 0 / 0.35);
+  --am-anillo: 0 0 0 4px rgb(143 211 173 / 0.22);
+  --am-tinte: #1a2420;
+  --am-cristal: rgb(23 29 26 / 0.92);
+  --am-rojo: #ffb4ab;
+  --am-rojo-suave: #3d1f1d;
+  --am-exito: #86efac;
+  --am-exito-suave: #173323;
+  --am-azul: #b4c6ff;
+  --am-azul-suave: #1d2747;
+  color-scheme: dark;
+
+  img:not([src$='.svg']) {
+    filter: brightness(0.92);
+  }
+}
+
+/* Campos sin fondo propio: en modo oscuro toman la superficie del tema en vez del gris del navegador.
+   :where() deja la especificidad en cero, así cualquier estilo de un componente sigue mandando. */
+:where(:root[data-tema='oscuro']) :where(input:not([type='checkbox'], [type='radio'], [type='range'], [type='file']), select, textarea) {
+  background-color: var(--am-superficie-baja);
+  color: var(--am-texto);
 }
 
 *,
@@ -93,7 +152,7 @@ a {
   gap: 1rem;
   margin: -1.5rem -1.5rem 1.5rem;
   padding: 2rem 2rem 1.75rem;
-  background: linear-gradient(120deg, var(--am-verde-oscuro), var(--am-verde) 70%, #24503d);
+  background: linear-gradient(120deg, var(--am-verde-oscuro), var(--am-verde-fondo) 70%, #24503d);
   color: #fff;
 
   &__migas {
@@ -170,9 +229,9 @@ a {
   justify-content: center;
   gap: 0.4rem;
   padding: 0.55rem 1.1rem;
-  border: 1px solid var(--am-verde);
+  border: 1px solid var(--am-verde-fondo);
   border-radius: 0.6rem;
-  background: var(--am-verde);
+  background: var(--am-verde-fondo);
   color: #fff;
   font-size: 0.875rem;
   font-weight: 600;
@@ -198,7 +257,7 @@ a {
     background: var(--am-naranja);
 
     &:hover:not(:disabled) {
-      background: var(--am-naranja-oscuro);
+      background: var(--am-naranja-fuerte);
     }
   }
 
@@ -213,12 +272,12 @@ a {
   }
 
   &--peligro {
-    border-color: #fecaca;
+    border-color: var(--am-error);
     background: var(--am-superficie);
     color: var(--am-error);
 
     &:hover:not(:disabled) {
-      background: #fef2f2;
+      background: var(--am-rojo-suave);
     }
   }
 
@@ -237,8 +296,8 @@ a {
   font-size: 0.9rem;
 
   &--error {
-    background: #ffdad6;
-    color: #93000a;
+    background: var(--am-rojo-suave);
+    color: var(--am-rojo);
   }
 
   &--exito {
@@ -332,7 +391,7 @@ a {
   }
 
   th {
-    background: #f1f6f3;
+    background: var(--am-tinte);
     color: var(--am-texto-suave);
     font-size: 0.72rem;
     font-weight: 700;
@@ -346,7 +405,7 @@ a {
   }
 
   tbody tr:hover {
-    background: #fbfcfb;
+    background: var(--am-tinte);
   }
 
   small {
@@ -367,6 +426,8 @@ a {
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--am-verde-medio);
+  /* Un código como POS-2026-019 se lee completo: no se parte en los guiones. */
+  white-space: nowrap;
 }
 
 /* ---- Etiquetas de estado ---- */
@@ -401,8 +462,8 @@ a {
   }
 
   &--azul {
-    background: #e8eefc;
-    color: #1e40af;
+    background: var(--am-azul-suave);
+    color: var(--am-azul);
   }
 
   &--amarilla,
@@ -412,8 +473,8 @@ a {
   }
 
   &--roja {
-    background: #ffdad6;
-    color: #93000a;
+    background: var(--am-rojo-suave);
+    color: var(--am-rojo);
   }
 
   &--gris {
@@ -646,11 +707,11 @@ a {
   }
 
   &--hecho {
-    background: #f1f6f3;
+    background: var(--am-tinte);
     color: var(--am-verde);
 
     .am-paso__icono {
-      background: var(--am-verde);
+      background: var(--am-verde-fondo);
     }
   }
 
@@ -665,7 +726,7 @@ a {
   }
 
   &--fallido {
-    background: #fff4f2;
+    background: var(--am-rojo-suave);
     color: var(--am-error);
 
     .am-paso__icono {
@@ -773,7 +834,7 @@ a {
   padding: 0.6rem 1.15rem;
   border: 0;
   border-radius: 0.6rem;
-  background: var(--am-verde);
+  background: var(--am-verde-fondo);
   color: #fff;
   font-weight: 600;
   cursor: pointer;
@@ -808,8 +869,8 @@ a {
   }
 
   &--revision {
-    background: #e8eefc;
-    color: #1e40af;
+    background: var(--am-azul-suave);
+    color: var(--am-azul);
   }
 
   &--ok {
@@ -822,8 +883,8 @@ a {
   margin: 0 0 1rem;
   padding: 0.75rem 1rem;
   border-radius: 0.6rem;
-  background: #ffdad6;
-  color: #93000a;
+  background: var(--am-rojo-suave);
+  color: var(--am-rojo);
 
   &--ok {
     background: var(--am-verde-suave);
@@ -944,12 +1005,12 @@ a {
   &__tarjeta {
     padding: 2.5rem 2.25rem;
     border-radius: 1.75rem;
-    background: #fff;
+    background: var(--am-superficie);
     box-shadow: 0 24px 64px rgb(0 0 0 / 0.25);
 
     h2 {
       margin: 0;
-      color: var(--am-verde-oscuro);
+      color: var(--am-verde);
       font-size: 2rem;
       font-weight: 800;
       letter-spacing: -0.03em;
@@ -1004,7 +1065,7 @@ a {
       padding: 0.85rem 2.75rem 0.85rem 2.75rem;
       border: 1px solid var(--am-borde);
       border-radius: 0.75rem;
-      background: #fff;
+      background: var(--am-superficie);
       color: var(--am-texto);
       font-size: 0.98rem;
 
@@ -1034,8 +1095,8 @@ a {
     margin: 0;
     padding: 0.7rem 0.9rem;
     border-radius: 0.6rem;
-    background: #ffdad6;
-    color: #93000a;
+    background: var(--am-rojo-suave);
+    color: var(--am-rojo);
     font-size: 0.9rem;
   }
 
@@ -1081,7 +1142,7 @@ a {
     padding: 0.95rem;
     border: 0;
     border-radius: 999px;
-    background: var(--am-verde);
+    background: var(--am-verde-fondo);
     color: #fff;
     font-size: 1.05rem;
     font-weight: 700;
@@ -1173,13 +1234,13 @@ app-portal-postulante .pp-portada {
 
 ::selection {
   background: rgb(234 88 12 / 0.2);
-  color: var(--am-verde-oscuro);
+  color: var(--am-verde);
 }
 
 /* Barras de desplazamiento finas y en el tono de la marca. */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #c3d3ca transparent;
+  scrollbar-color: var(--am-borde) transparent;
 }
 
 /* Anillo de foco visible al navegar con teclado. */
@@ -1192,7 +1253,7 @@ app-portal-postulante .pp-portada {
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 
   &:hover:not(:disabled, [readonly]) {
-    border-color: #b9cfc3;
+    border-color: var(--am-borde);
   }
 
   &:focus-visible {
@@ -1250,7 +1311,7 @@ app-portal-postulante .pp-portada {
   transition: transform 0.3s var(--am-curva), box-shadow 0.3s var(--am-curva), border-color 0.3s ease;
 
   &:hover {
-    border-color: #d3e3da;
+    border-color: var(--am-borde);
     box-shadow: var(--am-sombra-hover);
   }
 }
@@ -1279,7 +1340,7 @@ app-portal-postulante .pp-portada {
   }
 
   tbody tr:hover {
-    background: #f3f8f5;
+    background: var(--am-tinte);
   }
 }
 
@@ -1302,7 +1363,7 @@ app-portal-postulante .pp-portada {
   transition: box-shadow 0.25s ease, border-color 0.25s ease;
 
   &:focus-within {
-    border-color: #d3e3da;
+    border-color: var(--am-borde);
     box-shadow: var(--am-sombra);
   }
 }

@@ -43,12 +43,12 @@
   }
 
   &:hover {
-    border-color: #b9cfc3;
+    border-color: var(--am-borde);
   }
 
   &.activo {
     border-color: var(--am-verde);
-    background: #f1f6f3;
+    background: var(--am-tinte);
     box-shadow: var(--am-anillo);
   }
 }

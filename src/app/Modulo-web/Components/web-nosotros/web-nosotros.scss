@@ -57,7 +57,7 @@
   border: 1px solid var(--am-borde-suave);
   border-left: 5px solid var(--am-verde-medio);
   border-radius: 1.25rem;
-  background: #fff;
+  background: var(--am-superficie);
   box-shadow: var(--am-sombra);
 
   > .ico {
@@ -96,7 +96,7 @@
   padding: 1.5rem;
   border: 1px solid var(--am-borde-suave);
   border-radius: 1.25rem;
-  background: #fff;
+  background: var(--am-superficie);
 
   &__icono {
     display: grid;
@@ -130,7 +130,7 @@
   margin-top: 3.5rem;
   padding: 2rem 2.25rem;
   border-radius: 1.25rem;
-  background: var(--am-verde);
+  background: var(--am-verde-fondo);
   color: #fff;
 
   h2 {
@@ -151,7 +151,7 @@
     text-decoration: none;
 
     &:hover {
-      background: var(--am-naranja-oscuro);
+      background: var(--am-naranja-fuerte);
     }
   }
 }

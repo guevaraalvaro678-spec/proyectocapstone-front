@@ -12,10 +12,10 @@
 
 .bloque {
   padding: 5rem 0;
-  background: #fff;
+  background: var(--am-superficie);
 
   &--suave {
-    background: #f1f6f3;
+    background: var(--am-tinte);
   }
 }
 
@@ -68,12 +68,12 @@
     box-shadow: 0 6px 16px rgb(234 88 12 / 0.3);
 
     &:hover {
-      background: var(--am-naranja-oscuro);
+      background: var(--am-naranja-fuerte);
     }
   }
 
   &--verde {
-    background: var(--am-verde);
+    background: var(--am-verde-fondo);
     color: #fff;
 
     &:hover {
@@ -83,11 +83,11 @@
 
   &--blanco {
     border-color: rgb(255 255 255 / 0.85);
-    background: #fff;
+    background: var(--am-superficie);
     color: var(--am-verde);
 
     &:hover {
-      background: #f1f6f3;
+      background: var(--am-tinte);
     }
   }
 
@@ -322,7 +322,7 @@
   overflow: hidden;
   border: 1px solid var(--am-borde-suave);
   border-radius: 1.25rem;
-  background: #fff;
+  background: var(--am-superficie);
   box-shadow: var(--am-sombra);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 
@@ -434,7 +434,7 @@
   padding: 1.5rem 1.75rem;
   border: 1px solid var(--am-borde-suave);
   border-radius: 1.25rem;
-  background: #fff;
+  background: var(--am-superficie);
   box-shadow: var(--am-sombra);
 
   h3 {
@@ -460,9 +460,9 @@
 
 .donacion {
   padding: 3rem 2rem;
-  border: 1px solid #d5e5dc;
+  border: 1px solid var(--am-borde);
   border-radius: 1.5rem;
-  background: #f1f6f3;
+  background: var(--am-tinte);
   text-align: center;
 
   &__icono {
@@ -472,7 +472,7 @@
     height: 3.5rem;
     margin-bottom: 1rem;
     border-radius: 1rem;
-    background: var(--am-verde);
+    background: var(--am-verde-fondo);
     color: #fff;
   }
 
@@ -504,7 +504,7 @@
     padding: 2.25rem 1.75rem;
     border: 1px solid var(--am-borde-suave);
     border-radius: 1.25rem;
-    background: #fff;
+    background: var(--am-superficie);
     text-align: center;
     box-shadow: var(--am-sombra);
 

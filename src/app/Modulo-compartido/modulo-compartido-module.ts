@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 import { AnunciosSitio } from './Components/com-anuncios-sitio/com-anuncios-sitio';
+import { BotonTema } from './Components/com-boton-tema/com-boton-tema';
 import { CabeceraPublica } from './Components/com-cabecera-publica/com-cabecera-publica';
 import { Marca } from './Components/com-marca/com-marca';
 import { MiCuenta } from './Components/com-mi-cuenta/com-mi-cuenta';
@@ -16,8 +17,8 @@ import { PortalMiembro } from './Components/com-portal-miembro/com-portal-miembr
  * "Mi cuenta y seguridad" y "Mis iniciativas".
  */
 @NgModule({
-  declarations: [Marca, CabeceraPublica, PiePublico, MiCuenta, MisIniciativas, PortalMiembro, AnunciosSitio],
+  declarations: [Marca, CabeceraPublica, PiePublico, MiCuenta, MisIniciativas, PortalMiembro, AnunciosSitio, BotonTema],
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
-  exports: [Marca, CabeceraPublica, PiePublico, MiCuenta, MisIniciativas, PortalMiembro, AnunciosSitio],
+  exports: [Marca, CabeceraPublica, PiePublico, MiCuenta, MisIniciativas, PortalMiembro, AnunciosSitio, BotonTema],
 })
 export class ModuloCompartidoModule {}
